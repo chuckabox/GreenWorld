@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "email": "student@example.com",
+    "name": "Alex Green",
+    "role": "student",
+    "impact_points": 450,
+    "award_progress": 65,
+    "rank": 12,
+    "suburb": "West End",
+    "team": "UQ Sustainability Club",
+    "password": "demo1234"
+  },
+  {
+    "id": 2,
+    "email": "maya.chen@example.com",
+    "name": "Maya Chen",
+    "role": "student",
+    "impact_points": 820,
+    "award_progress": 93,
+    "rank": 2,
+    "suburb": "South Brisbane",
+    "team": "Green Brisbane",
+    "password": "demo1234"
+  },
+  {
+    "id": 3,
+    "email": "liam.carter@example.com",
+    "name": "Liam Carter",
+    "role": "student",
+    "impact_points": 610,
+    "award_progress": 84,
+    "rank": 5,
+    "suburb": "Fortitude Valley",
+    "team": "Valley Eco Crew",
+    "password": "demo1234"
+  },
+  {
+    "id": 4,
+    "email": "sofia.ramirez@example.com",
+    "name": "Sofia Ramirez",
+    "role": "teacher",
+    "impact_points": 390,
+    "award_progress": 58,
+    "rank": 16,
+    "suburb": "Toowong",
+    "team": "Campus Green Mentors",
+    "password": "demo1234"
+  },
+  {
+    "id": 5,
+    "email": "noah.kim@example.com",
+    "name": "Noah Kim",
+    "role": "community",
+    "impact_points": 270,
+    "award_progress": 41,
+    "rank": 22,
+    "suburb": "New Farm",
+    "team": "River Cleanup Team",
+    "password": "demo1234"
+  },
+  {
+    "id": 6,
+    "email": "admin@example.com",
+    "name": "Council Admin",
+    "role": "admin",
+    "impact_points": 0,
+    "award_progress": 0,
+    "rank": 0,
+    "suburb": "Brisbane CBD",
+    "team": "City Council",
+    "password": "admin1234"
+  }
+]

@@ -1,14 +1,51 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Leaf, Mail, Lock, Eye, EyeOff, LogIn, Globe } from 'lucide-react';
+import { StoredUser } from '../types';
+import demoAccounts from '../data/demoAccounts.json';
 
 export const LoginPage = ({ onLogin }: { onLogin?: (email: string) => void }) => {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+
+    const storedUsers: StoredUser[] = JSON.parse(localStorage.getItem('users') || '[]');
+    const demoUsers = demoAccounts as StoredUser[];
+
+    const usersByEmail = new Map<string, StoredUser>();
+    for (const existing of storedUsers) {
+      usersByEmail.set(existing.email.toLowerCase(), existing);
+    }
+    for (const demoUser of demoUsers) {
+      const key = demoUser.email.toLowerCase();
+      if (!usersByEmail.has(key)) {
+        usersByEmail.set(key, demoUser);
+      }
+    }
+
+    const users = Array.from(usersByEmail.values());
+    if (users.length !== storedUsers.length) {
+      localStorage.setItem('users', JSON.stringify(users));
+    }
+
+    const user = users.find((candidate) => candidate.email.toLowerCase() === email.toLowerCase());
+
+    if (!user) {
+      setError('No account found for that email. Please sign up first.');
+      return;
+    }
+
+    if (user.password && user.password !== password) {
+      setError('Incorrect password. Please try again.');
+      return;
+    }
+
     if (onLogin) onLogin(email);
     navigate('/dashboard');
   };
@@ -72,6 +109,8 @@ export const LoginPage = ({ onLogin }: { onLogin?: (email: string) => void }) =>
                 <input
                   type={showPassword ? "text" : "password"}
                   required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   className="w-full pl-11 pr-11 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#00c914]/20 focus:border-[#00c914] transition-all text-slate-900 font-medium tracking-widest placeholder:tracking-normal"
                 />
@@ -93,6 +132,8 @@ export const LoginPage = ({ onLogin }: { onLogin?: (email: string) => void }) =>
               />
               <label htmlFor="remember" className="text-sm text-slate-500 font-medium">Remember this device</label>
             </div>
+
+            {error && <p className="text-sm text-red-600 font-medium">{error}</p>}
 
             <button
               type="submit"
