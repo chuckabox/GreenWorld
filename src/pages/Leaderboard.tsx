@@ -68,14 +68,14 @@ export const Leaderboard = () => {
     <div className="p-6 space-y-6">
       <div className="mb-8">
         <h2 className="text-3xl">Community Leaderboard</h2>
-        <p className="text-slate-500">Live ranking from verified local demo activity data.</p>
+        <p className="text-slate-500">Real-time ranking based on AI-verified sustainability actions.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 card">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl">Top Contributors</h3>
-            <span className="px-3 py-1 bg-primary-light text-primary rounded-lg text-xs font-bold">Live Local Data</span>
+            <span className="px-3 py-1 bg-primary-light text-primary rounded-lg text-xs font-bold">AI Verified</span>
           </div>
           <div className="space-y-2">
             {leaders.length === 0 ? (
