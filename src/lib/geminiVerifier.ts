@@ -84,7 +84,7 @@ export const verifyEcoImageWithGemini = async (
   activityCategory: string,
   activityDescription: string,
 ): Promise<EcoVerificationResult> => {
-  const aiDemoMode = parseBoolean(import.meta.env.VITE_AI_DEMO_MODE, true);
+  const aiDemoMode = parseBoolean(import.meta.env.VITE_AI_DEMO_MODE, false);
   if (aiDemoMode) {
     return getDemoVerification(activityCategory, activityDescription);
   }
@@ -147,7 +147,7 @@ Rules:
       ],
     });
   } catch (error) {
-    const fallbackToDemo = parseBoolean(import.meta.env.VITE_AI_FALLBACK_TO_DEMO, true);
+    const fallbackToDemo = parseBoolean(import.meta.env.VITE_AI_FALLBACK_TO_DEMO, false);
     if (fallbackToDemo) {
       return getDemoVerification(activityCategory, activityDescription);
     }

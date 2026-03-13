@@ -70,7 +70,7 @@ Close (25-30s): "Log it in GreenPass and earn points."`,
 });
 
 export const runAiQuestionnaire = async (input: QuestionnaireInput): Promise<QuestionnaireResult> => {
-  const aiDemoMode = parseBoolean(import.meta.env.VITE_AI_DEMO_MODE, true);
+  const aiDemoMode = parseBoolean(import.meta.env.VITE_AI_DEMO_MODE, false);
   if (aiDemoMode) return getDemoQuestionnaireResult(input);
 
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
@@ -102,7 +102,7 @@ Rules: score 0-100, exactly 3 recommendations, realistic and concise, no markdow
       mode: "live",
     };
   } catch {
-    const fallback = parseBoolean(import.meta.env.VITE_AI_FALLBACK_TO_DEMO, true);
+    const fallback = parseBoolean(import.meta.env.VITE_AI_FALLBACK_TO_DEMO, false);
     if (fallback) return getDemoQuestionnaireResult(input);
     throw new Error("AI questionnaire failed.");
   }
@@ -112,7 +112,7 @@ export const generateAwarenessContent = async (
   topic: string,
   audience: string,
 ): Promise<AwarenessContentResult> => {
-  const aiDemoMode = parseBoolean(import.meta.env.VITE_AI_DEMO_MODE, true);
+  const aiDemoMode = parseBoolean(import.meta.env.VITE_AI_DEMO_MODE, false);
   if (aiDemoMode) return getDemoAwarenessContent(topic, audience);
 
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
@@ -145,7 +145,7 @@ Rules: shortScript under 90 words, caption under 35 words, hashtags 3-6 items, n
       mode: "live",
     };
   } catch {
-    const fallback = parseBoolean(import.meta.env.VITE_AI_FALLBACK_TO_DEMO, true);
+    const fallback = parseBoolean(import.meta.env.VITE_AI_FALLBACK_TO_DEMO, false);
     if (fallback) return getDemoAwarenessContent(topic, audience);
     throw new Error("AI content generation failed.");
   }
