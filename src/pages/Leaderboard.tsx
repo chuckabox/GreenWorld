@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { cn } from "../lib/utils";
-import { StoredUser } from "../types";
+import { Activity, StoredUser } from "../types";
 
 export const Leaderboard = () => {
   const [leaders, setLeaders] = useState<any[]>([]);
   const [communityStats, setCommunityStats] = useState({ co2Kg: 0, activitiesCount: 0, members: 0 });
+  const [highlight, setHighlight] = useState({
+    topCategory: "No actions yet",
+    topCategoryCount: 0,
+    recentAction: "No verified actions yet",
+    topTeam: "No team data",
+  });
 
   useEffect(() => {
     const users: StoredUser[] = JSON.parse(localStorage.getItem("users") || "[]");
-    const activities = JSON.parse(localStorage.getItem("activities") || "[]");
+    const activities: Activity[] = JSON.parse(localStorage.getItem("activities") || "[]");
 
     const ranked = users
       .filter((user) => user.role !== "admin")
@@ -26,6 +32,35 @@ export const Leaderboard = () => {
       co2Kg: Math.round(totalCo2 * 10) / 10,
       activitiesCount: activities.length,
       members: users.filter((u) => u.role !== "admin").length,
+    });
+
+    const approvedActivities = activities.filter((activity) => activity.status === "approved");
+    const categoryCount = approvedActivities.reduce<Record<string, number>>((acc, activity) => {
+      const key = activity.activity_type || "Other";
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {});
+
+    const topCategoryEntry = Object.entries(categoryCount).sort((a, b) => b[1] - a[1])[0];
+
+    const teamCount = users
+      .filter((u) => u.role !== "admin" && u.team)
+      .reduce<Record<string, number>>((acc, user) => {
+        const key = user.team as string;
+        acc[key] = (acc[key] || 0) + 1;
+        return acc;
+      }, {});
+
+    const topTeamEntry = Object.entries(teamCount).sort((a, b) => b[1] - a[1])[0];
+    const recentApproved = approvedActivities[approvedActivities.length - 1];
+
+    setHighlight({
+      topCategory: topCategoryEntry?.[0] ?? "No actions yet",
+      topCategoryCount: topCategoryEntry?.[1] ?? 0,
+      recentAction: recentApproved
+        ? `${recentApproved.activity_type} (${Math.round((recentApproved.estimatedCo2Kg || 0) * 100) / 100} kg CO2)`
+        : "No verified actions yet",
+      topTeam: topTeamEntry?.[0] ?? "No team data",
     });
   }, []);
 
@@ -89,12 +124,21 @@ export const Leaderboard = () => {
             </div>
           </div>
           <div className="card">
-            <h3 className="text-xl mb-4">Highlights</h3>
-            <div className="aspect-video rounded-xl overflow-hidden mb-4">
-              <img src="https://images.unsplash.com/photo-1530584735268-5b1c58727a3a?auto=format&fit=crop&q=80&w=500" alt="highlight" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+            <h3 className="text-xl mb-4">Local Highlights</h3>
+            <div className="space-y-4 text-sm">
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                <p className="text-slate-500">Top Action Category</p>
+                <p className="font-bold">{highlight.topCategory} {highlight.topCategoryCount > 0 ? `(${highlight.topCategoryCount})` : ""}</p>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                <p className="text-slate-500">Most Recent Verified Action</p>
+                <p className="font-bold">{highlight.recentAction}</p>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                <p className="text-slate-500">Most Active Team</p>
+                <p className="font-bold">{highlight.topTeam}</p>
+              </div>
             </div>
-            <p className="font-bold mb-1">Green Campus Initiative</p>
-            <p className="text-sm text-slate-500">The Student Union successfully implemented solar charging stations across campus.</p>
           </div>
         </div>
       </div>
