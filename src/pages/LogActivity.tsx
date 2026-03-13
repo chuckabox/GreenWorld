@@ -1,11 +1,15 @@
-import React, { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { CheckCircle2, LoaderCircle, Upload, X } from "lucide-react";
 import { verifyEcoImageWithGemini } from "../lib/geminiVerifier";
 
+type TaskLogState = { taskId?: string; taskTitle?: string };
+
 export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onActivityLogged: () => void }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const defaultDate = new Date().toISOString().split('T')[0];
+  const state = location.state as TaskLogState | null;
   const [formData, setFormData] = useState({
     category: "Waste Management",
     hours: 1,
@@ -13,6 +17,18 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
     description: "",
     evidenceUrl: ""
   });
+  const [taskFromSupervisor, setTaskFromSupervisor] = useState<{ taskId: string; taskTitle: string } | null>(null);
+
+  useEffect(() => {
+    if (state?.taskId && state?.taskTitle) {
+      setTaskFromSupervisor({ taskId: state.taskId, taskTitle: state.taskTitle });
+      setFormData((prev) => ({
+        ...prev,
+        category: "Sustainability task",
+        description: prev.description || state.taskTitle || "",
+      }));
+    }
+  }, [state?.taskId, state?.taskTitle]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [proofImage, setProofImage] = useState<File | null>(null);
   const [submitStage, setSubmitStage] = useState("Saving your activity...");
@@ -86,6 +102,10 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
         estimatedPlasticItemsReduced: aiResult?.estimatedPlasticItemsReduced,
         estimatedWaterLitersSaved: aiResult?.estimatedWaterLitersSaved,
         status,
+        ...(taskFromSupervisor && {
+          taskId: taskFromSupervisor.taskId,
+          taskTitle: taskFromSupervisor.taskTitle,
+        }),
       };
 
       const currentActivities = JSON.parse(localStorage.getItem("activities") || "[]");
@@ -112,6 +132,7 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
   };
 
   const resetForAnotherLog = () => {
+    setTaskFromSupervisor(null);
     setFormData({
       category: "Waste Management",
       hours: 1,
