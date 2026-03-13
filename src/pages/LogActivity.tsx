@@ -1,12 +1,18 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle2, LoaderCircle, Upload, X } from "lucide-react";
+import { CheckCircle2, LoaderCircle, Upload, X, Target } from "lucide-react";
 import { verifyEcoImageWithGemini } from "../lib/geminiVerifier";
+import tasksAndEventsData from "../data/tasksAndEvents.json";
+
+type TaskItem = { id: string; type: string; title: string; description: string; category?: string; pointsReward?: number };
 
 export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onActivityLogged: () => void }) => {
   const navigate = useNavigate();
   const defaultDate = new Date().toISOString().split('T')[0];
+  const tasks = useMemo(() => (tasksAndEventsData as TaskItem[]).filter((t) => t.type === "task"), []);
+
   const [formData, setFormData] = useState({
+    selectedTaskId: "" as string,
     category: "Waste Management",
     hours: 1,
     date: defaultDate,
@@ -22,12 +28,25 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
   const minDescriptionLength = 15;
   const hasEnoughDescription = formData.description.trim().length >= minDescriptionLength;
   const isDirty =
+    formData.selectedTaskId !== "" ||
     formData.category !== "Waste Management" ||
     formData.hours !== 1 ||
     formData.date !== defaultDate ||
     formData.description.trim().length > 0 ||
     formData.evidenceUrl.trim().length > 0 ||
     proofImage !== null;
+
+  const selectedTask = formData.selectedTaskId ? tasks.find((t) => t.id === formData.selectedTaskId) : null;
+
+  const handleTaskChange = (taskId: string) => {
+    const task = taskId ? tasks.find((t) => t.id === taskId) : null;
+    setFormData((prev) => ({
+      ...prev,
+      selectedTaskId: taskId,
+      category: task?.category ?? prev.category,
+      description: task ? task.description : prev.description,
+    }));
+  };
   const canSubmit = hasEnoughDescription && !isSubmitting;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -80,6 +99,8 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
         date: formData.date,
         description: enrichedDescription,
         evidenceUrl: formData.evidenceUrl,
+        taskId: selectedTask?.id,
+        taskTitle: selectedTask?.title,
         aiConfidence: aiResult?.confidence,
         aiRecommendation: aiResult?.reviewRecommendation,
         estimatedCo2Kg: aiResult?.estimatedCo2Kg,
@@ -90,6 +111,20 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
 
       const currentActivities = JSON.parse(localStorage.getItem("activities") || "[]");
       localStorage.setItem("activities", JSON.stringify([...currentActivities, localActivity]));
+
+      if (status === "approved" && earnedPoints > 0) {
+        const users = JSON.parse(localStorage.getItem("users") || "[]");
+        const updated = users.map((u: { id: number; impact_points?: number; award_progress?: number }) =>
+          u.id === userId
+            ? {
+                ...u,
+                impact_points: (u.impact_points || 0) + earnedPoints,
+                award_progress: Math.min(100, Math.round(((u.impact_points || 0) + earnedPoints) / 10)),
+              }
+            : u
+        );
+        localStorage.setItem("users", JSON.stringify(updated));
+      }
 
       onActivityLogged();
       clearInterval(submitTimer);
@@ -113,6 +148,7 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
 
   const resetForAnotherLog = () => {
     setFormData({
+      selectedTaskId: "",
       category: "Waste Management",
       hours: 1,
       date: defaultDate,
@@ -168,6 +204,30 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
         </div>
       ) : (
       <form onSubmit={handleSubmit} className="card space-y-5">
+        <div className="space-y-2">
+          <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+            <Target size={16} className="text-primary" />
+            Choose a task (optional)
+          </label>
+          <select
+            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
+            value={formData.selectedTaskId}
+            onChange={(e) => handleTaskChange(e.target.value)}
+          >
+            <option value="">None — log any activity</option>
+            {tasks.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.title} {t.pointsReward != null ? `(up to ${t.pointsReward} pts)` : ""}
+              </option>
+            ))}
+          </select>
+          {selectedTask && (
+            <p className="text-xs text-slate-500">
+              Category set to {selectedTask.category}. Add your own details below.
+            </p>
+          )}
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <label className="text-sm font-bold text-slate-700">Category</label>
