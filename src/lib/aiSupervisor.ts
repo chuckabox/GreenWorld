@@ -16,6 +16,25 @@ export interface QuestionnaireResult {
   mode: "demo" | "live";
 }
 
+/** Task from the list; used for fit analysis */
+export interface TaskForFit {
+  id: string;
+  title: string;
+  description: string;
+  category?: string;
+  pointsReward?: number;
+}
+
+/** Result of AI analyzing if the user fits the selected task */
+export interface TaskFitResult {
+  fitsTask: boolean;
+  fitScore: number;
+  summary: string;
+  recommendations: string[];
+  bonusPoints: number;
+  mode: "demo" | "live";
+}
+
 export interface AwarenessContentResult {
   title: string;
   shortScript: string;
@@ -68,6 +87,82 @@ Close (25-30s): "Log it in EcoImpact and earn points."`,
   bonusPoints: 40,
   mode: "demo",
 });
+
+const getDemoTaskFitResult = (task: TaskForFit, input: QuestionnaireInput): TaskFitResult => {
+  const avg = (input.transport + input.homeEnergy + input.waste + input.food + input.community) / 5;
+  const fitScore = Math.round((avg / 5) * 100);
+  const fitsTask = fitScore >= 55;
+  const bonusPoints = task.pointsReward ?? (fitsTask ? 80 : 30);
+
+  return {
+    fitsTask,
+    fitScore,
+    summary: fitsTask
+      ? `Your awareness and habits align well with "${task.title}". You're a good fit to take this on.`
+      : `You're building awareness. Focus on the recommendations below to get ready for "${task.title}".`,
+    recommendations: [
+      "Increase sustainable transport (e.g. 1–2 car-free days per week).",
+      "Improve waste habits: reduce single-use plastic and recycle consistently.",
+      "Join one local or campus eco activity to boost community engagement.",
+    ],
+    bonusPoints: fitsTask ? bonusPoints : Math.min(40, bonusPoints),
+    mode: "demo",
+  };
+};
+
+/** Analyze if the user's questionnaire answers show they're a good fit for the selected task. */
+export const runTaskFitAnalysis = async (
+  task: TaskForFit,
+  input: QuestionnaireInput
+): Promise<TaskFitResult> => {
+  const aiDemoMode = parseBoolean(import.meta.env.VITE_AI_DEMO_MODE, false);
+  if (aiDemoMode) return getDemoTaskFitResult(task, input);
+
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  if (!apiKey) throw new Error("Missing VITE_GEMINI_API_KEY in .env");
+
+  const ai = new GoogleGenAI({ apiKey });
+
+  const prompt = `You are an AI sustainability supervisor. A user wants to take on this task:
+TASK: ${task.title}
+DESCRIPTION: ${task.description}
+
+Their self-reported awareness (1–5 scale): transport=${input.transport}, homeEnergy=${input.homeEnergy}, waste=${input.waste}, food=${input.food}, community=${input.community}.
+
+Analyze whether this user is a good fit for the task (skills, habits, awareness). Return STRICT JSON only, no markdown:
+{
+  "fitsTask": boolean,
+  "fitScore": number,
+  "summary": string,
+  "recommendations": string[],
+  "bonusPoints": number
+}
+Rules: fitScore 0–100. If they fit, summary should be positive and bonusPoints between 50–120. If they don't fit yet, give 2–3 short recommendations and lower bonusPoints (20–50). Exactly 3 recommendations. No markdown.`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.0-flash",
+      contents: prompt,
+    });
+
+    const parsed = JSON.parse(cleanJsonText(response.text ?? "{}"));
+    const fitsTask = Boolean(parsed.fitsTask);
+    const fitScore = Math.max(0, Math.min(100, Number(parsed.fitScore ?? 50)));
+
+    return {
+      fitsTask,
+      fitScore,
+      summary: String(parsed.summary ?? "Analysis complete."),
+      recommendations: Array.isArray(parsed.recommendations) ? parsed.recommendations.slice(0, 3).map(String) : [],
+      bonusPoints: Math.max(0, Math.min(150, Number(parsed.bonusPoints ?? (fitsTask ? 80 : 30)))),
+      mode: "live",
+    };
+  } catch {
+    const fallback = parseBoolean(import.meta.env.VITE_AI_FALLBACK_TO_DEMO, false);
+    if (fallback) return getDemoTaskFitResult(task, input);
+    throw new Error("AI task fit analysis failed.");
+  }
+};
 
 export const runAiQuestionnaire = async (input: QuestionnaireInput): Promise<QuestionnaireResult> => {
   const aiDemoMode = parseBoolean(import.meta.env.VITE_AI_DEMO_MODE, false);

@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { PlusCircle, Zap, Globe, Clock, AlertCircle, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { PlusCircle, Zap, Globe, Clock, AlertCircle, ChevronDown, ChevronLeft, ChevronRight, Target, Calendar } from "lucide-react";
 import { cn } from "../lib/utils";
 import { UserData, Activity } from "../types";
 import { getLevelLabel, getNextBadge, getUnlockedBadges } from "../lib/badges";
+import tasksAndEventsData from "../data/tasksAndEvents.json";
 
 type FilterDropdownOption = {
   value: string;
@@ -109,6 +110,9 @@ export const Dashboard = ({ user, activities }: { user: UserData, activities: Ac
     { value: "all", label: "All categories" },
     ...activityCategories.map((category) => ({ value: category, label: category })),
   ];
+
+  const tasks = useMemo(() => (tasksAndEventsData as { id: string; type: string; title: string; description?: string; pointsReward?: number; location?: string; deadline?: string }[]).filter((t) => t.type === "task"), []);
+  const events = useMemo(() => (tasksAndEventsData as { id: string; type: string; title: string; description?: string; date?: string; location?: string; time?: string }[]).filter((t) => t.type === "event"), []);
 
   return (
     <div className="p-6 space-y-6">
@@ -255,28 +259,44 @@ export const Dashboard = ({ user, activities }: { user: UserData, activities: Ac
           </div>
         </div>
 
-        {/* Green Events */}
-        <div className="card">
-          <h3 className="text-xl mb-6">Upcoming Green Events</h3>
-          <div className="space-y-4">
-            {[
-              { title: "Tree Planting Day", date: "Mar 20", location: "Central Park" },
-              { title: "Eco-Tech Workshop", date: "Mar 25", location: "Innovation Hub" },
-              { title: "Zero Waste Seminar", date: "Apr 02", location: "Online" },
-            ].map((event, i) => (
-              <div key={i} className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                <div className="flex justify-between items-start mb-2">
-                  <span className="text-xs font-bold text-primary uppercase tracking-wider">{event.date}</span>
-                  <ChevronRight size={16} className="text-slate-300" />
+        {/* Current tasks & events */}
+        <div className="space-y-6">
+          <div className="card">
+            <h3 className="text-xl mb-4 flex items-center gap-2">
+              <Target size={20} className="text-primary" />
+              Current tasks
+            </h3>
+            <div className="space-y-3">
+              {tasks.slice(0, 3).map((t) => (
+                <div key={t.id} className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                  <p className="font-bold text-sm">{t.title}</p>
+                  {t.pointsReward != null && <p className="text-xs text-primary font-semibold">{t.pointsReward} pts</p>}
                 </div>
-                <p className="font-bold">{event.title}</p>
-                <p className="text-xs text-slate-500">{event.location}</p>
-              </div>
-            ))}
+              ))}
+            </div>
+            <Link to="/ai-supervisor" className="mt-4 w-full py-3 border-2 border-primary/30 rounded-xl text-sm font-bold text-primary hover:bg-primary-light/40 transition-colors flex items-center justify-center gap-2">
+              Check fit in AI Supervisor
+              <ChevronRight size={16} />
+            </Link>
           </div>
-          <button className="w-full mt-6 py-3 border-2 border-slate-100 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors">
-            Explore All Events
-          </button>
+          <div className="card">
+            <h3 className="text-xl mb-4 flex items-center gap-2">
+              <Calendar size={20} className="text-primary" />
+              Upcoming events
+            </h3>
+            <div className="space-y-3">
+              {events.slice(0, 4).map((e) => (
+                <div key={e.id} className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                  <div className="flex justify-between items-start gap-2">
+                    <span className="text-xs font-bold text-primary uppercase tracking-wider shrink-0">{e.date ?? ""}</span>
+                    <ChevronRight size={14} className="text-slate-300 shrink-0" />
+                  </div>
+                  <p className="font-bold text-sm mt-1">{e.title}</p>
+                  <p className="text-xs text-slate-500">{e.location ?? ""}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
