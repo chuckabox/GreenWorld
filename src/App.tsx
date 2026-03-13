@@ -126,9 +126,10 @@ const AppContent = () => {
         <div className="flex-1 overflow-y-auto">
           <motion.div
             key={location.pathname}
-            initial={false}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.12 }}
+            initial={{ opacity: 0, y: 8, filter: "blur(2px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
+            className="will-change-transform"
           >
             <Routes>
               <Route path="/" element={<LandingPage />} />
