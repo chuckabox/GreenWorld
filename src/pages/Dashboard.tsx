@@ -3,14 +3,23 @@ import { Link } from "react-router-dom";
 import { PlusCircle, Zap, Globe, Clock, AlertCircle, ChevronRight } from "lucide-react";
 import { cn } from "../lib/utils";
 import { UserData, Activity } from "../types";
+import { getLevelLabel, getNextBadge, getUnlockedBadges } from "../lib/badges";
 
 export const Dashboard = ({ user, activities }: { user: UserData, activities: Activity[] }) => {
+  const unlockedBadges = getUnlockedBadges(user.impact_points);
+  const nextBadge = getNextBadge(user.impact_points);
+  const totalEstimatedCo2 = activities.reduce((sum, activity) => sum + (activity.estimatedCo2Kg ?? 0), 0);
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-3xl">Welcome back, {user.name.split(' ')[0]}! 👋</h2>
-          <p className="text-slate-500">Here's your sustainability impact overview.</p>
+          <p className="text-slate-500">
+            {user.suburb ? `${user.suburb} ` : ""}
+            {user.team ? `• ${user.team} • ` : ""}
+            Level: {getLevelLabel(user.impact_points)}
+          </p>
         </div>
         <Link to="/log" className="btn-primary flex items-center gap-2">
           <PlusCircle size={20} />
@@ -44,9 +53,28 @@ export const Dashboard = ({ user, activities }: { user: UserData, activities: Ac
             <Globe size={24} />
           </div>
           <div>
-            <p className="text-sm text-slate-500 font-medium">Global Rank</p>
-            <p className="text-2xl font-bold">#{user.rank}</p>
+            <p className="text-sm text-slate-500 font-medium">Verified CO2 Saved</p>
+            <p className="text-2xl font-bold">{totalEstimatedCo2.toFixed(2)} kg</p>
           </div>
+        </div>
+      </div>
+
+      <div className="card flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <p className="text-sm font-semibold text-slate-500">Badge Progress</p>
+          <p className="text-xl font-bold">{unlockedBadges.length} unlocked badges</p>
+          <p className="text-sm text-slate-500">
+            {nextBadge
+              ? `Next badge: ${nextBadge.name} at ${nextBadge.minPoints} points`
+              : "All core badges unlocked. You are now a city-level climate champion."}
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {unlockedBadges.slice(-3).map((badge) => (
+            <span key={badge.id} className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              {badge.name}
+            </span>
+          ))}
         </div>
       </div>
 

@@ -17,6 +17,7 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
   const [isVerifying, setIsVerifying] = useState(false);
   const [verifyError, setVerifyError] = useState<string | null>(null);
   const [verificationResult, setVerificationResult] = useState<EcoVerificationResult | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const handleVerify = async () => {
     if (!proofImage) {
@@ -41,23 +42,55 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
+
+    if (!verificationResult) {
+      setSubmitError("Run AI verification before submitting this action.");
+      return;
+    }
+
+    if (verificationResult.reviewRecommendation === "reject") {
+      setSubmitError("AI marked this evidence as non-relevant. Please upload clearer proof.");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const enrichedDescription = verificationResult
         ? `${formData.description}\n\n[AI Verification]\nRelevant: ${verificationResult.isRelevant ? "yes" : "no"}\nConfidence: ${(verificationResult.confidence * 100).toFixed(0)}%\nEstimated CO2: ${verificationResult.estimatedCo2Kg} kg\nEstimated Plastic Reduced: ${verificationResult.estimatedPlasticItemsReduced} items\nEstimated Water Saved: ${verificationResult.estimatedWaterLitersSaved} L\nRecommendation: ${verificationResult.reviewRecommendation}\nSummary: ${verificationResult.summary}`
         : formData.description;
 
-      const res = await fetch("/api/activities", {
+      const localActivity = {
+        id: Date.now(),
+        user_id: userId,
+        category: formData.category,
+        hours: formData.hours,
+        date: formData.date,
+        description: enrichedDescription,
+        evidenceUrl: formData.evidenceUrl,
+        aiConfidence: verificationResult.confidence,
+        aiRecommendation: verificationResult.reviewRecommendation,
+        estimatedCo2Kg: verificationResult.estimatedCo2Kg,
+        estimatedPlasticItemsReduced: verificationResult.estimatedPlasticItemsReduced,
+        estimatedWaterLitersSaved: verificationResult.estimatedWaterLitersSaved,
+        status: verificationResult.reviewRecommendation === "approve" ? "approved" : "pending" as const,
+      };
+
+      const currentActivities = JSON.parse(localStorage.getItem("activities") || "[]");
+      localStorage.setItem("activities", JSON.stringify([...currentActivities, localActivity]));
+
+      // Best-effort API write for the admin queue and persistence.
+      await fetch("/api/activities", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, description: enrichedDescription, userId })
+        body: JSON.stringify({ ...formData, description: enrichedDescription, userId }),
       });
-      if (res.ok) {
-        onActivityLogged();
-        navigate("/dashboard");
-      }
+
+      onActivityLogged();
+      navigate("/dashboard");
     } catch (err) {
       console.error(err);
+      setSubmitError("Unable to submit at the moment. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -67,7 +100,7 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
     <div className="p-6 max-w-3xl mx-auto">
       <div className="mb-8">
         <h2 className="text-3xl">Log Your Impact</h2>
-        <p className="text-slate-500">Tell us about your sustainability contribution.</p>
+        <p className="text-slate-500">Snap, verify, and submit your sustainability action for points.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="card space-y-6">
@@ -155,7 +188,7 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
             disabled={isVerifying || !proofImage}
             className="px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold disabled:opacity-50"
           >
-            {isVerifying ? "Verifying..." : "Verify Image with AI"}
+            {isVerifying ? "Verifying..." : "Snap-to-Verify with AI Supervisor"}
           </button>
 
           {isVerifying && (
@@ -190,7 +223,15 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
               </div>
             </div>
           )}
+
+          {verificationResult?.reviewRecommendation === "approve" && (
+            <div className="rounded-xl p-3 text-sm border border-emerald-200 bg-emerald-50 text-emerald-800">
+              Verified action. Estimated reward: <span className="font-bold">+{Math.max(25, Math.round(verificationResult.estimatedCo2Kg * 40))} Green Points</span>
+            </div>
+          )}
         </div>
+
+        {submitError && <p className="text-sm text-red-600 font-semibold">{submitError}</p>}
 
         <div className="pt-4 flex items-center gap-4">
           <button

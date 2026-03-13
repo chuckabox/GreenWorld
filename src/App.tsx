@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { Leaf } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
-import { UserData, Activity } from "./types";
+import { UserData, Activity, StoredUser } from "./types";
 import { Sidebar } from "./components/Sidebar";
 import { Header } from "./components/Header";
 
@@ -17,7 +17,7 @@ import { Portfolio } from "./pages/Portfolio";
 import { AdminPortal } from "./pages/AdminPortal";
 
 const AppContent = () => {
-  const [userEmail, setUserEmail] = useState<string>(localStorage.getItem("userEmail") || "student@example.com");
+  const [userEmail, setUserEmail] = useState<string>(localStorage.getItem("userEmail") || "");
   const [user, setUser] = useState<UserData | null>(null);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,44 +25,49 @@ const AppContent = () => {
 
   const loadUserData = () => {
     setLoading(true);
-    // Get users from localStorage or initialize with default
-    const storedUsers = JSON.parse(localStorage.getItem("users") || "[]");
-    let currentUser = storedUsers.find((u: any) => u.email === userEmail);
+    const defaultUser: StoredUser = {
+      id: 1,
+      email: "student@example.com",
+      name: "Alex Green",
+      role: "student",
+      impact_points: 450,
+      award_progress: 65,
+      rank: 12,
+      suburb: "West End",
+      team: "UQ Sustainability Club",
+      password: "demo1234",
+    };
 
-    if (!currentUser && userEmail === "student@example.com") {
-      currentUser = {
-        id: 1,
-        email: "student@example.com",
-        name: "Alex Green",
-        role: "student",
-        impact_points: 450,
-        award_progress: 65,
-        rank: 12
-      };
-      localStorage.setItem("users", JSON.stringify([currentUser]));
-    } else if (!currentUser) {
-      // Auto-create user if they don't exist
-      const nameFromEmail = userEmail.split('@')[0].replace(/[^a-zA-Z0-9]/g, ' ');
-      const nameCapitalized = nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1);
-      currentUser = {
-        id: Date.now(),
-        email: userEmail,
-        name: nameCapitalized,
-        role: "student",
-        impact_points: 0,
-        award_progress: 0,
-        rank: 0
-      };
-      localStorage.setItem("users", JSON.stringify([...storedUsers, currentUser]));
+    const storedUsers: StoredUser[] = JSON.parse(localStorage.getItem("users") || "[]");
+    const users = storedUsers.length > 0 ? storedUsers : [defaultUser];
+    if (storedUsers.length === 0) {
+      localStorage.setItem("users", JSON.stringify(users));
+    }
+
+    if (!userEmail) {
+      setUser(null);
+      setActivities([]);
+      setLoading(false);
+      return;
+    }
+
+    const currentUser = users.find((u) => u.email.toLowerCase() === userEmail.toLowerCase());
+    if (!currentUser) {
+      localStorage.removeItem("userEmail");
+      setUserEmail("");
+      setUser(null);
+      setActivities([]);
+      setLoading(false);
+      return;
     }
 
     setUser(currentUser);
     
     // Mock activities
-    const storedActivities = JSON.parse(localStorage.getItem("activities") || "[]");
-    const userActivities = storedActivities.filter((a: any) => a.user_id === currentUser?.id);
+    const storedActivities: Activity[] = JSON.parse(localStorage.getItem("activities") || "[]");
+    const userActivities = storedActivities.filter((a) => a.user_id === currentUser.id);
     
-    if (userActivities.length === 0 && currentUser?.id === 1) {
+    if (userActivities.length === 0 && currentUser.id === 1) {
       const defaultActivities = [
         { id: 1, user_id: 1, category: "Waste Management", hours: 4, date: "2024-03-10", description: "Beach cleanup", status: "approved" },
         { id: 2, user_id: 1, category: "Energy Conservation", hours: 2, date: "2024-03-12", description: "Smart power strips", status: "pending" }
@@ -94,15 +99,18 @@ const AppContent = () => {
     );
   }
 
-  if (!user) return <div>Error loading user.</div>;
-
   const isLanding = location.pathname === "/";
   const isAuthPage = location.pathname === "/login" || location.pathname === "/signup";
   const hideLayout = isLanding || isAuthPage;
+  const isProtectedRoute = !isLanding && !isAuthPage;
+
+  if (!loading && !user && isProtectedRoute) {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <div className="flex min-h-screen">
-      {!hideLayout && <Sidebar user={user} />}
+      {!hideLayout && user && <Sidebar user={user} />}
       <main className="flex-1 flex flex-col min-w-0">
         {!hideLayout && <Header title={
           location.pathname === "/dashboard" ? "Student Dashboard" :
@@ -123,19 +131,23 @@ const AppContent = () => {
               <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<LoginPage onLogin={(email: string) => { localStorage.setItem("userEmail", email); setUserEmail(email); }} />} />
-                <Route path="/signup" element={<SignUpPage onSignUp={(email: string, name?: string) => { 
+                <Route path="/signup" element={<SignUpPage onSignUp={(payload) => {
+                  const { email, name, password, role, suburb, team } = payload;
                   if (name) {
-                    const storedUsers = JSON.parse(localStorage.getItem("users") || "[]");
-                    const userExists = storedUsers.find((u: any) => u.email === email);
+                    const storedUsers: StoredUser[] = JSON.parse(localStorage.getItem("users") || "[]");
+                    const userExists = storedUsers.find((u) => u.email.toLowerCase() === email.toLowerCase());
                     if (!userExists) {
-                      const newUser = {
+                      const newUser: StoredUser = {
                         id: Date.now(),
-                        email: email,
-                        name: name,
-                        role: "student",
+                        email,
+                        name,
+                        role,
                         impact_points: 0,
                         award_progress: 0,
-                        rank: 0
+                        rank: 0,
+                        suburb,
+                        team,
+                        password,
                       };
                       localStorage.setItem("users", JSON.stringify([...storedUsers, newUser]));
                     }
@@ -143,11 +155,11 @@ const AppContent = () => {
                   localStorage.setItem("userEmail", email); 
                   setUserEmail(email); 
                 }} />} />
-                <Route path="/dashboard" element={<Dashboard user={user} activities={activities} />} />
-                <Route path="/log" element={<LogActivity userId={user.id} onActivityLogged={loadUserData} />} />
-                <Route path="/leaderboard" element={<Leaderboard />} />
-                <Route path="/portfolio" element={<Portfolio user={user} />} />
-                <Route path="/admin" element={<AdminPortal />} />
+                <Route path="/dashboard" element={user ? <Dashboard user={user} activities={activities} /> : <Navigate to="/login" replace />} />
+                <Route path="/log" element={user ? <LogActivity userId={user.id} onActivityLogged={loadUserData} /> : <Navigate to="/login" replace />} />
+                <Route path="/leaderboard" element={user ? <Leaderboard /> : <Navigate to="/login" replace />} />
+                <Route path="/portfolio" element={user ? <Portfolio user={user} /> : <Navigate to="/login" replace />} />
+                <Route path="/admin" element={user ? <AdminPortal /> : <Navigate to="/login" replace />} />
               </Routes>
             </motion.div>
           </AnimatePresence>
