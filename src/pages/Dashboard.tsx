@@ -9,6 +9,9 @@ export const Dashboard = ({ user, activities }: { user: UserData, activities: Ac
   const unlockedBadges = getUnlockedBadges(user.impact_points);
   const nextBadge = getNextBadge(user.impact_points);
   const totalEstimatedCo2 = activities.reduce((sum, activity) => sum + (activity.estimatedCo2Kg ?? 0), 0);
+  const previewActivities = [...activities]
+    .sort((left, right) => new Date(right.date).getTime() - new Date(left.date).getTime())
+    .slice(0, 3);
 
   return (
     <div className="p-6 space-y-6">
@@ -83,10 +86,13 @@ export const Dashboard = ({ user, activities }: { user: UserData, activities: Ac
         <div className="lg:col-span-2 card">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl">Recent Activities</h3>
-            <Link to="/portfolio" className="text-primary text-sm font-semibold hover:underline">View All</Link>
+            <Link to="/activities" className="inline-flex items-center gap-2 text-primary text-sm font-semibold hover:underline">
+              Open Activity History
+              <ChevronRight size={14} />
+            </Link>
           </div>
           <div className="space-y-4">
-            {activities.length > 0 ? activities.map((activity) => (
+            {previewActivities.length > 0 ? previewActivities.map((activity) => (
               <div key={activity.id} className="flex items-center gap-4 p-4 rounded-2xl border border-slate-50 hover:bg-slate-50 transition-colors">
                 <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-slate-600">
                   <Clock size={20} />

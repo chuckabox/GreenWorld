@@ -108,19 +108,19 @@ export const Leaderboard = () => {
         </div>
 
         <div className="space-y-6">
-          <div className="card bg-primary text-white">
+          <div className="card bg-gradient-to-br from-emerald-700 via-green-700 to-emerald-800 text-white border-emerald-600 shadow-xl shadow-emerald-900/20">
             <h3 className="text-xl mb-4">Community Impact</h3>
             <div className="space-y-4">
               <div>
-                <p className="text-sm opacity-80">Total Estimated CO2 Saved</p>
+                <p className="text-sm text-emerald-100">Total Estimated CO2 Saved</p>
                 <p className="text-3xl font-bold">{communityStats.co2Kg} kg</p>
               </div>
               <div>
-                <p className="text-sm opacity-80">Verified Actions</p>
+                <p className="text-sm text-emerald-100">Verified Actions</p>
                 <p className="text-3xl font-bold">{communityStats.activitiesCount}</p>
               </div>
               <div>
-                <p className="text-sm opacity-80">Active Members</p>
+                <p className="text-sm text-emerald-100">Active Members</p>
                 <p className="text-3xl font-bold">{communityStats.members}</p>
               </div>
             </div>
