@@ -12,7 +12,6 @@ import { LoginPage } from "./pages/LoginPage";
 import { SignUpPage } from "./pages/SignUpPage";
 import { Dashboard } from "./pages/Dashboard";
 import { LogActivity } from "./pages/LogActivity";
-import { ActivityHistory } from "./pages/ActivityHistory";
 import { Leaderboard } from "./pages/Leaderboard";
 import { Portfolio } from "./pages/Portfolio";
 import { AdminPortal } from "./pages/AdminPortal";
@@ -117,9 +116,8 @@ const AppContent = () => {
       {!hideLayout && user && <Sidebar user={user} />}
       <main className="flex-1 flex flex-col min-w-0">
         {!hideLayout && <Header title={
-          location.pathname === "/dashboard" ? "Student Dashboard" :
+          location.pathname === "/dashboard" ? "Dashboard" :
           location.pathname === "/log" ? "Log Activity" :
-          location.pathname === "/activities" ? "Activity History" :
           location.pathname === "/ai-supervisor" ? "AI Supervisor" :
           location.pathname === "/leaderboard" ? "Leaderboard" :
           location.pathname === "/portfolio" ? "Impact Portfolio" :
@@ -162,7 +160,6 @@ const AppContent = () => {
               }} />} />
               <Route path="/dashboard" element={user ? <Dashboard user={user} activities={activities} /> : <Navigate to="/login" replace />} />
               <Route path="/log" element={user ? <LogActivity userId={user.id} onActivityLogged={loadUserData} /> : <Navigate to="/login" replace />} />
-              <Route path="/activities" element={user ? <ActivityHistory activities={activities} /> : <Navigate to="/login" replace />} />
               <Route path="/ai-supervisor" element={user ? <AISupervisor userEmail={user.email} onPointsAdded={loadUserData} /> : <Navigate to="/login" replace />} />
               <Route path="/leaderboard" element={user ? <Leaderboard /> : <Navigate to="/login" replace />} />
               <Route path="/portfolio" element={user ? <Portfolio user={user} /> : <Navigate to="/login" replace />} />
