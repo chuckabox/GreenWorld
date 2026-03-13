@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Leaf, Eye, EyeOff, ArrowRight } from 'lucide-react';
 
-export const SignUpPage = () => {
+export const SignUpPage = ({ onSignUp }: { onSignUp?: (email: string, name?: string) => void }) => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSignUp = (e: React.FormEvent) => {
     e.preventDefault();
+    if (onSignUp) onSignUp(email, name);
     navigate('/dashboard');
   };
 
@@ -41,6 +44,8 @@ export const SignUpPage = () => {
               <input
                 type="text"
                 required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 placeholder="Alex Johnson"
                 className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900 placeholder:text-slate-400"
               />
@@ -51,6 +56,8 @@ export const SignUpPage = () => {
               <input
                 type="email"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="alex@university.edu"
                 className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900 placeholder:text-slate-400"
               />

@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Leaf, Mail, Lock, Eye, EyeOff, LogIn, Globe } from 'lucide-react';
 
-export const LoginPage = () => {
+export const LoginPage = ({ onLogin }: { onLogin?: (email: string) => void }) => {
+  const [email, setEmail] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    if (onLogin) onLogin(email);
     navigate('/dashboard');
   };
 
@@ -51,6 +53,8 @@ export const LoginPage = () => {
                 <input
                   type="email"
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@university.edu"
                   className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#00c914]/20 focus:border-[#00c914] transition-all text-slate-900"
                 />
