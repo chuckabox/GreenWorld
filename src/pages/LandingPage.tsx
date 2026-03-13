@@ -1,23 +1,15 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import {
-  Leaf,
-  Award,
-  CheckCircle2,
-  Trophy,
-  Globe,
-  Menu,
-  X,
-} from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
-import { Leaf, Award, CheckCircle2, Trophy, Globe, Target, Calendar, ChevronDown } from "lucide-react";
+import { Leaf, Users, Award, CheckCircle2, Trophy, Globe, ChevronDown } from "lucide-react";
 import { motion } from "motion/react";
+import { cn } from "../lib/utils";
 
 import heroBg from "../assets/hero_background.png";
 import tasksAndEventsData from "../data/tasksAndEvents.json";
 import reforestationImg from "../assets/reforestation.png";
 import universityImg from "../assets/university_recognition.png";
 import analyticsImg from "../assets/impact_analytics.png";
+import councilImg from "../assets/council_support.png";
 
 export const LandingPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -47,6 +39,7 @@ export const LandingPage = () => {
   const navLinks = [
     { href: "#levels", label: "Levels" },
     { href: "#how-it-works", label: "How it Works" },
+    { href: "#events-tasks", label: "Events & tasks" },
     { href: "#faq", label: "FAQ" },
   ];
 
@@ -102,7 +95,7 @@ export const LandingPage = () => {
           </div>
             <a href="#levels" className="hover:text-primary transition-colors">Levels</a>
             <a href="#how-it-works" className="hover:text-primary transition-colors">How it Works</a>
-            <a href="#events-tasks" className="hover:text-primary transition-colors">Events & tasks</a>
+            <a href="#council" className="hover:text-primary transition-colors">Council Support</a>
           </div>
           <Link to={authPath} className="btn-primary text-sm shadow-md">{authText}</Link>
         </div>
@@ -205,14 +198,43 @@ export const LandingPage = () => {
         </div>
       </section>
 
-      {/* ── Badge Levels ── */}
-      <section id="levels" className="py-16 sm:py-24 bg-slate-50 relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl font-display font-bold mb-4">
-              Badge Levels
-            </h2>
-            <div className="w-16 h-1 bg-primary mx-auto rounded-full" />
+      {/* Council Support Section */}
+      <section id="council" className="py-16 bg-white border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
+          <div className="flex-1 text-center md:text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-bold uppercase tracking-wider mb-6">
+              <Globe size={14} />
+              Official City Partner
+            </div>
+            <h2 className="text-3xl md:text-4xl font-display font-bold mb-6">Supported by Brisbane City Council</h2>
+            <p className="text-slate-600 text-lg leading-relaxed mb-8">
+              We are proud to be supported by the Brisbane City Council in our mission to build a more sustainable future. Through this partnership, we're empowering residents to take verifiable action for our local environment.
+            </p>
+            <div className="flex items-center justify-center md:justify-start gap-4">
+              <div className="h-px w-12 bg-slate-200"></div>
+              <span className="text-slate-400 font-medium text-sm">Working together for a cleaner Brisbane</span>
+              <div className="h-px w-12 bg-slate-200"></div>
+            </div>
+          </div>
+          <div className="w-full max-w-[320px] md:max-w-none md:flex-1 flex justify-center">
+            <div className="relative group">
+              <div className="absolute -inset-4 bg-gradient-to-tr from-primary/10 to-blue-500/10 rounded-[2.5rem] blur-2xl group-hover:blur-3xl transition-all opacity-70"></div>
+              <img 
+                src={councilImg} 
+                alt="Brisbane City Council Support" 
+                className="relative w-full max-w-[400px] h-auto object-contain drop-shadow-2xl grayscale hover:grayscale-0 transition-all duration-700"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Award Levels */}
+      <section id="levels" className="py-24 bg-slate-50 relative">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-display font-bold mb-4">Badge Levels</h2>
+            <div className="w-16 h-1 bg-primary mx-auto rounded-full"></div>
           </div>
 
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto">
@@ -354,22 +376,13 @@ export const LandingPage = () => {
         </div>
       </section>
 
-      {/* ── How it Works ── */}
-      <section
-        id="how-it-works"
-        className="py-16 sm:py-24 bg-white border-y border-slate-100"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-          <div className="text-center lg:text-left">
-            <h2 className="text-3xl sm:text-4xl font-display font-bold mb-4 sm:mb-6">
-              How Your Journey
-              <br />
-              to Impact Works
-            </h2>
-            <p className="text-slate-500 text-base sm:text-lg mb-6 sm:mb-8 max-w-md mx-auto lg:mx-0 leading-relaxed">
-              We've simplified the path to making a difference. Follow our
-              evidence-based framework to build sustainable habits and scale
-              your influence.
+      {/* How it Works */}
+      <section id="how-it-works" className="py-24 bg-white border-y border-slate-100">
+        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+          <div>
+            <h2 className="text-4xl font-display font-bold mb-6">How Your Journey<br />to Impact Works</h2>
+            <p className="text-slate-500 text-lg mb-8 max-w-md leading-relaxed">
+              Make a difference step by step. Use our framework to build green habits and grow your impact.
             </p>
             {/* Centered on mobile, left-aligned on desktop */}
             <div className="flex justify-center lg:justify-start">
@@ -379,21 +392,9 @@ export const LandingPage = () => {
 
           <div className="space-y-6 sm:space-y-8">
             {[
-              {
-                num: "1",
-                title: "Log Your Actions",
-                desc: "Use our mobile app to record daily sustainable choices—from composting to commuting green.",
-              },
-              {
-                num: "2",
-                title: "Earn Impact Points",
-                desc: "Watch your dashboard grow as you collect points for every eco-friendly milestone you hit.",
-              },
-              {
-                num: "3",
-                title: "Lead Your Community",
-                desc: "Unlock project funding and mentorship as you transition from local action to leadership.",
-              },
+              { num: "1", title: "Log Your Actions", desc: "Record your sustainability activities like recycling, volunteering, or saving energy." },
+              { num: "2", title: "AI Verification", desc: "Our AI reviews your submissions and verifies that the activity meets sustainability criteria." },
+              { num: "3", title: "Earn Points & Climb", desc: "Receive impact points for verified actions and move up the community leaderboard." }
             ].map((step, i) => (
               <div key={i} className="flex gap-5 sm:gap-6">
                 <div className="shrink-0 w-11 h-11 sm:w-12 sm:h-12 bg-primary text-white rounded-full flex items-center justify-center font-display font-bold text-lg sm:text-xl shadow-lg shadow-primary/20">
@@ -421,21 +422,9 @@ export const LandingPage = () => {
           {/* sm:grid-cols-2 fills the gap between 1-col mobile and 3-col desktop */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {[
-              {
-                img: reforestationImg,
-                title: "AI-Verified Actions",
-                desc: "Upload a photo of your eco action. Our Gemini-powered AI checks the evidence, scores the impact, and awards points automatically.",
-              },
-              {
-                img: universityImg,
-                title: "Community Leaderboard",
-                desc: "See how your suburb, team, and school rank. Every verified action moves you up and earns you recognition.",
-              },
-              {
-                img: analyticsImg,
-                title: "Impact Analytics",
-                desc: "Track your total CO₂ saved, plastic reduced, and water conserved — updated every time an action is verified.",
-              },
+              { img: reforestationImg, title: "AI-Verified Actions", desc: "Upload a photo of your eco action. Our AI checks it, scores the impact, and awards points." },
+              { img: universityImg, title: "Leaderboard", desc: "See your rank in your volunteering community. Verified activities move you up." },
+              { img: analyticsImg, title: "Impact Stats", desc: "Track CO₂ saved, plastic reduced, and water conserved." }
             ].map((card, i) => (
               <motion.div whileHover={{ y: -5 }} key={i} className="group">
                 <div className="w-full aspect-[4/3] rounded-3xl overflow-hidden mb-5 sm:mb-6 shadow-md relative">
