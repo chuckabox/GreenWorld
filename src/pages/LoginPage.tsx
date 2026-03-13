@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Leaf, Mail, Lock, Eye, EyeOff, LogIn, Globe } from 'lucide-react';
 import { StoredUser } from '../types';
+import demoAccounts from '../data/demoAccounts.json';
 
 export const LoginPage = ({ onLogin }: { onLogin?: (email: string) => void }) => {
   const [email, setEmail] = useState('');
@@ -14,7 +15,25 @@ export const LoginPage = ({ onLogin }: { onLogin?: (email: string) => void }) =>
     e.preventDefault();
     setError('');
 
-    const users: StoredUser[] = JSON.parse(localStorage.getItem('users') || '[]');
+    const storedUsers: StoredUser[] = JSON.parse(localStorage.getItem('users') || '[]');
+    const demoUsers = demoAccounts as StoredUser[];
+
+    const usersByEmail = new Map<string, StoredUser>();
+    for (const existing of storedUsers) {
+      usersByEmail.set(existing.email.toLowerCase(), existing);
+    }
+    for (const demoUser of demoUsers) {
+      const key = demoUser.email.toLowerCase();
+      if (!usersByEmail.has(key)) {
+        usersByEmail.set(key, demoUser);
+      }
+    }
+
+    const users = Array.from(usersByEmail.values());
+    if (users.length !== storedUsers.length) {
+      localStorage.setItem('users', JSON.stringify(users));
+    }
+
     const user = users.find((candidate) => candidate.email.toLowerCase() === email.toLowerCase());
 
     if (!user) {

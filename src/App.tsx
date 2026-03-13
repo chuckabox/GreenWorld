@@ -15,6 +15,7 @@ import { LogActivity } from "./pages/LogActivity";
 import { Leaderboard } from "./pages/Leaderboard";
 import { Portfolio } from "./pages/Portfolio";
 import { AdminPortal } from "./pages/AdminPortal";
+import demoAccounts from "./data/demoAccounts.json";
 
 const AppContent = () => {
   const [userEmail, setUserEmail] = useState<string>(localStorage.getItem("userEmail") || "");
@@ -25,22 +26,23 @@ const AppContent = () => {
 
   const loadUserData = () => {
     setLoading(true);
-    const defaultUser: StoredUser = {
-      id: 1,
-      email: "student@example.com",
-      name: "Alex Green",
-      role: "student",
-      impact_points: 450,
-      award_progress: 65,
-      rank: 12,
-      suburb: "West End",
-      team: "UQ Sustainability Club",
-      password: "demo1234",
-    };
-
     const storedUsers: StoredUser[] = JSON.parse(localStorage.getItem("users") || "[]");
-    const users = storedUsers.length > 0 ? storedUsers : [defaultUser];
-    if (storedUsers.length === 0) {
+    const demoUsers = demoAccounts as StoredUser[];
+
+    // Keep hardcoded demo accounts available even when old localStorage data exists.
+    const usersByEmail = new Map<string, StoredUser>();
+    for (const existing of storedUsers) {
+      usersByEmail.set(existing.email.toLowerCase(), existing);
+    }
+    for (const demoUser of demoUsers) {
+      const key = demoUser.email.toLowerCase();
+      if (!usersByEmail.has(key)) {
+        usersByEmail.set(key, demoUser);
+      }
+    }
+
+    const users = Array.from(usersByEmail.values());
+    if (users.length !== storedUsers.length) {
       localStorage.setItem("users", JSON.stringify(users));
     }
 
