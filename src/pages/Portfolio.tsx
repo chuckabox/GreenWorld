@@ -8,7 +8,7 @@ export const Portfolio = ({ user }: { user: UserData }) => {
   const [projects, setProjects] = useState<any[]>([]);
   const unlockedBadges = getUnlockedBadges(user.impact_points);
   const nextBadge = getNextBadge(user.impact_points);
-  const latestUnlockedBadge = unlockedBadges[unlockedBadges.length - 1];
+  const levelLabel = getLevelLabel(user.impact_points);
 
   const getLocalProjects = () => {
     const storedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
@@ -43,17 +43,19 @@ export const Portfolio = ({ user }: { user: UserData }) => {
         <div className="flex-1 text-center md:text-left">
           <h2 className="text-4xl mb-2">{user.name}</h2>
           <p className="text-slate-500 mb-4">
-            {getLevelLabel(user.impact_points)} • {user.suburb || "Brisbane"} • {user.team || "Community Team"}
+            {levelLabel} • {user.suburb || "Brisbane"} • {user.team || "Community Team"}
           </p>
-          <div className="flex flex-wrap justify-center md:justify-start gap-3">
-            <span className="px-4 py-1.5 bg-primary-light text-primary rounded-full text-sm font-bold">
-              {latestUnlockedBadge ? `${latestUnlockedBadge.name} Unlocked` : "Eco Beginner Unlocked"}
-            </span>
-            <span className="px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-sm font-bold">
-              {nextBadge
-                ? `Next: ${nextBadge.name} (${Math.max(0, nextBadge.minPoints - user.impact_points)} pts left)`
-                : "All Milestone Badges Completed"}
-            </span>
+          <div className="flex flex-wrap justify-center md:justify-start gap-2">
+            {unlockedBadges.slice(-3).map((badge) => (
+              <span key={badge.id} className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                {badge.name}
+              </span>
+            ))}
+            {nextBadge && (
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200">
+                Next: {nextBadge.name} at {nextBadge.minPoints} pts
+              </span>
+            )}
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4 w-full md:w-auto">
@@ -69,38 +71,46 @@ export const Portfolio = ({ user }: { user: UserData }) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Badges */}
+        {/* Badges - same wording and order as Dashboard */}
         <div className="card">
-          <h3 className="text-xl mb-2">Awards and Badges</h3>
-          <p className="text-sm text-slate-500 mb-6">
+          <p className="text-sm font-semibold text-slate-500">Badge Progress</p>
+          <p className="text-xl font-bold mt-1">{unlockedBadges.length} unlocked badges</p>
+          <p className="text-sm text-slate-500 mt-2 mb-6">
             {nextBadge
-              ? `Earn ${nextBadge.minPoints - user.impact_points} more points to unlock ${nextBadge.name}.`
-              : "All milestone badges unlocked."}
+              ? `Next badge: ${nextBadge.name} at ${nextBadge.minPoints} points`
+              : "All core badges unlocked. You are now a city-level climate champion."}
           </p>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-wrap gap-2 mb-6">
+            {unlockedBadges.map((badge) => (
+              <span key={badge.id} className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                {badge.name}
+              </span>
+            ))}
+          </div>
+          <div className="grid grid-cols-2 gap-3">
             {badgeCatalog.map((badge) => {
               const isUnlocked = user.impact_points >= badge.minPoints;
               return (
                 <div
                   key={badge.id}
                   className={cn(
-                    "flex flex-col items-center text-center p-4 rounded-2xl border transition-all",
+                    "flex flex-col items-center text-center p-3 rounded-xl border transition-all",
                     isUnlocked
                       ? "bg-white border-slate-100 hover:shadow-md"
-                      : "bg-slate-50 border-slate-200 opacity-80"
+                      : "bg-slate-50 border-slate-200 opacity-75"
                   )}
                 >
                   <div
                     className={cn(
-                      "w-12 h-12 rounded-xl flex items-center justify-center text-white mb-3 shadow-sm",
+                      "w-10 h-10 rounded-lg flex items-center justify-center text-white mb-2 shadow-sm",
                       isUnlocked ? `bg-gradient-to-br ${badge.colorClass}` : "bg-slate-300"
                     )}
                   >
-                    {isUnlocked ? <Sparkles size={20} /> : <Lock size={18} />}
+                    {isUnlocked ? <Sparkles size={18} /> : <Lock size={16} />}
                   </div>
-                  <p className="text-sm font-bold">{badge.name}</p>
-                  <p className="text-[10px] text-slate-500 mt-1">{badge.description}</p>
-                  <p className="text-[10px] text-slate-400 mt-1">{badge.minPoints} pts</p>
+                  <p className="text-xs font-bold">{badge.name}</p>
+                  <p className="text-[10px] text-slate-500 mt-0.5 line-clamp-2">{badge.description}</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5">{badge.minPoints} pts</p>
                 </div>
               );
             })}

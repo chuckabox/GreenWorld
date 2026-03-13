@@ -150,7 +150,7 @@ export const Dashboard = ({ user, activities }: { user: UserData, activities: Ac
           <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
             <div className="h-full bg-primary" style={{ width: `${user.award_progress}%` }}></div>
           </div>
-          <p className="text-xs text-slate-400 mt-2">Next: Silver Award (500 pts)</p>
+          <p className="text-xs text-slate-400 mt-2">{nextBadge ? `Next: ${nextBadge.name} (${nextBadge.minPoints} pts)` : "All badges unlocked"}</p>
         </div>
         <div className="card flex items-center gap-4">
           <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
