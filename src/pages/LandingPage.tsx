@@ -255,7 +255,7 @@ export const LandingPage = () => {
           <div className="text-center mb-12">
             <h2 className="text-4xl font-display font-bold mb-4">Current events & tasks</h2>
             <p className="text-slate-500 max-w-xl mx-auto">
-              Join challenges and events. Use AI Supervisor to see if a task fits your goals.
+              Join challenges and events. Use AI Advisor to see if a task fits you.
             </p>
             <div className="w-16 h-1 bg-primary mx-auto rounded-full mt-4" />
           </div>
@@ -276,7 +276,7 @@ export const LandingPage = () => {
                 ))}
               </ul>
               <Link to={isLoggedIn ? "/ai-supervisor" : authPath} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline">
-                {isLoggedIn ? "Check fit in AI Supervisor" : "Sign in to use AI Supervisor"}
+                {isLoggedIn ? "Check fit in AI Advisor" : "Sign in to use AI Advisor"}
                 <ChevronDown size={16} className="rotate-[-90deg]" />
               </Link>
             </div>

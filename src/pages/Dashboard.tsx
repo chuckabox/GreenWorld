@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { PlusCircle, Zap, Globe, Clock, AlertCircle, ChevronDown, ChevronLeft, ChevronRight, Target, Calendar } from "lucide-react";
 import { cn } from "../lib/utils";
 import { UserData, Activity } from "../types";
-import { getLevelLabel, getNextBadge, getUnlockedBadges } from "../lib/badges";
+import { getLevelLabel } from "../lib/badges";
 import tasksAndEventsData from "../data/tasksAndEvents.json";
 
 type FilterDropdownOption = {
@@ -78,8 +78,6 @@ export const Dashboard = ({ user, activities }: { user: UserData, activities: Ac
   const [statusFilter, setStatusFilter] = useState<"all" | "approved" | "pending" | "rejected">("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [activityPage, setActivityPage] = useState(1);
-  const unlockedBadges = getUnlockedBadges(user.impact_points);
-  const nextBadge = getNextBadge(user.impact_points);
   const totalEstimatedCo2 = activities.reduce((sum, activity) => sum + (activity.estimatedCo2Kg ?? 0), 0);
   const tasks = useMemo(() => (tasksAndEventsData as (TaskItem | EventItem)[]).filter((t) => t.type === "task") as TaskItem[], []);
   const events = useMemo(() => (tasksAndEventsData as (TaskItem | EventItem)[]).filter((t) => t.type === "event") as EventItem[], []);
@@ -165,29 +163,10 @@ export const Dashboard = ({ user, activities }: { user: UserData, activities: Ac
         </div>
       </div>
 
-      <div className="card flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <p className="text-sm font-semibold text-slate-500">Badge Progress</p>
-          <p className="text-xl font-bold">{unlockedBadges.length} unlocked badges</p>
-          <p className="text-sm text-slate-500">
-            {nextBadge
-              ? `Next badge: ${nextBadge.name} at ${nextBadge.minPoints} points`
-              : "All core badges unlocked. You are now a city-level climate champion."}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {unlockedBadges.slice(-3).map((badge) => (
-            <span key={badge.id} className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-              {badge.name}
-            </span>
-          ))}
-        </div>
-      </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Activities */}
-        <div className="lg:col-span-2 card">
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
+        <div className="lg:col-span-2 card flex flex-col min-h-0">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6 shrink-0">
             <h3 className="text-xl">Recent Activities</h3>
             <div className="flex flex-wrap gap-3 md:justify-end">
               <FilterDropdown
@@ -208,7 +187,7 @@ export const Dashboard = ({ user, activities }: { user: UserData, activities: Ac
               />
             </div>
           </div>
-          <div className="space-y-4">
+          <div className="flex-1 min-h-0 space-y-4">
             {pagedActivities.length > 0 ? pagedActivities.map((activity) => (
               <div key={activity.id} className="flex items-center gap-4 p-4 rounded-2xl border border-slate-50 hover:bg-slate-50 transition-colors">
                 <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-slate-600">
@@ -234,7 +213,7 @@ export const Dashboard = ({ user, activities }: { user: UserData, activities: Ac
               </div>
             )}
           </div>
-          <div className="mt-5 flex items-center justify-between gap-3">
+          <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between gap-3 shrink-0">
             <div className="text-sm text-slate-500">
               Page {safeActivityPage} of {totalActivityPages}
             </div>
@@ -282,7 +261,7 @@ export const Dashboard = ({ user, activities }: { user: UserData, activities: Ac
               to="/ai-supervisor"
               className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
             >
-              Check fit in AI Supervisor
+              Check fit in AI Advisor
               <ChevronRight size={16} />
             </Link>
           </div>
