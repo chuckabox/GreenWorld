@@ -168,7 +168,7 @@ export const AISupervisor = ({ userEmail, onPointsAdded }: { userEmail: string; 
               >
                 {questionnaireAlreadyClaimed
                   ? "Already Claimed"
-                  : `Claim +${questionnaireResult.bonusPoints} GreenPass Points`}
+                  : `Claim +${questionnaireResult.bonusPoints} EcoImpact Points`}
               </button>
             </div>
           )}
@@ -225,7 +225,7 @@ export const AISupervisor = ({ userEmail, onPointsAdded }: { userEmail: string; 
               >
                 {contentAlreadyClaimed
                   ? "Already Claimed"
-                  : `Claim +${contentResult.bonusPoints} GreenPass Points`}
+                  : `Claim +${contentResult.bonusPoints} EcoImpact Points`}
               </button>
             </div>
           )}

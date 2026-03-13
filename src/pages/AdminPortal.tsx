@@ -19,56 +19,31 @@ export const AdminPortal = () => {
   };
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await fetch("/api/admin/pending");
-        if (!res.ok) throw new Error("Pending API failed");
-        const data = await res.json();
-        setPending(data);
-      } catch {
-        setPending(getLocalPending());
-      }
-    };
-
-    load();
+    setPending(getLocalPending());
   }, []);
 
-  const handleReview = async (activityId: number, status: string, points: number) => {
-    let apiOk = false;
-    try {
-      const res = await fetch("/api/admin/review", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ activityId, status, points })
-      });
-      apiOk = res.ok;
-    } catch {
-      apiOk = false;
-    }
+  const handleReview = (activityId: number, status: string, points: number) => {
+    const activities: Activity[] = JSON.parse(localStorage.getItem("activities") || "[]");
+    const users: StoredUser[] = JSON.parse(localStorage.getItem("users") || "[]");
 
-    if (!apiOk) {
-      const activities: Activity[] = JSON.parse(localStorage.getItem("activities") || "[]");
-      const users: StoredUser[] = JSON.parse(localStorage.getItem("users") || "[]");
+    const updatedActivities = activities.map((activity) =>
+      activity.id === activityId ? { ...activity, status: status as "approved" | "pending" | "rejected" } : activity
+    );
+    localStorage.setItem("activities", JSON.stringify(updatedActivities));
 
-      const updatedActivities = activities.map((activity) =>
-        activity.id === activityId ? { ...activity, status: status as "approved" | "pending" | "rejected" } : activity
-      );
-      localStorage.setItem("activities", JSON.stringify(updatedActivities));
-
-      if (status === "approved" && points > 0) {
-        const reviewed = updatedActivities.find((activity) => activity.id === activityId);
-        if (reviewed?.user_id) {
-          const updatedUsers = users.map((user) => {
-            if (user.id !== reviewed.user_id) return user;
-            const updatedPoints = (user.impact_points || 0) + points;
-            return {
-              ...user,
-              impact_points: updatedPoints,
-              award_progress: Math.min(100, Math.round(updatedPoints / 10)),
-            };
-          });
-          localStorage.setItem("users", JSON.stringify(updatedUsers));
-        }
+    if (status === "approved" && points > 0) {
+      const reviewed = updatedActivities.find((activity) => activity.id === activityId);
+      if (reviewed?.user_id) {
+        const updatedUsers = users.map((user) => {
+          if (user.id !== reviewed.user_id) return user;
+          const updatedPoints = (user.impact_points || 0) + points;
+          return {
+            ...user,
+            impact_points: updatedPoints,
+            award_progress: Math.min(100, Math.round(updatedPoints / 10)),
+          };
+        });
+        localStorage.setItem("users", JSON.stringify(updatedUsers));
       }
     }
 

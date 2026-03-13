@@ -4,10 +4,13 @@ import { StoredUser } from "../types";
 
 export const Leaderboard = () => {
   const [leaders, setLeaders] = useState<any[]>([]);
+  const [communityStats, setCommunityStats] = useState({ co2Kg: 0, activitiesCount: 0, members: 0 });
 
-  const getLocalLeaderboard = () => {
+  useEffect(() => {
     const users: StoredUser[] = JSON.parse(localStorage.getItem("users") || "[]");
-    return users
+    const activities = JSON.parse(localStorage.getItem("activities") || "[]");
+
+    const ranked = users
       .filter((user) => user.role !== "admin")
       .sort((a, b) => (b.impact_points || 0) - (a.impact_points || 0))
       .slice(0, 10)
@@ -16,21 +19,14 @@ export const Leaderboard = () => {
         impact_points: user.impact_points || 0,
         rank: index + 1,
       }));
-  };
+    setLeaders(ranked);
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await fetch("/api/leaderboard");
-        if (!res.ok) throw new Error("Leaderboard API failed");
-        const data = await res.json();
-        setLeaders(data);
-      } catch {
-        setLeaders(getLocalLeaderboard());
-      }
-    };
-
-    load();
+    const totalCo2 = activities.reduce((sum: number, a: any) => sum + (a.estimatedCo2Kg || 0), 0);
+    setCommunityStats({
+      co2Kg: Math.round(totalCo2 * 10) / 10,
+      activitiesCount: activities.length,
+      members: users.filter((u) => u.role !== "admin").length,
+    });
   }, []);
 
   return (
@@ -79,16 +75,16 @@ export const Leaderboard = () => {
             <h3 className="text-xl mb-4">Community Impact</h3>
             <div className="space-y-4">
               <div>
-                <p className="text-sm opacity-80">Total Carbon Offset</p>
-                <p className="text-3xl font-bold">12,450 kg</p>
+                <p className="text-sm opacity-80">Total CO₂ Saved</p>
+                <p className="text-3xl font-bold">{communityStats.co2Kg} kg</p>
               </div>
               <div>
-                <p className="text-sm opacity-80">Waste Diverted</p>
-                <p className="text-3xl font-bold">4.2 Tons</p>
+                <p className="text-sm opacity-80">Verified Actions</p>
+                <p className="text-3xl font-bold">{communityStats.activitiesCount}</p>
               </div>
               <div>
-                <p className="text-sm opacity-80">Volunteer Hours</p>
-                <p className="text-3xl font-bold">8,900+</p>
+                <p className="text-sm opacity-80">Active Members</p>
+                <p className="text-3xl font-bold">{communityStats.members}</p>
               </div>
             </div>
           </div>

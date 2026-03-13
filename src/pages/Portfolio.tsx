@@ -29,18 +29,7 @@ export const Portfolio = ({ user }: { user: UserData }) => {
   };
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await fetch(`/api/projects/${user.id}`);
-        if (!res.ok) throw new Error("Projects API failed");
-        const data = await res.json();
-        setProjects(data);
-      } catch {
-        setProjects(getLocalProjects());
-      }
-    };
-
-    load();
+    setProjects(getLocalProjects());
   }, [user.id]);
 
   return (

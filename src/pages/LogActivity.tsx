@@ -79,13 +79,6 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
       const currentActivities = JSON.parse(localStorage.getItem("activities") || "[]");
       localStorage.setItem("activities", JSON.stringify([...currentActivities, localActivity]));
 
-      // Best-effort API write for the admin queue and persistence.
-      await fetch("/api/activities", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, description: enrichedDescription, userId }),
-      });
-
       onActivityLogged();
       navigate("/dashboard");
     } catch (err) {
