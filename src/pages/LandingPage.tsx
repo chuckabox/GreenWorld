@@ -25,7 +25,7 @@ export const LandingPage = () => {
             <a href="#winners" className="hover:text-primary transition-colors">Winners</a>
             <a href="#faq" className="hover:text-primary transition-colors">FAQ</a>
           </div>
-          <Link to="/dashboard" className="btn-primary text-sm shadow-md shadow-primary/20">Join Now</Link>
+          <Link to="/login" className="btn-primary text-sm shadow-md shadow-primary/20">Join Now</Link>
         </div>
       </nav>
 
@@ -50,7 +50,7 @@ export const LandingPage = () => {
               Join a global community of students committed to a greener future. Complete impact goals and earn official recognition for your sustainability leadership.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link to="/dashboard" className="bg-primary hover:bg-primary-dark text-white px-8 py-4 rounded-xl font-bold shadow-lg shadow-primary/30 transition-all hover:-translate-y-1">
+              <Link to="/login" className="bg-primary hover:bg-primary-dark text-white px-8 py-4 rounded-xl font-bold shadow-lg shadow-primary/30 transition-all hover:-translate-y-1">
                 Get Started Today
               </Link>
               <button className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-xl font-bold text-white transition-all hover:-translate-y-1">
@@ -203,7 +203,7 @@ export const LandingPage = () => {
             <p className="text-slate-300 text-lg mb-10 max-w-xl mx-auto">
               Join over 10,000 students worldwide who are already creating a measurable impact in their communities.
             </p>
-            <Link to="/dashboard" className="inline-block bg-primary hover:bg-primary-dark text-white text-lg px-10 py-4 rounded-xl font-bold transition-all hover:scale-105 shadow-xl shadow-primary/20">
+            <Link to="/login" className="inline-block bg-primary hover:bg-primary-dark text-white text-lg px-10 py-4 rounded-xl font-bold transition-all hover:scale-105 shadow-xl shadow-primary/20">
               Join the Movement Now
             </Link>
           </div>
