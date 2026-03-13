@@ -213,8 +213,8 @@ export const Dashboard = ({ user, activities }: { user: UserData, activities: Ac
                   <Clock size={20} />
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold">{activity.category}</p>
-                  <p className="text-xs text-slate-500">{activity.date} • {activity.hours} hours</p>
+                  <p className="font-semibold">{activity.taskTitle ?? activity.category}</p>
+                  <p className="text-xs text-slate-500">{activity.date} • {activity.hours} hours{activity.taskTitle ? ` • ${activity.category}` : ""}</p>
                 </div>
                 <div className={cn(
                   "px-3 py-1 rounded-full text-xs font-bold capitalize",

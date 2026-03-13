@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
-import { Sparkles, CheckCircle2, ChevronRight, Target } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Sparkles, CheckCircle2, ChevronRight, Target, LogIn } from "lucide-react";
 import {
   runTaskFitAnalysis,
   QuestionnaireInput,
@@ -7,25 +8,6 @@ import {
   TaskForFit,
 } from "../lib/aiSupervisor";
 import tasksAndEventsData from "../data/tasksAndEvents.json";
-
-const CLAIMS_STORAGE_KEY = "ai_task_claimed";
-
-const getClaimedTaskIds = (): string[] => {
-  const raw = localStorage.getItem(CLAIMS_STORAGE_KEY);
-  if (!raw) return [];
-  try {
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed.map(String) : [];
-  } catch {
-    return [];
-  }
-};
-
-const markTaskClaimed = (taskId: string) => {
-  const ids = new Set(getClaimedTaskIds());
-  ids.add(taskId);
-  localStorage.setItem(CLAIMS_STORAGE_KEY, JSON.stringify(Array.from(ids)));
-};
 
 const questions: Array<{ key: keyof QuestionnaireInput; label: string }> = [
   { key: "transport", label: "How sustainable is your weekly transport?" },
@@ -48,34 +30,16 @@ export const AISupervisor = ({ userEmail, onPointsAdded }: { userEmail: string; 
     food: 3,
     community: 3,
   });
+  const [feelingText, setFeelingText] = useState("");
   const [fitResult, setFitResult] = useState<TaskFitResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [claimedForCurrent, setClaimedForCurrent] = useState(false);
-
-  const claimedIds = useMemo(() => getClaimedTaskIds(), []);
-  const selectedClaimed = selectedTask ? (claimedForCurrent || claimedIds.includes(selectedTask.id)) : false;
-
-  const awardPoints = (points: number) => {
-    const users = JSON.parse(localStorage.getItem("users") || "[]");
-    const updated = users.map((u: { email: string; impact_points?: number; award_progress?: number }) =>
-      u.email !== userEmail
-        ? u
-        : {
-            ...u,
-            impact_points: (u.impact_points || 0) + points,
-            award_progress: Math.min(100, Math.round(((u.impact_points || 0) + points) / 10)),
-          }
-    );
-    localStorage.setItem("users", JSON.stringify(updated));
-    onPointsAdded();
-  };
 
   const startOver = () => {
     setSelectedTask(null);
     setFitResult(null);
     setError(null);
-    setClaimedForCurrent(false);
+    setFeelingText("");
     setAnswers({ transport: 3, homeEnergy: 3, waste: 3, food: 3, community: 3 });
   };
 
@@ -85,7 +49,7 @@ export const AISupervisor = ({ userEmail, onPointsAdded }: { userEmail: string; 
     setError(null);
     setFitResult(null);
     try {
-      const result = await runTaskFitAnalysis(selectedTask, answers);
+      const result = await runTaskFitAnalysis(selectedTask, answers, feelingText.trim() || undefined);
       setFitResult(result);
     } catch (e) {
       const message = e instanceof Error ? e.message : "AI analysis failed.";
@@ -95,19 +59,12 @@ export const AISupervisor = ({ userEmail, onPointsAdded }: { userEmail: string; 
     }
   };
 
-  const handleClaim = () => {
-    if (!fitResult || !selectedTask || selectedClaimed) return;
-    awardPoints(fitResult.bonusPoints);
-    markTaskClaimed(selectedTask.id);
-    setClaimedForCurrent(true);
-  };
-
   return (
     <div className="p-6 space-y-6">
       <div>
         <h2 className="text-3xl">AI Supervisor</h2>
         <p className="text-slate-500">
-          Pick a task, answer a short questionnaire, and the AI will tell you if it fits your current awareness—then claim points.
+          Pick a task, rate your habits and share how you feel. The AI will tell you if the task fits you—then you can choose to do it or check another.
         </p>
       </div>
 
@@ -135,7 +92,7 @@ export const AISupervisor = ({ userEmail, onPointsAdded }: { userEmail: string; 
                   <p className="font-bold text-slate-900">{t.title}</p>
                   <p className="text-sm text-slate-500 line-clamp-1">{t.description}</p>
                   {t.pointsReward != null && (
-                    <span className="inline-block mt-1 text-xs font-semibold text-primary">Up to {t.pointsReward} pts</span>
+                    <span className="inline-block mt-1 text-xs font-semibold text-primary">Complete to earn up to {t.pointsReward} pts</span>
                   )}
                 </div>
                 <ChevronRight size={20} className="text-slate-400 shrink-0" />
@@ -159,10 +116,10 @@ export const AISupervisor = ({ userEmail, onPointsAdded }: { userEmail: string; 
             <div className="card space-y-4">
               <div className="flex items-center gap-2">
                 <Sparkles size={18} className="text-primary" />
-                <h3 className="text-xl">Quick questionnaire</h3>
+                <h3 className="text-xl">Questionnaire & how you feel</h3>
               </div>
               <p className="text-sm text-slate-600">
-                Rate your current habits (1–5). The AI will analyze if this task fits your awareness.
+                Rate your current habits (1–5). Optionally write how you feel about this task—the AI will use both to judge fit.
               </p>
               {questions.map((q) => (
                 <div key={q.key} className="space-y-2">
@@ -178,12 +135,22 @@ export const AISupervisor = ({ userEmail, onPointsAdded }: { userEmail: string; 
                   <p className="text-xs text-slate-500">Score: {answers[q.key]} / 5</p>
                 </div>
               ))}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-slate-700">How do you feel about this task? (optional)</label>
+                <textarea
+                  placeholder="e.g. I’m keen but not sure I have time; or I’ve done similar things before..."
+                  rows={3}
+                  value={feelingText}
+                  onChange={(e) => setFeelingText(e.target.value)}
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none resize-none text-sm"
+                />
+              </div>
               <button
                 onClick={submitForAnalysis}
                 disabled={isLoading}
                 className="btn-primary w-full py-3 flex items-center justify-center gap-2"
               >
-                {isLoading ? "Analyzing fit..." : "Analyze with AI"}
+                {isLoading ? "Analyzing fit..." : "Check if I fit"}
               </button>
               {error && <p className="text-sm text-red-600 font-medium">{error}</p>}
             </div>
@@ -204,16 +171,23 @@ export const AISupervisor = ({ userEmail, onPointsAdded }: { userEmail: string; 
                   </ul>
                 )}
               </div>
-              <button
-                onClick={handleClaim}
-                disabled={selectedClaimed}
-                className="w-full py-3 rounded-xl bg-emerald-600 text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-emerald-700 transition-colors"
-              >
-                {selectedClaimed ? "Already claimed" : `Claim +${fitResult.bonusPoints} points`}
-              </button>
-              <button type="button" onClick={startOver} className="w-full py-2 text-slate-600 hover:text-primary font-medium">
-                Try another task
-              </button>
+              <p className="text-sm text-slate-500">No points for the check—earn points when you complete the task and log it.</p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link
+                  to="/log"
+                  className="flex-1 py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary-dark transition-colors flex items-center justify-center gap-2"
+                >
+                  <LogIn size={18} />
+                  I'll do this task
+                </Link>
+                <button
+                  type="button"
+                  onClick={startOver}
+                  className="flex-1 py-3 rounded-xl border-2 border-slate-200 font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                >
+                  Check another task
+                </button>
+              </div>
             </div>
           )}
         </>

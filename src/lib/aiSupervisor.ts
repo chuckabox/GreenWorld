@@ -88,7 +88,7 @@ Close (25-30s): "Log it in EcoImpact and earn points."`,
   mode: "demo",
 });
 
-const getDemoTaskFitResult = (task: TaskForFit, input: QuestionnaireInput): TaskFitResult => {
+const getDemoTaskFitResult = (task: TaskForFit, input: QuestionnaireInput, _userFeeling?: string): TaskFitResult => {
   const avg = (input.transport + input.homeEnergy + input.waste + input.food + input.community) / 5;
   const fitScore = Math.round((avg / 5) * 100);
   const fitsTask = fitScore >= 55;
@@ -110,26 +110,31 @@ const getDemoTaskFitResult = (task: TaskForFit, input: QuestionnaireInput): Task
   };
 };
 
-/** Analyze if the user's questionnaire answers show they're a good fit for the selected task. */
+/** Analyze if the user's questionnaire answers and optional feeling text show they're a good fit for the selected task. */
 export const runTaskFitAnalysis = async (
   task: TaskForFit,
-  input: QuestionnaireInput
+  input: QuestionnaireInput,
+  userFeelingText?: string
 ): Promise<TaskFitResult> => {
   const aiDemoMode = parseBoolean(import.meta.env.VITE_AI_DEMO_MODE, false);
-  if (aiDemoMode) return getDemoTaskFitResult(task, input);
+  if (aiDemoMode) return getDemoTaskFitResult(task, input, userFeelingText);
 
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
   if (!apiKey) throw new Error("Missing VITE_GEMINI_API_KEY in .env");
 
   const ai = new GoogleGenAI({ apiKey });
 
+  const feelingBlock = userFeelingText?.trim()
+    ? `\nThey also wrote about how they feel about this task: "${userFeelingText.trim()}"\n`
+    : "\n";
+
   const prompt = `You are an AI sustainability supervisor. A user wants to take on this task:
 TASK: ${task.title}
 DESCRIPTION: ${task.description}
 
-Their self-reported awareness (1–5 scale): transport=${input.transport}, homeEnergy=${input.homeEnergy}, waste=${input.waste}, food=${input.food}, community=${input.community}.
+Their self-reported awareness (1–5 scale): transport=${input.transport}, homeEnergy=${input.homeEnergy}, waste=${input.waste}, food=${input.food}, community=${input.community}.${feelingBlock}
 
-Analyze whether this user is a good fit for the task (skills, habits, awareness). Return STRICT JSON only, no markdown:
+Analyze whether this user is a good fit for the task (skills, habits, awareness, motivation). Use both the scores and their written feeling if provided. Return STRICT JSON only, no markdown:
 {
   "fitsTask": boolean,
   "fitScore": number,
@@ -159,7 +164,7 @@ Rules: fitScore 0–100. If they fit, summary should be positive and bonusPoints
     };
   } catch {
     const fallback = parseBoolean(import.meta.env.VITE_AI_FALLBACK_TO_DEMO, false);
-    if (fallback) return getDemoTaskFitResult(task, input);
+    if (fallback) return getDemoTaskFitResult(task, input, userFeelingText);
     throw new Error("AI task fit analysis failed.");
   }
 };
