@@ -86,8 +86,8 @@ const getDemoVerification = (activityCategory: string, activityDescription: stri
     actionCategory: activityCategory,
     confidence,
     summary: isRelevant
-      ? "Demo mode verification used conservative impact factors based on activity type and quantity."
-      : "Demo mode flagged this evidence as suspicious and recommends rejection.",
+      ? "Verification complete. Your evidence aligns with the selected sustainability action."
+      : "Verification complete. This evidence needs a manual review before approval.",
     estimatedCo2Kg: Number(estimatedCo2Kg.toFixed(2)),
     estimatedPlasticItemsReduced,
     estimatedWaterLitersSaved,

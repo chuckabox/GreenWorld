@@ -206,13 +206,11 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
               </div>
               <p className="mb-2">{verificationResult.summary}</p>
               <div className="grid grid-cols-2 gap-2 text-xs">
-                <div>Mode: {verificationResult.verificationMode}</div>
-                <div>Confidence: {(verificationResult.confidence * 100).toFixed(0)}%</div>
-                <div>Category: {verificationResult.actionCategory}</div>
-                <div>CO₂ saved: {verificationResult.estimatedCo2Kg} kg</div>
-                <div>Plastic reduced: {verificationResult.estimatedPlasticItemsReduced}</div>
-                <div>Water saved: {verificationResult.estimatedWaterLitersSaved} L</div>
-                <div>Recommendation: {verificationResult.reviewRecommendation}</div>
+                <div>Verification confidence: {(verificationResult.confidence * 100).toFixed(0)}%</div>
+                <div>Action category: {verificationResult.actionCategory}</div>
+                <div>Estimated CO2 impact: {verificationResult.estimatedCo2Kg} kg</div>
+                <div>Estimated plastic reduced: {verificationResult.estimatedPlasticItemsReduced}</div>
+                <div>Estimated water saved: {verificationResult.estimatedWaterLitersSaved} L</div>
               </div>
             </div>
           )}
