@@ -60,7 +60,6 @@ export const LoginPage = () => {
             <div className="space-y-2 relative">
               <div className="flex justify-between items-center">
                 <label className="text-sm font-bold text-slate-800">Password</label>
-                <a href="#" className="text-xs font-bold text-[#00c914] hover:underline">Forgot password?</a>
               </div>
               <div className="relative">
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
@@ -101,9 +100,9 @@ export const LoginPage = () => {
 
           <div className="mt-10 text-center text-sm font-medium text-slate-500">
             New to the program?{' '}
-            <a href="#" className="text-[#00c914] font-bold hover:underline">
+            <Link to="/signup" className="text-[#00c914] font-bold hover:underline">
               Sign up
-            </a>
+            </Link>
           </div>
         </div>
       </main>

@@ -9,6 +9,7 @@ import { Header } from "./components/Header";
 
 import { LandingPage } from "./pages/LandingPage";
 import { LoginPage } from "./pages/LoginPage";
+import { SignUpPage } from "./pages/SignUpPage";
 import { Dashboard } from "./pages/Dashboard";
 import { LogActivity } from "./pages/LogActivity";
 import { Leaderboard } from "./pages/Leaderboard";
@@ -60,7 +61,7 @@ const AppContent = () => {
   if (!user) return <div>Error loading user.</div>;
 
   const isLanding = location.pathname === "/";
-  const isAuthPage = location.pathname === "/login";
+  const isAuthPage = location.pathname === "/login" || location.pathname === "/signup";
   const hideLayout = isLanding || isAuthPage;
 
   return (
@@ -86,6 +87,7 @@ const AppContent = () => {
               <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignUpPage />} />
                 <Route path="/dashboard" element={<Dashboard user={user} activities={activities} />} />
                 <Route path="/log" element={<LogActivity userId={user.id} onActivityLogged={fetchUserData} />} />
                 <Route path="/leaderboard" element={<Leaderboard />} />
