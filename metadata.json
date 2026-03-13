@@ -1,0 +1,8 @@
+{
+  "name": "Sustainability Impact Award",
+  "description": "A platform for students to track their environmental impact, earn awards, and lead sustainability initiatives.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
