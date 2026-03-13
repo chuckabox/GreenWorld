@@ -27,12 +27,12 @@ export const Sidebar = ({ user }: { user: UserData }) => {
 
   return (
     <div className="w-64 bg-white border-r border-slate-200 h-screen sticky top-0 hidden md:flex flex-col">
-      <div className="p-6 flex items-center gap-2">
+      <Link to="/" className="p-6 flex items-center gap-2 hover:opacity-80 transition-opacity">
         <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white">
           <Leaf size={24} />
         </div>
         <span className="font-display font-bold text-xl tracking-tight">EcoImpact</span>
-      </div>
+      </Link>
 
       <nav className="flex-1 px-4 py-4 space-y-1">
         {navItems.map((item) => {
