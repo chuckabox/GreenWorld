@@ -15,6 +15,7 @@ import { LogActivity } from "./pages/LogActivity";
 import { Leaderboard } from "./pages/Leaderboard";
 import { Portfolio } from "./pages/Portfolio";
 import { AdminPortal } from "./pages/AdminPortal";
+import { AISupervisor } from "./pages/AISupervisor";
 
 const AppContent = () => {
   const [userEmail, setUserEmail] = useState<string>(localStorage.getItem("userEmail") || "student@example.com");
@@ -107,6 +108,7 @@ const AppContent = () => {
         {!hideLayout && <Header title={
           location.pathname === "/dashboard" ? "Student Dashboard" :
           location.pathname === "/log" ? "Log Activity" :
+          location.pathname === "/ai-supervisor" ? "AI Supervisor" :
           location.pathname === "/leaderboard" ? "Leaderboard" :
           location.pathname === "/portfolio" ? "Impact Portfolio" :
           location.pathname === "/admin" ? "Admin Portal" : ""
@@ -145,6 +147,7 @@ const AppContent = () => {
                 }} />} />
                 <Route path="/dashboard" element={<Dashboard user={user} activities={activities} />} />
                 <Route path="/log" element={<LogActivity userId={user.id} onActivityLogged={loadUserData} />} />
+                <Route path="/ai-supervisor" element={<AISupervisor userEmail={user.email} onPointsAdded={loadUserData} />} />
                 <Route path="/leaderboard" element={<Leaderboard />} />
                 <Route path="/portfolio" element={<Portfolio user={user} />} />
                 <Route path="/admin" element={<AdminPortal />} />

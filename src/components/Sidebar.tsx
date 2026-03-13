@@ -7,7 +7,8 @@ import {
   User, 
   LogOut, 
   Leaf, 
-  ShieldCheck 
+  ShieldCheck,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { UserData } from "../types";
@@ -17,6 +18,7 @@ export const Sidebar = ({ user }: { user: UserData }) => {
   const navItems = [
     { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
     { name: "Log Activity", path: "/log", icon: PlusCircle },
+    { name: "AI Supervisor", path: "/ai-supervisor", icon: Sparkles },
     { name: "Leaderboard", path: "/leaderboard", icon: Trophy },
     { name: "Impact Portfolio", path: "/portfolio", icon: User },
   ];
