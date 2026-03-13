@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { Leaf } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 
 import { UserData, Activity, StoredUser } from "./types";
 import { Sidebar } from "./components/Sidebar";
@@ -15,6 +15,7 @@ import { LogActivity } from "./pages/LogActivity";
 import { Leaderboard } from "./pages/Leaderboard";
 import { Portfolio } from "./pages/Portfolio";
 import { AdminPortal } from "./pages/AdminPortal";
+import { AISupervisor } from "./pages/AISupervisor";
 import demoAccounts from "./data/demoAccounts.json";
 
 const AppContent = () => {
@@ -115,56 +116,56 @@ const AppContent = () => {
       {!hideLayout && user && <Sidebar user={user} />}
       <main className="flex-1 flex flex-col min-w-0">
         {!hideLayout && <Header title={
-          location.pathname === "/dashboard" ? "Student Dashboard" :
+          location.pathname === "/dashboard" ? "Dashboard" :
           location.pathname === "/log" ? "Log Activity" :
+          location.pathname === "/ai-supervisor" ? "AI Supervisor" :
           location.pathname === "/leaderboard" ? "Leaderboard" :
           location.pathname === "/portfolio" ? "Impact Portfolio" :
           location.pathname === "/admin" ? "Admin Portal" : ""
         } />}
         <div className="flex-1 overflow-y-auto">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={location.pathname}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/login" element={<LoginPage onLogin={(email: string) => { localStorage.setItem("userEmail", email); setUserEmail(email); }} />} />
-                <Route path="/signup" element={<SignUpPage onSignUp={(payload) => {
-                  const { email, name, password, role, suburb, team } = payload;
-                  if (name) {
-                    const storedUsers: StoredUser[] = JSON.parse(localStorage.getItem("users") || "[]");
-                    const userExists = storedUsers.find((u) => u.email.toLowerCase() === email.toLowerCase());
-                    if (!userExists) {
-                      const newUser: StoredUser = {
-                        id: Date.now(),
-                        email,
-                        name,
-                        role,
-                        impact_points: 0,
-                        award_progress: 0,
-                        rank: 0,
-                        suburb,
-                        team,
-                        password,
-                      };
-                      localStorage.setItem("users", JSON.stringify([...storedUsers, newUser]));
-                    }
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 8, filter: "blur(2px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
+            className="will-change-transform"
+          >
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/login" element={<LoginPage onLogin={(email: string) => { localStorage.setItem("userEmail", email); setUserEmail(email); }} />} />
+              <Route path="/signup" element={<SignUpPage onSignUp={(payload) => {
+                const { email, name, password, role, suburb, team } = payload;
+                if (name) {
+                  const storedUsers: StoredUser[] = JSON.parse(localStorage.getItem("users") || "[]");
+                  const userExists = storedUsers.find((u) => u.email.toLowerCase() === email.toLowerCase());
+                  if (!userExists) {
+                    const newUser: StoredUser = {
+                      id: Date.now(),
+                      email,
+                      name,
+                      role,
+                      impact_points: 0,
+                      award_progress: 0,
+                      rank: 0,
+                      suburb,
+                      team,
+                      password,
+                    };
+                    localStorage.setItem("users", JSON.stringify([...storedUsers, newUser]));
                   }
-                  localStorage.setItem("userEmail", email); 
-                  setUserEmail(email); 
-                }} />} />
-                <Route path="/dashboard" element={user ? <Dashboard user={user} activities={activities} /> : <Navigate to="/login" replace />} />
-                <Route path="/log" element={user ? <LogActivity userId={user.id} onActivityLogged={loadUserData} /> : <Navigate to="/login" replace />} />
-                <Route path="/leaderboard" element={user ? <Leaderboard /> : <Navigate to="/login" replace />} />
-                <Route path="/portfolio" element={user ? <Portfolio user={user} /> : <Navigate to="/login" replace />} />
-                <Route path="/admin" element={user ? <AdminPortal /> : <Navigate to="/login" replace />} />
-              </Routes>
-            </motion.div>
-          </AnimatePresence>
+                }
+                localStorage.setItem("userEmail", email); 
+                setUserEmail(email); 
+              }} />} />
+              <Route path="/dashboard" element={user ? <Dashboard user={user} activities={activities} /> : <Navigate to="/login" replace />} />
+              <Route path="/log" element={user ? <LogActivity userId={user.id} onActivityLogged={loadUserData} /> : <Navigate to="/login" replace />} />
+              <Route path="/ai-supervisor" element={user ? <AISupervisor userEmail={user.email} onPointsAdded={loadUserData} /> : <Navigate to="/login" replace />} />
+              <Route path="/leaderboard" element={user ? <Leaderboard /> : <Navigate to="/login" replace />} />
+              <Route path="/portfolio" element={user ? <Portfolio user={user} /> : <Navigate to="/login" replace />} />
+              <Route path="/admin" element={user ? <AdminPortal /> : <Navigate to="/login" replace />} />
+            </Routes>
+          </motion.div>
         </div>
       </main>
     </div>

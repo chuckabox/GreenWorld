@@ -1,14 +1,114 @@
-import React from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { PlusCircle, Zap, Globe, Clock, AlertCircle, ChevronRight } from "lucide-react";
+import { PlusCircle, Zap, Globe, Clock, AlertCircle, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "../lib/utils";
 import { UserData, Activity } from "../types";
 import { getLevelLabel, getNextBadge, getUnlockedBadges } from "../lib/badges";
 
+type FilterDropdownOption = {
+  value: string;
+  label: string;
+};
+
+const FilterDropdown = ({
+  value,
+  options,
+  onChange,
+}: {
+  value: string;
+  options: FilterDropdownOption[];
+  onChange: (value: string) => void;
+}) => {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const selected = options.find((option) => option.value === value) ?? options[0];
+
+  useEffect(() => {
+    const handlePointerDown = (event: MouseEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    return () => document.removeEventListener("mousedown", handlePointerDown);
+  }, []);
+
+  return (
+    <div ref={rootRef} className="relative min-w-[140px]">
+      <button
+        type="button"
+        onClick={() => setOpen((current) => !current)}
+        className="w-full h-10 px-3 rounded-xl border border-slate-200 bg-slate-50 text-sm font-medium text-slate-900 flex items-center justify-between hover:border-primary/30 hover:bg-white transition-colors"
+      >
+        <span>{selected?.label ?? "Select"}</span>
+        <ChevronDown size={16} className={cn("text-slate-400 transition-transform", open && "rotate-180")} />
+      </button>
+      {open ? (
+        <div className="absolute right-0 mt-2 w-full rounded-2xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70 p-2 z-20">
+          {options.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => {
+                onChange(option.value);
+                setOpen(false);
+              }}
+              className={cn(
+                "w-full text-left px-3 py-2 rounded-xl text-sm transition-colors",
+                option.value === value
+                  ? "bg-primary-light text-primary font-semibold"
+                  : "text-slate-700 hover:bg-slate-50"
+              )}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+};
+
 export const Dashboard = ({ user, activities }: { user: UserData, activities: Activity[] }) => {
+  const [statusFilter, setStatusFilter] = useState<"all" | "approved" | "pending" | "rejected">("all");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [activityPage, setActivityPage] = useState(1);
   const unlockedBadges = getUnlockedBadges(user.impact_points);
   const nextBadge = getNextBadge(user.impact_points);
   const totalEstimatedCo2 = activities.reduce((sum, activity) => sum + (activity.estimatedCo2Kg ?? 0), 0);
+  const activityCategories = useMemo(
+    () => Array.from(new Set(activities.map((activity) => activity.category).filter(Boolean))).sort(),
+    [activities],
+  );
+  const filteredActivities = useMemo(
+    () => [...activities]
+      .filter((activity) => statusFilter === "all" || activity.status === statusFilter)
+      .filter((activity) => categoryFilter === "all" || activity.category === categoryFilter)
+      .sort((left, right) => {
+        const dateDiff = new Date(right.date).getTime() - new Date(left.date).getTime();
+        if (dateDiff !== 0) return dateDiff;
+        return right.id - left.id;
+      }),
+    [activities, categoryFilter, statusFilter],
+  );
+  const activitiesPerPage = 5;
+  const totalActivityPages = Math.max(1, Math.ceil(filteredActivities.length / activitiesPerPage));
+  const safeActivityPage = Math.min(activityPage, totalActivityPages);
+  const pagedActivities = filteredActivities.slice(
+    (safeActivityPage - 1) * activitiesPerPage,
+    safeActivityPage * activitiesPerPage,
+  );
+  const statusOptions: FilterDropdownOption[] = [
+    { value: "all", label: "All statuses" },
+    { value: "approved", label: "Approved" },
+    { value: "pending", label: "Pending" },
+    { value: "rejected", label: "Rejected" },
+  ];
+  const categoryOptions: FilterDropdownOption[] = [
+    { value: "all", label: "All categories" },
+    ...activityCategories.map((category) => ({ value: category, label: category })),
+  ];
 
   return (
     <div className="p-6 space-y-6">
@@ -81,12 +181,29 @@ export const Dashboard = ({ user, activities }: { user: UserData, activities: Ac
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Activities */}
         <div className="lg:col-span-2 card">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
             <h3 className="text-xl">Recent Activities</h3>
-            <Link to="/portfolio" className="text-primary text-sm font-semibold hover:underline">View All</Link>
+            <div className="flex flex-wrap gap-3 md:justify-end">
+              <FilterDropdown
+                value={statusFilter}
+                options={statusOptions}
+                onChange={(value) => {
+                  setStatusFilter(value as "all" | "approved" | "pending" | "rejected");
+                  setActivityPage(1);
+                }}
+              />
+              <FilterDropdown
+                value={categoryFilter}
+                options={categoryOptions}
+                onChange={(value) => {
+                  setCategoryFilter(value);
+                  setActivityPage(1);
+                }}
+              />
+            </div>
           </div>
           <div className="space-y-4">
-            {activities.length > 0 ? activities.map((activity) => (
+            {pagedActivities.length > 0 ? pagedActivities.map((activity) => (
               <div key={activity.id} className="flex items-center gap-4 p-4 rounded-2xl border border-slate-50 hover:bg-slate-50 transition-colors">
                 <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-slate-600">
                   <Clock size={20} />
@@ -107,9 +224,34 @@ export const Dashboard = ({ user, activities }: { user: UserData, activities: Ac
             )) : (
               <div className="text-center py-12 text-slate-400">
                 <AlertCircle className="mx-auto mb-2" size={32} />
-                <p>No activities logged yet.</p>
+                <p>No activities match the current filters.</p>
               </div>
             )}
+          </div>
+          <div className="mt-5 flex items-center justify-between gap-3">
+            <div className="text-sm text-slate-500">
+              Page {safeActivityPage} of {totalActivityPages}
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setActivityPage((current) => Math.max(1, current - 1))}
+                disabled={safeActivityPage === 1}
+                className="inline-flex items-center gap-2 px-4 h-11 border border-slate-200 rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 transition-colors"
+              >
+                <ChevronLeft size={16} />
+                Back
+              </button>
+              <button
+                type="button"
+                onClick={() => setActivityPage((current) => Math.min(totalActivityPages, current + 1))}
+                disabled={safeActivityPage === totalActivityPages}
+                className="inline-flex items-center gap-2 px-4 h-11 border border-slate-200 rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 transition-colors"
+              >
+                Next
+                <ChevronRight size={16} />
+              </button>
+            </div>
           </div>
         </div>
 

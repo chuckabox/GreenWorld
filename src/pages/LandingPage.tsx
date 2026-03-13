@@ -31,7 +31,7 @@ export const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <Leaf className="text-primary fill-primary" size={24} />
-            <span className="font-display font-bold text-xl tracking-tight">Impact Award</span>
+            <span className="font-display font-bold text-xl tracking-tight">EcoImpact</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600">
             <a href="#levels" className="hover:text-primary transition-colors">Levels</a>
@@ -53,14 +53,14 @@ export const LandingPage = () => {
         <div className="relative z-20 max-w-4xl mx-auto px-6 text-center text-white flex flex-col items-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <span className="inline-block px-4 py-1.5 bg-primary/20 backdrop-blur-md border border-primary/30 text-primary-light rounded-full text-xs font-bold tracking-widest uppercase mb-8 shadow-sm">
-              2024 Applications Open
+              AI-Powered Eco Verification
             </span>
             <h1 className="text-5xl md:text-7xl font-display font-bold leading-tight mb-4 drop-shadow-lg">
               Lead the Change.<br />
               <span className="text-primary drop-shadow-md">Earn the Award.</span>
             </h1>
             <p className="text-lg md:text-xl text-slate-200 mb-10 max-w-2xl mx-auto font-medium drop-shadow">
-              Join a global community of students committed to a greener future. Complete impact goals and earn official recognition for your sustainability leadership.
+              Log your eco actions, get them AI-verified, and earn impact points. Track your CO₂ savings, climb the leaderboard, and unlock badges that prove your commitment.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link to={authPath} className="bg-primary hover:bg-primary-dark text-white px-8 py-4 rounded-xl font-bold shadow-lg shadow-primary/30 transition-all hover:-translate-y-1">
@@ -75,7 +75,7 @@ export const LandingPage = () => {
       <section id="levels" className="py-24 bg-slate-50 relative">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-display font-bold mb-4">Award Levels</h2>
+            <h2 className="text-4xl font-display font-bold mb-4">Badge Levels</h2>
             <div className="w-16 h-1 bg-primary mx-auto rounded-full"></div>
           </div>
 
@@ -86,18 +86,18 @@ export const LandingPage = () => {
               <div className="w-14 h-14 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center mb-6 shadow-orange-500/10 shadow-lg">
                 <Award size={28} />
               </div>
-              <h3 className="text-xl font-bold mb-3">Bronze Level</h3>
+              <h3 className="text-xl font-bold mb-3">Eco Beginner 🌱</h3>
               <p className="text-slate-500 text-sm mb-8 leading-relaxed">
-                Perfect for beginners starting their eco-journey. Focus on daily green habits and personal plastic reduction.
+                Start your green journey. Log your first eco actions — any recycling, energy saving or clean-up counts.
               </p>
               <div className="space-y-3">
                 <div className="flex items-center gap-3 text-sm font-medium">
                   <CheckCircle2 size={16} className="text-primary" />
-                  <span>25 Community Points</span>
+                  <span>0 Points to unlock</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm font-medium">
                   <CheckCircle2 size={16} className="text-primary" />
-                  <span>Habit Tracker (30 Days)</span>
+                  <span>AI-verified activity log</span>
                 </div>
               </div>
             </motion.div>
@@ -111,18 +111,18 @@ export const LandingPage = () => {
               <div className="w-14 h-14 bg-slate-100 text-slate-600 rounded-2xl flex items-center justify-center mb-6 shadow-slate-500/10 shadow-lg">
                 <Award size={28} />
               </div>
-              <h3 className="text-xl font-bold mb-3">Silver Level</h3>
+              <h3 className="text-xl font-bold mb-3">Tree Guardian 🌳</h3>
               <p className="text-slate-500 text-sm mb-8 leading-relaxed">
-                Elevate your impact through advocacy. Organize school workshops and lead community recycling drives.
+                You're making a real difference. Lead biodiversity actions, organize clean-up drives and inspire your community.
               </p>
               <div className="space-y-3">
                 <div className="flex items-center gap-3 text-sm font-medium">
                   <CheckCircle2 size={16} className="text-primary" />
-                  <span>100 Community Points</span>
+                  <span>300 Points to unlock</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm font-medium">
                   <CheckCircle2 size={16} className="text-primary" />
-                  <span>1 Community Initiative</span>
+                  <span>Community leaderboard ranking</span>
                 </div>
               </div>
             </motion.div>
@@ -133,18 +133,18 @@ export const LandingPage = () => {
               <div className="w-14 h-14 bg-yellow-50 text-yellow-600 rounded-2xl flex items-center justify-center mb-6 shadow-yellow-500/10 shadow-lg">
                 <Trophy size={28} />
               </div>
-              <h3 className="text-xl font-bold mb-3">Gold Level</h3>
+              <h3 className="text-xl font-bold mb-3">Climate Action Hero 🌍</h3>
               <p className="text-slate-500 text-sm mb-8 leading-relaxed">
-                Our highest honor for true leaders. Spearhead long-term environmental projects and policy changes.
+                Our highest tier. You've built habits, led your community, and your CO₂ savings are measurable and verified.
               </p>
               <div className="space-y-3">
                 <div className="flex items-center gap-3 text-sm font-medium">
                   <CheckCircle2 size={16} className="text-primary" />
-                  <span>500 Community Points</span>
+                  <span>800 Points to unlock</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm font-medium">
                   <CheckCircle2 size={16} className="text-primary" />
-                  <span>Measurable Policy Impact</span>
+                  <span>Portfolio showcase + AI insights</span>
                 </div>
               </div>
             </motion.div>
@@ -188,9 +188,9 @@ export const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { img: reforestationImg, title: "Verified Reforestation", desc: "For every 50 points you earn, we plant a native tree in your name with our global partners." },
-              { img: universityImg, title: "University Recognition", desc: "Our award is recognized by top universities globally as a mark of leadership and civic duty." },
-              { img: analyticsImg, title: "Impact Analytics", desc: "Get real-time data on how your individual actions translate into CO2 offset and water saved." }
+              { img: reforestationImg, title: "AI-Verified Actions", desc: "Upload a photo of your eco action. Our Gemini-powered AI checks the evidence, scores the impact, and awards points automatically." },
+              { img: universityImg, title: "Community Leaderboard", desc: "See how your suburb, team, and school rank. Every verified action moves you up and earns you recognition." },
+              { img: analyticsImg, title: "Impact Analytics", desc: "Track your total CO₂ saved, plastic reduced, and water conserved — updated every time an action is verified." }
             ].map((card, i) => (
               <motion.div whileHover={{ y: -5 }} key={i} className="group">
                 <div className="w-full aspect-[4/3] rounded-3xl overflow-hidden mb-6 shadow-md relative">
@@ -211,7 +211,7 @@ export const LandingPage = () => {
           <div className="bg-slate-900 text-white rounded-[2rem] p-12 md:p-16 text-center shadow-2xl">
             <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">Ready to make your mark?</h2>
             <p className="text-slate-300 text-lg mb-10 max-w-xl mx-auto">
-              Join over 10,000 students worldwide who are already creating a measurable impact in their communities.
+              Log real actions, earn AI-verified points, and track your community's CO₂ impact — one eco choice at a time.
             </p>
             <Link to={authPath} className="inline-block bg-primary hover:bg-primary-dark text-white text-lg px-10 py-4 rounded-xl font-bold transition-all hover:scale-105 shadow-xl shadow-primary/20">
               {ctaBtnText}
@@ -227,10 +227,10 @@ export const LandingPage = () => {
             <div className="col-span-2 lg:col-span-2">
               <div className="flex items-center gap-2 mb-6">
                 <Leaf className="text-primary fill-primary" size={24} />
-                <span className="font-display font-bold text-xl tracking-tight">Impact Award</span>
+                <span className="font-display font-bold text-xl tracking-tight">EcoImpact</span>
               </div>
               <p className="text-slate-500 text-sm leading-relaxed max-w-xs mb-8">
-                Empowering the next generation of environmental leaders through recognition and resources.
+                AI-powered sustainability tracking. Log eco actions, earn verified impact points, and build a greener community.
               </p>
             </div>
 
@@ -269,7 +269,7 @@ export const LandingPage = () => {
           </div>
 
           <div className="pt-8 border-t border-slate-100 text-center text-sm text-slate-400">
-            © 2024 Sustainability Impact Award. All rights reserved.
+            © 2026 EcoImpact. All rights reserved.
           </div>
         </div>
       </footer>

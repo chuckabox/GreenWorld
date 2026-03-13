@@ -1,64 +1,76 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle2, AlertCircle, LoaderCircle } from "lucide-react";
-import { verifyEcoImageWithGemini, EcoVerificationResult } from "../lib/geminiVerifier";
+import { CheckCircle2, LoaderCircle, Upload, X } from "lucide-react";
+import { verifyEcoImageWithGemini } from "../lib/geminiVerifier";
 
 export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onActivityLogged: () => void }) => {
   const navigate = useNavigate();
+  const defaultDate = new Date().toISOString().split('T')[0];
   const [formData, setFormData] = useState({
     category: "Waste Management",
     hours: 1,
-    date: new Date().toISOString().split('T')[0],
+    date: defaultDate,
     description: "",
     evidenceUrl: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [proofImage, setProofImage] = useState<File | null>(null);
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [verifyError, setVerifyError] = useState<string | null>(null);
-  const [verificationResult, setVerificationResult] = useState<EcoVerificationResult | null>(null);
+  const [submitStage, setSubmitStage] = useState("Saving your activity...");
+  const [submitSuccess, setSubmitSuccess] = useState<null | { status: "approved" | "pending"; points: number; note: string }>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
-
-  const handleVerify = async () => {
-    if (!proofImage) {
-      setVerifyError("Please select an image before verifying.");
-      return;
-    }
-
-    setIsVerifying(true);
-    setVerifyError(null);
-
-    try {
-      const result = await verifyEcoImageWithGemini(proofImage, formData.category, formData.description);
-      setVerificationResult(result);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Verification failed.";
-      setVerifyError(message);
-      setVerificationResult(null);
-    } finally {
-      setIsVerifying(false);
-    }
-  };
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const minDescriptionLength = 15;
+  const hasEnoughDescription = formData.description.trim().length >= minDescriptionLength;
+  const isDirty =
+    formData.category !== "Waste Management" ||
+    formData.hours !== 1 ||
+    formData.date !== defaultDate ||
+    formData.description.trim().length > 0 ||
+    formData.evidenceUrl.trim().length > 0 ||
+    proofImage !== null;
+  const canSubmit = hasEnoughDescription && !isSubmitting;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitError(null);
 
-    if (!verificationResult) {
-      setSubmitError("Run AI verification before submitting this action.");
-      return;
-    }
-
-    if (verificationResult.reviewRecommendation === "reject") {
-      setSubmitError("AI marked this evidence as non-relevant. Please upload clearer proof.");
+    if (proofImage && !hasEnoughDescription) {
+      setSubmitError(`Please describe your action in at least ${minDescriptionLength} characters when uploading a photo.`);
       return;
     }
 
     setIsSubmitting(true);
+    setSubmitStage("Saving your activity details...");
+
+    const submitSteps = [
+      "Saving your activity details...",
+      "Verifying evidence with AI...",
+      "Finalizing your result...",
+    ];
+    let submitIndex = 0;
+    const submitTimer = setInterval(() => {
+      submitIndex = (submitIndex + 1) % submitSteps.length;
+      setSubmitStage(submitSteps[submitIndex]);
+    }, 850);
+
     try {
-      const enrichedDescription = verificationResult
-        ? `${formData.description}\n\n[AI Verification]\nRelevant: ${verificationResult.isRelevant ? "yes" : "no"}\nConfidence: ${(verificationResult.confidence * 100).toFixed(0)}%\nEstimated CO2: ${verificationResult.estimatedCo2Kg} kg\nEstimated Plastic Reduced: ${verificationResult.estimatedPlasticItemsReduced} items\nEstimated Water Saved: ${verificationResult.estimatedWaterLitersSaved} L\nRecommendation: ${verificationResult.reviewRecommendation}\nSummary: ${verificationResult.summary}`
+      let aiResult: Awaited<ReturnType<typeof verifyEcoImageWithGemini>> | null = null;
+      if (proofImage) {
+        setSubmitStage("Verifying evidence with AI...");
+        aiResult = await verifyEcoImageWithGemini(proofImage, formData.category, formData.description);
+      }
+
+      const enrichedDescription = aiResult
+        ? `${formData.description}\n\n[AI Verification]\nRelevant: ${aiResult.isRelevant ? "yes" : "no"}\nConfidence: ${(aiResult.confidence * 100).toFixed(0)}%\nEstimated CO2: ${aiResult.estimatedCo2Kg} kg\nEstimated Plastic Reduced: ${aiResult.estimatedPlasticItemsReduced} items\nEstimated Water Saved: ${aiResult.estimatedWaterLitersSaved} L\nRecommendation: ${aiResult.reviewRecommendation}\nSummary: ${aiResult.summary}`
         : formData.description;
+
+      const status = aiResult
+        ? (aiResult.reviewRecommendation === "approve" ? "approved" : "pending")
+        : "pending";
+
+      const earnedPoints = aiResult && aiResult.reviewRecommendation === "approve"
+        ? Math.max(25, Math.round(aiResult.estimatedCo2Kg * 40))
+        : 0;
 
       const localActivity = {
         id: Date.now(),
@@ -68,31 +80,50 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
         date: formData.date,
         description: enrichedDescription,
         evidenceUrl: formData.evidenceUrl,
-        aiConfidence: verificationResult.confidence,
-        aiRecommendation: verificationResult.reviewRecommendation,
-        estimatedCo2Kg: verificationResult.estimatedCo2Kg,
-        estimatedPlasticItemsReduced: verificationResult.estimatedPlasticItemsReduced,
-        estimatedWaterLitersSaved: verificationResult.estimatedWaterLitersSaved,
-        status: verificationResult.reviewRecommendation === "approve" ? "approved" : "pending" as const,
+        aiConfidence: aiResult?.confidence,
+        aiRecommendation: aiResult?.reviewRecommendation,
+        estimatedCo2Kg: aiResult?.estimatedCo2Kg,
+        estimatedPlasticItemsReduced: aiResult?.estimatedPlasticItemsReduced,
+        estimatedWaterLitersSaved: aiResult?.estimatedWaterLitersSaved,
+        status,
       };
 
       const currentActivities = JSON.parse(localStorage.getItem("activities") || "[]");
       localStorage.setItem("activities", JSON.stringify([...currentActivities, localActivity]));
 
-      // Best-effort API write for the admin queue and persistence.
-      await fetch("/api/activities", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, description: enrichedDescription, userId }),
-      });
-
       onActivityLogged();
-      navigate("/dashboard");
+      clearInterval(submitTimer);
+      setSubmitSuccess({
+        status,
+        points: earnedPoints,
+        note: !proofImage
+          ? "No photo was uploaded. This log is queued for manual review."
+          : status === "approved"
+            ? "AI verification completed successfully."
+            : "Evidence submitted. This log is queued for manual review.",
+      });
     } catch (err) {
       console.error(err);
       setSubmitError("Unable to submit at the moment. Please try again.");
+      clearInterval(submitTimer);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const resetForAnotherLog = () => {
+    setFormData({
+      category: "Waste Management",
+      hours: 1,
+      date: defaultDate,
+      description: "",
+      evidenceUrl: "",
+    });
+    setProofImage(null);
+    setSubmitError(null);
+    setSubmitSuccess(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
@@ -103,7 +134,40 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
         <p className="text-slate-500">Snap, verify, and submit your sustainability action for points.</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="card space-y-6">
+      {submitSuccess ? (
+        <div className="card space-y-6">
+          <div className={`rounded-xl p-4 border ${submitSuccess.status === "approved" ? "border-emerald-200 bg-emerald-50 text-emerald-900" : "border-amber-200 bg-amber-50 text-amber-900"}`}>
+            <div className="flex items-center gap-2 font-bold text-lg">
+              <CheckCircle2 size={20} />
+              {submitSuccess.status === "approved" ? "Activity approved" : "Activity submitted for review"}
+            </div>
+            <p className="mt-2 text-sm">
+              {submitSuccess.status === "approved"
+                ? `Great work. Your activity has been logged successfully and ${submitSuccess.points} Green Points were added.`
+                : "Your activity is now in review. You can keep logging more actions while this one is pending."}
+            </p>
+            <p className="mt-1 text-xs opacity-80">{submitSuccess.note}</p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={resetForAnotherLog}
+              className="btn-primary flex-1 h-14 flex items-center justify-center"
+            >
+              Add Another Log
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/dashboard")}
+              className="flex-1 h-14 flex items-center justify-center border-2 border-slate-100 rounded-xl font-bold hover:bg-slate-50 transition-colors"
+            >
+              Go to Dashboard
+            </button>
+          </div>
+        </div>
+      ) : (
+      <form onSubmit={handleSubmit} className="card space-y-5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <label className="text-sm font-bold text-slate-700">Category</label>
@@ -151,10 +215,13 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           />
+          <p className={`text-xs ${hasEnoughDescription ? "text-emerald-600" : "text-slate-500"}`}>
+            {formData.description.trim().length}/{minDescriptionLength} minimum characters
+          </p>
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-bold text-slate-700">Evidence (Optional URL)</label>
+          <label className="text-sm font-bold text-slate-700">Evidence (Optional)</label>
           <input
             type="url"
             placeholder="Link to photos, reports, or social posts"
@@ -162,94 +229,85 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
             value={formData.evidenceUrl}
             onChange={(e) => setFormData({ ...formData, evidenceUrl: e.target.value })}
           />
-        </div>
-
-        <div className="space-y-3 border border-slate-200 bg-slate-50 rounded-xl p-4">
-          <div>
-            <label className="text-sm font-bold text-slate-700">AI Image Verification (Recommended)</label>
-            <p className="text-xs text-slate-500 mt-1">Upload a photo proof and verify before submitting.</p>
-          </div>
+          <p className="text-xs text-slate-500">Or upload a photo by browsing. AI verification will run automatically after you submit.</p>
 
           <input
+            ref={fileInputRef}
             type="file"
             accept="image/*"
-            className="w-full p-3 bg-white border border-slate-200 rounded-xl outline-none"
+            className="hidden"
             onChange={(e) => {
               const file = e.target.files?.[0] ?? null;
               setProofImage(file);
-              setVerificationResult(null);
-              setVerifyError(null);
             }}
           />
 
           <button
             type="button"
-            onClick={handleVerify}
-            disabled={isVerifying || !proofImage}
-            className="px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold disabled:opacity-50"
+            onClick={() => fileInputRef.current?.click()}
+            className={`w-full text-left p-3 rounded-xl border transition-all ${proofImage ? "bg-emerald-50 border-emerald-200 text-emerald-900" : "bg-white border-slate-200 hover:border-primary/30 hover:bg-primary-light/40"}`}
           >
-            {isVerifying ? "Verifying..." : "Snap-to-Verify with AI Supervisor"}
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 min-w-0">
+                <Upload size={16} />
+                <div className="truncate">
+                  <p className="text-sm font-semibold truncate">{proofImage ? proofImage.name : "Choose evidence image"}</p>
+                  <p className="text-xs opacity-80">{proofImage ? `${(proofImage.size / 1024).toFixed(0)} KB selected` : "PNG, JPG or HEIC supported"}</p>
+                </div>
+              </div>
+              {proofImage ? (
+                <span className="text-xs font-semibold px-2 py-1 rounded bg-emerald-100 text-emerald-800">Selected</span>
+              ) : (
+                <span className="text-xs font-semibold px-2 py-1 rounded bg-slate-100 text-slate-600">Browse</span>
+              )}
+            </div>
           </button>
 
-          {isVerifying && (
-            <div className="flex items-center gap-2 text-sm text-slate-600">
-              <LoaderCircle size={16} className="animate-spin" />
-              AI is reviewing your evidence...
-            </div>
+          {proofImage && (
+            <button
+              type="button"
+              onClick={() => {
+                setProofImage(null);
+                if (fileInputRef.current) fileInputRef.current.value = "";
+              }}
+              className="inline-flex items-center gap-1 text-xs text-red-600 hover:text-red-700"
+            >
+              <X size={14} />
+              Remove selected image
+            </button>
           )}
 
-          {verifyError && (
-            <div className="flex items-center gap-2 text-sm text-red-600">
-              <AlertCircle size={16} />
-              {verifyError}
-            </div>
-          )}
-
-          {verificationResult && (
-            <div className={`rounded-xl p-3 text-sm ${verificationResult.isRelevant ? "bg-green-50 text-green-800 border border-green-200" : "bg-amber-50 text-amber-900 border border-amber-200"}`}>
-              <div className="flex items-center gap-2 font-semibold mb-2">
-                {verificationResult.isRelevant ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
-                {verificationResult.isRelevant ? "Evidence looks relevant" : "Evidence needs manual review"}
-              </div>
-              <p className="mb-2">{verificationResult.summary}</p>
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div>Mode: {verificationResult.verificationMode}</div>
-                <div>Confidence: {(verificationResult.confidence * 100).toFixed(0)}%</div>
-                <div>Category: {verificationResult.actionCategory}</div>
-                <div>CO₂ saved: {verificationResult.estimatedCo2Kg} kg</div>
-                <div>Plastic reduced: {verificationResult.estimatedPlasticItemsReduced}</div>
-                <div>Water saved: {verificationResult.estimatedWaterLitersSaved} L</div>
-                <div>Recommendation: {verificationResult.reviewRecommendation}</div>
-              </div>
-            </div>
-          )}
-
-          {verificationResult?.reviewRecommendation === "approve" && (
-            <div className="rounded-xl p-3 text-sm border border-emerald-200 bg-emerald-50 text-emerald-800">
-              Verified action. Estimated reward: <span className="font-bold">+{Math.max(25, Math.round(verificationResult.estimatedCo2Kg * 40))} Green Points</span>
-            </div>
-          )}
         </div>
 
         {submitError && <p className="text-sm text-red-600 font-semibold">{submitError}</p>}
 
-        <div className="pt-4 flex items-center gap-4">
+        {isSubmitting && (
+          <div className="flex items-center gap-2 text-sm text-slate-600">
+            <LoaderCircle size={16} className="animate-spin" />
+            {submitStage}
+          </div>
+        )}
+
+        <div className="pt-0 flex items-center gap-3">
           <button
             type="submit"
-            disabled={isSubmitting}
-            className="btn-primary flex-1 py-4 disabled:opacity-50"
+            disabled={!canSubmit}
+            className={`${isDirty ? "flex-[2]" : "flex-1"} btn-primary h-14 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed`}
           >
-            {isSubmitting ? "Logging..." : "Submit for Review"}
+            {isSubmitting ? "Submitting..." : "Submit Activity"}
           </button>
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="px-8 py-4 border-2 border-slate-100 rounded-xl font-bold hover:bg-slate-50 transition-colors"
-          >
-            Cancel
-          </button>
+          {isDirty ? (
+            <button
+              type="button"
+              onClick={resetForAnotherLog}
+              className="flex-1 h-14 flex items-center justify-center border-2 border-red-100 text-red-600 rounded-xl font-bold text-center hover:bg-red-50 hover:text-red-700 transition-colors"
+            >
+              Reset
+            </button>
+          ) : null}
         </div>
       </form>
+      )}
     </div>
   );
 };

@@ -8,9 +8,29 @@ export const Portfolio = ({ user }: { user: UserData }) => {
   const [projects, setProjects] = useState<any[]>([]);
   const unlockedBadges = getUnlockedBadges(user.impact_points);
   const nextBadge = getNextBadge(user.impact_points);
+  const latestUnlockedBadge = unlockedBadges[unlockedBadges.length - 1];
+
+  const getLocalProjects = () => {
+    const storedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
+    const forUser = storedProjects.filter((project: any) => project.user_id === user.id);
+    if (forUser.length > 0) return forUser;
+
+    const seeded = [
+      {
+        id: Date.now(),
+        user_id: user.id,
+        title: `${user.suburb || "Community"} Clean-Up Drive`,
+        description: `Coordinated a local volunteer effort with ${user.team || "community members"} to reduce street litter and improve recycling awareness.`,
+        status: "In Progress",
+      },
+    ];
+
+    localStorage.setItem("projects", JSON.stringify([...storedProjects, ...seeded]));
+    return seeded;
+  };
 
   useEffect(() => {
-    fetch(`/api/projects/${user.id}`).then(res => res.json()).then(data => setProjects(data));
+    setProjects(getLocalProjects());
   }, [user.id]);
 
   return (
@@ -26,8 +46,14 @@ export const Portfolio = ({ user }: { user: UserData }) => {
             {getLevelLabel(user.impact_points)} • {user.suburb || "Brisbane"} • {user.team || "Community Team"}
           </p>
           <div className="flex flex-wrap justify-center md:justify-start gap-3">
-            <span className="px-4 py-1.5 bg-primary-light text-primary rounded-full text-sm font-bold">Silver Award Candidate</span>
-            <span className="px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-sm font-bold">Eco-Ambassador</span>
+            <span className="px-4 py-1.5 bg-primary-light text-primary rounded-full text-sm font-bold">
+              {latestUnlockedBadge ? `${latestUnlockedBadge.name} Unlocked` : "Eco Beginner Unlocked"}
+            </span>
+            <span className="px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-sm font-bold">
+              {nextBadge
+                ? `Next: ${nextBadge.name} (${Math.max(0, nextBadge.minPoints - user.impact_points)} pts left)`
+                : "All Milestone Badges Completed"}
+            </span>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4 w-full md:w-auto">
