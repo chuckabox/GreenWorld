@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { CheckCircle2, AlertCircle, LoaderCircle } from "lucide-react";
+import { verifyEcoImageWithGemini, EcoVerificationResult } from "../lib/geminiVerifier";
 
 export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onActivityLogged: () => void }) => {
   const navigate = useNavigate();
@@ -11,15 +13,44 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
     evidenceUrl: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [proofImage, setProofImage] = useState<File | null>(null);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [verifyError, setVerifyError] = useState<string | null>(null);
+  const [verificationResult, setVerificationResult] = useState<EcoVerificationResult | null>(null);
+
+  const handleVerify = async () => {
+    if (!proofImage) {
+      setVerifyError("Please select an image before verifying.");
+      return;
+    }
+
+    setIsVerifying(true);
+    setVerifyError(null);
+
+    try {
+      const result = await verifyEcoImageWithGemini(proofImage, formData.category, formData.description);
+      setVerificationResult(result);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Verification failed.";
+      setVerifyError(message);
+      setVerificationResult(null);
+    } finally {
+      setIsVerifying(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
+      const enrichedDescription = verificationResult
+        ? `${formData.description}\n\n[AI Verification]\nRelevant: ${verificationResult.isRelevant ? "yes" : "no"}\nConfidence: ${(verificationResult.confidence * 100).toFixed(0)}%\nEstimated CO2: ${verificationResult.estimatedCo2Kg} kg\nEstimated Plastic Reduced: ${verificationResult.estimatedPlasticItemsReduced} items\nEstimated Water Saved: ${verificationResult.estimatedWaterLitersSaved} L\nRecommendation: ${verificationResult.reviewRecommendation}\nSummary: ${verificationResult.summary}`
+        : formData.description;
+
       const res = await fetch("/api/activities", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, userId })
+        body: JSON.stringify({ ...formData, description: enrichedDescription, userId })
       });
       if (res.ok) {
         onActivityLogged();
@@ -98,6 +129,67 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
             value={formData.evidenceUrl}
             onChange={(e) => setFormData({ ...formData, evidenceUrl: e.target.value })}
           />
+        </div>
+
+        <div className="space-y-3 border border-slate-200 bg-slate-50 rounded-xl p-4">
+          <div>
+            <label className="text-sm font-bold text-slate-700">AI Image Verification (Recommended)</label>
+            <p className="text-xs text-slate-500 mt-1">Upload a photo proof and verify before submitting.</p>
+          </div>
+
+          <input
+            type="file"
+            accept="image/*"
+            className="w-full p-3 bg-white border border-slate-200 rounded-xl outline-none"
+            onChange={(e) => {
+              const file = e.target.files?.[0] ?? null;
+              setProofImage(file);
+              setVerificationResult(null);
+              setVerifyError(null);
+            }}
+          />
+
+          <button
+            type="button"
+            onClick={handleVerify}
+            disabled={isVerifying || !proofImage}
+            className="px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold disabled:opacity-50"
+          >
+            {isVerifying ? "Verifying..." : "Verify Image with AI"}
+          </button>
+
+          {isVerifying && (
+            <div className="flex items-center gap-2 text-sm text-slate-600">
+              <LoaderCircle size={16} className="animate-spin" />
+              AI is reviewing your evidence...
+            </div>
+          )}
+
+          {verifyError && (
+            <div className="flex items-center gap-2 text-sm text-red-600">
+              <AlertCircle size={16} />
+              {verifyError}
+            </div>
+          )}
+
+          {verificationResult && (
+            <div className={`rounded-xl p-3 text-sm ${verificationResult.isRelevant ? "bg-green-50 text-green-800 border border-green-200" : "bg-amber-50 text-amber-900 border border-amber-200"}`}>
+              <div className="flex items-center gap-2 font-semibold mb-2">
+                {verificationResult.isRelevant ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
+                {verificationResult.isRelevant ? "Evidence looks relevant" : "Evidence needs manual review"}
+              </div>
+              <p className="mb-2">{verificationResult.summary}</p>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div>Mode: {verificationResult.verificationMode}</div>
+                <div>Confidence: {(verificationResult.confidence * 100).toFixed(0)}%</div>
+                <div>Category: {verificationResult.actionCategory}</div>
+                <div>CO₂ saved: {verificationResult.estimatedCo2Kg} kg</div>
+                <div>Plastic reduced: {verificationResult.estimatedPlasticItemsReduced}</div>
+                <div>Water saved: {verificationResult.estimatedWaterLitersSaved} L</div>
+                <div>Recommendation: {verificationResult.reviewRecommendation}</div>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="pt-4 flex items-center gap-4">
