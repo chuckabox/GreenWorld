@@ -59,12 +59,12 @@ export const LoginPage = ({ onLogin }: { onLogin?: (email: string) => void }) =>
 
       {/* Header */}
       <header className="px-8 py-6 flex items-center justify-between relative z-10">
-        <div className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
           <div className="w-8 h-8 bg-[#00c914] rounded flex items-center justify-center text-white">
             <Leaf size={18} />
           </div>
           <span className="font-display font-bold text-lg text-slate-900 tracking-tight">Sustainability Impact Award</span>
-        </div>
+        </Link>
         <div className="hidden md:flex gap-6 text-sm font-medium text-slate-600">
           <a href="#" className="hover:text-slate-900 transition-colors">Program Info</a>
           <a href="#" className="hover:text-slate-900 transition-colors">Resources</a>

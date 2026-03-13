@@ -1,10 +1,12 @@
-import React from "react";
 import { Search, Bell } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const Header = ({ title }: { title: string }) => {
   return (
     <header className="h-16 bg-white/80 backdrop-blur-md border-bottom border-slate-200 sticky top-0 z-10 px-6 flex items-center justify-between">
-      <h1 className="text-xl font-display font-bold">{title}</h1>
+      <Link to="/" className="hover:opacity-70 transition-opacity">
+        <h1 className="text-xl font-display font-bold">{title}</h1>
+      </Link>
       <div className="flex items-center gap-4">
         <div className="relative hidden sm:block">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
