@@ -91,6 +91,20 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
       const currentActivities = JSON.parse(localStorage.getItem("activities") || "[]");
       localStorage.setItem("activities", JSON.stringify([...currentActivities, localActivity]));
 
+      if (status === "approved" && earnedPoints > 0) {
+        const users = JSON.parse(localStorage.getItem("users") || "[]");
+        const updated = users.map((u: { id: number; impact_points?: number; award_progress?: number }) =>
+          u.id === userId
+            ? {
+                ...u,
+                impact_points: (u.impact_points || 0) + earnedPoints,
+                award_progress: Math.min(100, Math.round(((u.impact_points || 0) + earnedPoints) / 10)),
+              }
+            : u
+        );
+        localStorage.setItem("users", JSON.stringify(updated));
+      }
+
       onActivityLogged();
       clearInterval(submitTimer);
       setSubmitSuccess({

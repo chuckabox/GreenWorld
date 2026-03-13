@@ -36,7 +36,7 @@ export const Leaderboard = () => {
 
     const approvedActivities = activities.filter((activity) => activity.status === "approved");
     const categoryCount = approvedActivities.reduce<Record<string, number>>((acc, activity) => {
-      const key = activity.activity_type || "Other";
+      const key = activity.category || "Other";
       acc[key] = (acc[key] || 0) + 1;
       return acc;
     }, {});
@@ -58,7 +58,7 @@ export const Leaderboard = () => {
       topCategory: topCategoryEntry?.[0] ?? "No actions yet",
       topCategoryCount: topCategoryEntry?.[1] ?? 0,
       recentAction: recentApproved
-        ? `${recentApproved.activity_type} (${Math.round((recentApproved.estimatedCo2Kg || 0) * 100) / 100} kg CO2)`
+        ? `${recentApproved.category} (${Math.round((recentApproved.estimatedCo2Kg || 0) * 100) / 100} kg CO2)`
         : "No verified actions yet",
       topTeam: topTeamEntry?.[0] ?? "No team data",
     });
