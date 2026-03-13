@@ -36,7 +36,6 @@ export const LandingPage = () => {
           <div className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600">
             <a href="#levels" className="hover:text-primary transition-colors">Levels</a>
             <a href="#how-it-works" className="hover:text-primary transition-colors">How it Works</a>
-            <a href="#winners" className="hover:text-primary transition-colors">Winners</a>
             <a href="#faq" className="hover:text-primary transition-colors">FAQ</a>
           </div>
           <Link to={authPath} className="btn-primary text-sm shadow-md shadow-primary/20">{authText}</Link>
@@ -67,9 +66,6 @@ export const LandingPage = () => {
               <Link to={authPath} className="bg-primary hover:bg-primary-dark text-white px-8 py-4 rounded-xl font-bold shadow-lg shadow-primary/30 transition-all hover:-translate-y-1">
                 {heroBtnText}
               </Link>
-              <button className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-xl font-bold text-white transition-all hover:-translate-y-1">
-                View Past Winners
-              </button>
             </div>
           </motion.div>
         </div>
