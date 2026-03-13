@@ -8,6 +8,33 @@ import {
   AwarenessContentResult,
 } from "../lib/aiSupervisor";
 
+const CLAIMS_STORAGE_KEY = "ai_claimed_rewards";
+
+const buildQuestionnaireClaimKey = (userEmail: string, result: QuestionnaireResult) =>
+  `q:${userEmail}:${result.mode}:${result.score}:${result.tier}:${result.recommendations.join("|")}`;
+
+const buildContentClaimKey = (userEmail: string, result: AwarenessContentResult) =>
+  `c:${userEmail}:${result.mode}:${result.title}:${result.caption}:${result.hashtags.join("|")}`;
+
+const getClaimedRewardKeys = () => {
+  const raw = localStorage.getItem(CLAIMS_STORAGE_KEY);
+  if (!raw) return [] as string[];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.map(String) : [];
+  } catch {
+    return [];
+  }
+};
+
+const markClaimedRewardKey = (claimKey: string) => {
+  const keys = new Set(getClaimedRewardKeys());
+  keys.add(claimKey);
+  localStorage.setItem(CLAIMS_STORAGE_KEY, JSON.stringify(Array.from(keys)));
+};
+
+const isRewardClaimed = (claimKey: string) => getClaimedRewardKeys().includes(claimKey);
+
 const questions: Array<{ key: keyof QuestionnaireInput; label: string }> = [
   { key: "transport", label: "How sustainable is your weekly transport?" },
   { key: "homeEnergy", label: "How efficient is your home/campus energy use?" },
@@ -30,6 +57,8 @@ export const AISupervisor = ({ userEmail, onPointsAdded }: { userEmail: string; 
   const [audience, setAudience] = useState("University students");
   const [isLoadingQ, setIsLoadingQ] = useState(false);
   const [isLoadingC, setIsLoadingC] = useState(false);
+  const [errorQ, setErrorQ] = useState<string | null>(null);
+  const [errorC, setErrorC] = useState<string | null>(null);
 
   const awardPoints = (points: number) => {
     const users = JSON.parse(localStorage.getItem("users") || "[]");
@@ -48,9 +77,14 @@ export const AISupervisor = ({ userEmail, onPointsAdded }: { userEmail: string; 
 
   const submitQuestionnaire = async () => {
     setIsLoadingQ(true);
+    setErrorQ(null);
     try {
       const result = await runAiQuestionnaire(answers);
       setQuestionnaireResult(result);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "AI questionnaire failed.";
+      setErrorQ(`${message} Check your Gemini key and AI env flags.`);
+      setQuestionnaireResult(null);
     } finally {
       setIsLoadingQ(false);
     }
@@ -58,13 +92,28 @@ export const AISupervisor = ({ userEmail, onPointsAdded }: { userEmail: string; 
 
   const createContent = async () => {
     setIsLoadingC(true);
+    setErrorC(null);
     try {
       const result = await generateAwarenessContent(topic, audience);
       setContentResult(result);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "AI content generation failed.";
+      setErrorC(`${message} Check your Gemini key and AI env flags.`);
+      setContentResult(null);
     } finally {
       setIsLoadingC(false);
     }
   };
+
+  const questionnaireClaimKey = questionnaireResult
+    ? buildQuestionnaireClaimKey(userEmail, questionnaireResult)
+    : null;
+  const contentClaimKey = contentResult
+    ? buildContentClaimKey(userEmail, contentResult)
+    : null;
+
+  const questionnaireAlreadyClaimed = questionnaireClaimKey ? isRewardClaimed(questionnaireClaimKey) : false;
+  const contentAlreadyClaimed = contentClaimKey ? isRewardClaimed(contentClaimKey) : false;
 
   return (
     <div className="p-6 space-y-6">
@@ -99,6 +148,8 @@ export const AISupervisor = ({ userEmail, onPointsAdded }: { userEmail: string; 
             {isLoadingQ ? "Analyzing..." : "Analyze with AI"}
           </button>
 
+          {errorQ && <p className="text-sm text-red-600 font-medium">{errorQ}</p>}
+
           {questionnaireResult && (
             <div className="rounded-xl border border-slate-200 p-4 bg-slate-50 space-y-2">
               <p className="font-bold">Score: {questionnaireResult.score} / 100</p>
@@ -107,10 +158,17 @@ export const AISupervisor = ({ userEmail, onPointsAdded }: { userEmail: string; 
                 {questionnaireResult.recommendations.map((r, i) => <li key={i}>{r}</li>)}
               </ul>
               <button
-                onClick={() => awardPoints(questionnaireResult.bonusPoints)}
-                className="mt-2 px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-semibold"
+                onClick={() => {
+                  if (!questionnaireClaimKey || questionnaireAlreadyClaimed) return;
+                  awardPoints(questionnaireResult.bonusPoints);
+                  markClaimedRewardKey(questionnaireClaimKey);
+                }}
+                disabled={questionnaireAlreadyClaimed}
+                className="mt-2 px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-semibold disabled:opacity-50"
               >
-                Claim +{questionnaireResult.bonusPoints} GreenPass Points
+                {questionnaireAlreadyClaimed
+                  ? "Already Claimed"
+                  : `Claim +${questionnaireResult.bonusPoints} EcoImpact Points`}
               </button>
             </div>
           )}
@@ -144,6 +202,8 @@ export const AISupervisor = ({ userEmail, onPointsAdded }: { userEmail: string; 
             {isLoadingC ? "Generating..." : "Generate AI Content"}
           </button>
 
+          {errorC && <p className="text-sm text-red-600 font-medium">{errorC}</p>}
+
           {contentResult && (
             <div className="rounded-xl border border-slate-200 p-4 bg-slate-50 space-y-2">
               <div className="flex items-center gap-2 text-emerald-700 text-sm font-semibold">
@@ -155,10 +215,17 @@ export const AISupervisor = ({ userEmail, onPointsAdded }: { userEmail: string; 
               <p className="text-sm text-slate-700">Caption: {contentResult.caption}</p>
               <p className="text-xs text-slate-500">{contentResult.hashtags.join(" ")}</p>
               <button
-                onClick={() => awardPoints(contentResult.bonusPoints)}
-                className="mt-2 px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-semibold"
+                onClick={() => {
+                  if (!contentClaimKey || contentAlreadyClaimed) return;
+                  awardPoints(contentResult.bonusPoints);
+                  markClaimedRewardKey(contentClaimKey);
+                }}
+                disabled={contentAlreadyClaimed}
+                className="mt-2 px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-semibold disabled:opacity-50"
               >
-                Claim +{contentResult.bonusPoints} GreenPass Points
+                {contentAlreadyClaimed
+                  ? "Already Claimed"
+                  : `Claim +${contentResult.bonusPoints} EcoImpact Points`}
               </button>
             </div>
           )}

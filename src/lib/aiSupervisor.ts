@@ -62,15 +62,15 @@ const getDemoAwarenessContent = (topic: string, audience: string): AwarenessCont
     `Hook (0-5s): "Small actions, big impact."
 Proof (5-15s): show one real action related to ${topic.toLowerCase()}.
 Call to Action (15-25s): invite ${audience.toLowerCase()} to copy the action today.
-Close (25-30s): "Log it in GreenPass and earn points."`,
-  caption: `Today I took one step for the planet through ${topic.toLowerCase()}. Join me and log your impact in GreenPass.`,
-  hashtags: ["#GreenPass", "#ClimateAction", "#Sustainability", "#EcoChallenge"],
+Close (25-30s): "Log it in EcoImpact and earn points."`,
+  caption: `Today I took one step for the planet through ${topic.toLowerCase()}. Join me and log your impact in EcoImpact.`,
+  hashtags: ["#EcoImpact", "#ClimateAction", "#Sustainability", "#EcoChallenge"],
   bonusPoints: 40,
   mode: "demo",
 });
 
 export const runAiQuestionnaire = async (input: QuestionnaireInput): Promise<QuestionnaireResult> => {
-  const aiDemoMode = parseBoolean(import.meta.env.VITE_AI_DEMO_MODE, true);
+  const aiDemoMode = parseBoolean(import.meta.env.VITE_AI_DEMO_MODE, false);
   if (aiDemoMode) return getDemoQuestionnaireResult(input);
 
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
@@ -102,7 +102,7 @@ Rules: score 0-100, exactly 3 recommendations, realistic and concise, no markdow
       mode: "live",
     };
   } catch {
-    const fallback = parseBoolean(import.meta.env.VITE_AI_FALLBACK_TO_DEMO, true);
+    const fallback = parseBoolean(import.meta.env.VITE_AI_FALLBACK_TO_DEMO, false);
     if (fallback) return getDemoQuestionnaireResult(input);
     throw new Error("AI questionnaire failed.");
   }
@@ -112,7 +112,7 @@ export const generateAwarenessContent = async (
   topic: string,
   audience: string,
 ): Promise<AwarenessContentResult> => {
-  const aiDemoMode = parseBoolean(import.meta.env.VITE_AI_DEMO_MODE, true);
+  const aiDemoMode = parseBoolean(import.meta.env.VITE_AI_DEMO_MODE, false);
   if (aiDemoMode) return getDemoAwarenessContent(topic, audience);
 
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
@@ -140,12 +140,12 @@ Rules: shortScript under 90 words, caption under 35 words, hashtags 3-6 items, n
       title: String(parsed.title ?? "Eco Action Spotlight"),
       shortScript: String(parsed.shortScript ?? "Show one practical eco action and invite others to participate."),
       caption: String(parsed.caption ?? "Join me in taking one climate-positive action today."),
-      hashtags: Array.isArray(parsed.hashtags) ? parsed.hashtags.map(String).slice(0, 6) : ["#GreenPass", "#Sustainability"],
+      hashtags: Array.isArray(parsed.hashtags) ? parsed.hashtags.map(String).slice(0, 6) : ["#EcoImpact", "#Sustainability"],
       bonusPoints: Number(parsed.bonusPoints ?? 40),
       mode: "live",
     };
   } catch {
-    const fallback = parseBoolean(import.meta.env.VITE_AI_FALLBACK_TO_DEMO, true);
+    const fallback = parseBoolean(import.meta.env.VITE_AI_FALLBACK_TO_DEMO, false);
     if (fallback) return getDemoAwarenessContent(topic, audience);
     throw new Error("AI content generation failed.");
   }

@@ -2,15 +2,51 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Leaf, Eye, EyeOff, ArrowRight } from 'lucide-react';
 
-export const SignUpPage = ({ onSignUp }: { onSignUp?: (email: string, name?: string) => void }) => {
+interface SignUpPayload {
+  email: string;
+  name: string;
+  password: string;
+  role: string;
+  suburb: string;
+  team: string;
+}
+
+export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) => void }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [role, setRole] = useState('student');
+  const [suburb, setSuburb] = useState('');
+  const [team, setTeam] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleSignUp = (e: React.FormEvent) => {
     e.preventDefault();
-    if (onSignUp) onSignUp(email, name);
+    setError('');
+
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
+    if (onSignUp) {
+      onSignUp({
+        email,
+        name,
+        password,
+        role,
+        suburb,
+        team,
+      });
+    }
     navigate('/dashboard');
   };
 
@@ -63,12 +99,52 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (email: string, name?: str
               />
             </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-slate-800 block">Role</label>
+                <select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900"
+                >
+                  <option value="student">Student</option>
+                  <option value="teacher">Teacher</option>
+                  <option value="community">Community Member</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-slate-800 block">Suburb</label>
+                <input
+                  type="text"
+                  required
+                  value={suburb}
+                  onChange={(e) => setSuburb(e.target.value)}
+                  placeholder="South Brisbane"
+                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900 placeholder:text-slate-400"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-slate-800 block">Team or Organization</label>
+              <input
+                type="text"
+                value={team}
+                onChange={(e) => setTeam(e.target.value)}
+                placeholder="UQ Sustainability Club"
+                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900 placeholder:text-slate-400"
+              />
+            </div>
+
             <div className="space-y-2 relative">
               <label className="text-sm font-bold text-slate-800 block">Password</label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
                   required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   className="w-full pl-4 pr-11 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900 font-medium tracking-widest placeholder:tracking-normal placeholder:text-slate-400"
                 />
@@ -84,6 +160,20 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (email: string, name?: str
                 Must be at least 8 characters with one number.
               </p>
             </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-slate-800 block">Confirm Password</label>
+              <input
+                type={showPassword ? "text" : "password"}
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900 font-medium tracking-widest placeholder:tracking-normal placeholder:text-slate-400"
+              />
+            </div>
+
+            {error && <p className="text-sm text-red-600 font-medium">{error}</p>}
 
             <div className="flex items-start gap-3 pt-2 pb-4">
               <div className="pt-0.5">

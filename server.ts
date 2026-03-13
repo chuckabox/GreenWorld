@@ -3,6 +3,7 @@ import { createServer as createViteServer } from "vite";
 import path from "path";
 import Database from "better-sqlite3";
 import cors from "cors";
+import type { Server } from "http";
 
 const db = new Database("database.sqlite");
 
@@ -174,10 +175,27 @@ async function startServer() {
     });
   }
 
-  const PORT = 3000;
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
+  const preferredPort = Number(process.env.PORT || 3000);
+
+  const startListening = (port: number): Server => {
+    const server = app.listen(port, "0.0.0.0", () => {
+      console.log(`Server running on http://localhost:${port}`);
+    });
+
+    server.on("error", (error: NodeJS.ErrnoException) => {
+      if (error.code === "EADDRINUSE") {
+        const nextPort = port + 1;
+        console.warn(`Port ${port} is busy, retrying on ${nextPort}...`);
+        startListening(nextPort);
+        return;
+      }
+      throw error;
+    });
+
+    return server;
+  };
+
+  startListening(preferredPort);
 }
 
 startServer();

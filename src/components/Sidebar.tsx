@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { 
   LayoutDashboard, 
   PlusCircle, 
@@ -15,6 +15,7 @@ import { UserData } from "../types";
 
 export const Sidebar = ({ user }: { user: UserData }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const navItems = [
     { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
     { name: "Log Activity", path: "/log", icon: PlusCircle },
@@ -67,7 +68,13 @@ export const Sidebar = ({ user }: { user: UserData }) => {
             <p className="text-sm font-semibold truncate">{user.name}</p>
             <p className="text-xs text-slate-500 truncate capitalize">{user.role}</p>
           </div>
-          <button className="text-slate-400 hover:text-red-500 transition-colors">
+          <button
+            className="text-slate-400 hover:text-red-500 transition-colors"
+            onClick={() => {
+              localStorage.removeItem("userEmail");
+              navigate("/login");
+            }}
+          >
             <LogOut size={18} />
           </button>
         </div>
