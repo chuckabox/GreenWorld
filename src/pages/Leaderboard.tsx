@@ -68,19 +68,21 @@ export const Leaderboard = () => {
     <div className="p-6 space-y-6">
       <div className="mb-8">
         <h2 className="text-3xl">Community Leaderboard</h2>
-        <p className="text-slate-500">Celebrating the top sustainability champions.</p>
+        <p className="text-slate-500">Live ranking from verified local demo activity data.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 card">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl">Top Individuals</h3>
-            <div className="flex gap-2">
-              <button className="px-3 py-1 bg-primary-light text-primary rounded-lg text-xs font-bold">Weekly</button>
-              <button className="px-3 py-1 text-slate-400 rounded-lg text-xs font-bold hover:bg-slate-50">All Time</button>
-            </div>
+            <h3 className="text-xl">Top Contributors</h3>
+            <span className="px-3 py-1 bg-primary-light text-primary rounded-lg text-xs font-bold">Live Local Data</span>
           </div>
           <div className="space-y-2">
+            {leaders.length === 0 ? (
+              <div className="p-4 rounded-2xl bg-slate-50 text-sm text-slate-500">
+                No contributors yet. Log and verify an activity to appear on the leaderboard.
+              </div>
+            ) : null}
             {leaders.map((leader, i) => (
               <div key={i} className="flex items-center gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-colors">
                 <span className={cn(
@@ -110,7 +112,7 @@ export const Leaderboard = () => {
             <h3 className="text-xl mb-4">Community Impact</h3>
             <div className="space-y-4">
               <div>
-                <p className="text-sm opacity-80">Total CO₂ Saved</p>
+                <p className="text-sm opacity-80">Total Estimated CO2 Saved</p>
                 <p className="text-3xl font-bold">{communityStats.co2Kg} kg</p>
               </div>
               <div>
@@ -124,14 +126,14 @@ export const Leaderboard = () => {
             </div>
           </div>
           <div className="card">
-            <h3 className="text-xl mb-4">Local Highlights</h3>
+            <h3 className="text-xl mb-4">Proof of Impact</h3>
             <div className="space-y-4 text-sm">
               <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
                 <p className="text-slate-500">Top Action Category</p>
                 <p className="font-bold">{highlight.topCategory} {highlight.topCategoryCount > 0 ? `(${highlight.topCategoryCount})` : ""}</p>
               </div>
               <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                <p className="text-slate-500">Most Recent Verified Action</p>
+                <p className="text-slate-500">Latest Verified Action</p>
                 <p className="font-bold">{highlight.recentAction}</p>
               </div>
               <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
