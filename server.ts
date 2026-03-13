@@ -94,6 +94,23 @@ async function startServer() {
     }
   });
 
+  app.post("/api/user", (req, res) => {
+    const { email, name } = req.body;
+    try {
+      const result = db.prepare(
+        "INSERT INTO users (email, name, role, impact_points, award_progress, rank) VALUES (?, ?, 'student', 0, 0, 0)"
+      ).run(email, name);
+      const newUser = db.prepare("SELECT * FROM users WHERE id = ?").get(result.lastInsertRowid);
+      res.json(newUser);
+    } catch (err: any) {
+      if (err.message && err.message.includes('UNIQUE constraint failed')) {
+        res.status(400).json({ error: "User already exists" });
+      } else {
+        res.status(500).json({ error: "Server error" });
+      }
+    }
+  });
+
   app.get("/api/activities/:userId", (req, res) => {
     const activities = db.prepare("SELECT * FROM activities WHERE user_id = ? ORDER BY date DESC").all(req.params.userId);
     res.json(activities);

@@ -1,0 +1,128 @@
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Leaf, Mail, Lock, Eye, EyeOff, LogIn, Globe } from 'lucide-react';
+
+export const LoginPage = ({ onLogin }: { onLogin?: (email: string) => void }) => {
+  const [email, setEmail] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (onLogin) onLogin(email);
+    navigate('/dashboard');
+  };
+
+  return (
+    <div className="min-h-screen bg-[#f8faf9] font-sans flex flex-col relative overflow-hidden">
+      {/* Background Graphic */}
+      <div className="absolute -bottom-48 -right-48 text-[#00c914] opacity-[0.1] -z-0 pointer-events-none transform rotate-[-25deg]">
+        <Leaf strokeWidth={0} fill="currentColor" size={600} />
+      </div>
+
+      {/* Header */}
+      <header className="px-8 py-6 flex items-center justify-between relative z-10">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-[#00c914] rounded flex items-center justify-center text-white">
+            <Leaf size={18} />
+          </div>
+          <span className="font-display font-bold text-lg text-slate-900 tracking-tight">Sustainability Impact Award</span>
+        </div>
+        <div className="hidden md:flex gap-6 text-sm font-medium text-slate-600">
+          <a href="#" className="hover:text-slate-900 transition-colors">Program Info</a>
+          <a href="#" className="hover:text-slate-900 transition-colors">Resources</a>
+          <a href="#" className="hover:text-slate-900 transition-colors">Support</a>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col justify-center items-center px-4 relative z-10 w-full mb-12">
+        <div className="w-full max-w-[460px] bg-white rounded-2xl shadow-sm border border-slate-100 p-8 sm:p-10">
+          <div className="mb-8">
+            <h1 className="text-3xl font-display font-bold mb-2 text-slate-900">Welcome Back</h1>
+            <p className="text-[#00c914] font-semibold">Log in to your impact dashboard</p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-slate-800 block">University Email</label>
+              <div className="relative">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                  <Mail size={18} />
+                </div>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@university.edu"
+                  className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#00c914]/20 focus:border-[#00c914] transition-all text-slate-900"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2 relative">
+              <div className="flex justify-between items-center">
+                <label className="text-sm font-bold text-slate-800">Password</label>
+              </div>
+              <div className="relative">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                  <Lock size={18} />
+                </div>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  placeholder="••••••••"
+                  className="w-full pl-11 pr-11 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#00c914]/20 focus:border-[#00c914] transition-all text-slate-900 font-medium tracking-widest placeholder:tracking-normal"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 pt-2 pb-2">
+              <input
+                type="checkbox"
+                id="remember"
+                className="w-4 h-4 rounded border-slate-300 text-[#00c914] focus:ring-[#00c914]/20"
+              />
+              <label htmlFor="remember" className="text-sm text-slate-500 font-medium">Remember this device</label>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-[#0cb80f] hover:bg-[#0ba60d] text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-[0_4px_14px_0_rgba(12,184,15,0.39)]"
+            >
+              Welcome Back <LogIn size={18} />
+            </button>
+          </form>
+
+          <div className="mt-10 text-center text-sm font-medium text-slate-500">
+            New to the program?{' '}
+            <Link to="/signup" className="text-[#00c914] font-bold hover:underline">
+              Sign up
+            </Link>
+          </div>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="w-full px-8 py-6 relative z-10 flex flex-col md:flex-row items-center justify-between text-xs font-medium text-slate-500 mt-auto">
+        <div className="flex gap-4 md:gap-6 items-center">
+          <span>© 2024 Sustainability Impact Award</span>
+          <a href="#" className="hover:text-slate-800 transition-colors">Privacy Policy</a>
+          <a href="#" className="hover:text-slate-800 transition-colors">Terms of Service</a>
+        </div>
+        <div className="flex items-center gap-2 mt-4 md:mt-0">
+          <Globe size={14} className="text-slate-400" />
+          <span>Together for a greener future</span>
+        </div>
+      </footer>
+    </div>
+  );
+};
