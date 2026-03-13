@@ -9,7 +9,56 @@ export interface EcoVerificationResult {
   estimatedPlasticItemsReduced: number;
   estimatedWaterLitersSaved: number;
   reviewRecommendation: "approve" | "manual_review" | "reject";
+  verificationMode: "demo" | "live";
 }
+
+const parseBoolean = (value: string | undefined, defaultValue = false) => {
+  if (value == null) return defaultValue;
+  return value.trim().toLowerCase() === "true";
+};
+
+const getDemoVerification = (activityCategory: string, activityDescription: string): EcoVerificationResult => {
+  const category = activityCategory.toLowerCase();
+  const description = activityDescription.toLowerCase();
+  const looksSuspicious = description.includes("test") || description.includes("fake");
+
+  const confidenceByCategory: Record<string, number> = {
+    "waste management": 0.84,
+    "energy conservation": 0.76,
+    "community outreach": 0.72,
+    "environmental advocacy": 0.68,
+    biodiversity: 0.8,
+  };
+
+  const confidence = Math.max(0.45, Math.min(0.95, (confidenceByCategory[category] ?? 0.7) - (looksSuspicious ? 0.2 : 0)));
+  const isRelevant = !looksSuspicious;
+
+  const estimatedCo2Kg = Number((confidence * 2.4).toFixed(2));
+  const estimatedPlasticItemsReduced = Math.max(0, Math.round(confidence * 6));
+  const estimatedWaterLitersSaved = Math.max(0, Math.round(confidence * 12));
+
+  const reviewRecommendation = !isRelevant
+    ? "reject"
+    : confidence >= 0.8
+      ? "approve"
+      : confidence >= 0.6
+        ? "manual_review"
+        : "reject";
+
+  return {
+    isRelevant,
+    actionCategory: activityCategory,
+    confidence,
+    summary: isRelevant
+      ? "Demo mode verification completed with stable scoring for presentation reliability."
+      : "Demo mode flagged this evidence as suspicious and recommends rejection.",
+    estimatedCo2Kg,
+    estimatedPlasticItemsReduced,
+    estimatedWaterLitersSaved,
+    reviewRecommendation,
+    verificationMode: "demo",
+  };
+};
 
 const toBase64 = (file: File) =>
   new Promise<string>((resolve, reject) => {
@@ -35,6 +84,11 @@ export const verifyEcoImageWithGemini = async (
   activityCategory: string,
   activityDescription: string,
 ): Promise<EcoVerificationResult> => {
+  const aiDemoMode = parseBoolean(import.meta.env.VITE_AI_DEMO_MODE, true);
+  if (aiDemoMode) {
+    return getDemoVerification(activityCategory, activityDescription);
+  }
+
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
   if (!apiKey) {
     throw new Error("Missing VITE_GEMINI_API_KEY in .env");
@@ -73,23 +127,32 @@ Rules:
 - If irrelevant/non-eco image, set isRelevant=false and reviewRecommendation="reject".
 - Never include text outside JSON.`;
 
-  const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
-    contents: [
-      {
-        role: "user",
-        parts: [
-          { text: prompt },
-          {
-            inlineData: {
-              mimeType: file.type || "image/jpeg",
-              data: imageBase64,
+  let response;
+  try {
+    response = await ai.models.generateContent({
+      model: "gemini-2.0-flash",
+      contents: [
+        {
+          role: "user",
+          parts: [
+            { text: prompt },
+            {
+              inlineData: {
+                mimeType: file.type || "image/jpeg",
+                data: imageBase64,
+              },
             },
-          },
-        ],
-      },
-    ],
-  });
+          ],
+        },
+      ],
+    });
+  } catch (error) {
+    const fallbackToDemo = parseBoolean(import.meta.env.VITE_AI_FALLBACK_TO_DEMO, true);
+    if (fallbackToDemo) {
+      return getDemoVerification(activityCategory, activityDescription);
+    }
+    throw error;
+  }
 
   const rawText = response.text?.trim();
   if (!rawText) {
@@ -117,5 +180,6 @@ Rules:
       parsed.reviewRecommendation === "reject"
         ? parsed.reviewRecommendation
         : "manual_review",
+    verificationMode: "live",
   };
 };

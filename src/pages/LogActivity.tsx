@@ -134,7 +134,7 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
         <div className="space-y-3 border border-slate-200 bg-slate-50 rounded-xl p-4">
           <div>
             <label className="text-sm font-bold text-slate-700">AI Image Verification (Recommended)</label>
-            <p className="text-xs text-slate-500 mt-1">Upload a photo proof and verify with Gemini before submitting.</p>
+            <p className="text-xs text-slate-500 mt-1">Upload a photo proof and verify before submitting.</p>
           </div>
 
           <input
@@ -180,6 +180,7 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
               </div>
               <p className="mb-2">{verificationResult.summary}</p>
               <div className="grid grid-cols-2 gap-2 text-xs">
+                <div>Mode: {verificationResult.verificationMode}</div>
                 <div>Confidence: {(verificationResult.confidence * 100).toFixed(0)}%</div>
                 <div>Category: {verificationResult.actionCategory}</div>
                 <div>CO₂ saved: {verificationResult.estimatedCo2Kg} kg</div>
