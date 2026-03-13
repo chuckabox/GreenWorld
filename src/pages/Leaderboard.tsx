@@ -1,13 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { cn } from "../lib/utils";
+import { StoredUser } from "../types";
 
 export const Leaderboard = () => {
   const [leaders, setLeaders] = useState<any[]>([]);
 
+  const getLocalLeaderboard = () => {
+    const users: StoredUser[] = JSON.parse(localStorage.getItem("users") || "[]");
+    return users
+      .filter((user) => user.role !== "admin")
+      .sort((a, b) => (b.impact_points || 0) - (a.impact_points || 0))
+      .slice(0, 10)
+      .map((user, index) => ({
+        name: user.name,
+        impact_points: user.impact_points || 0,
+        rank: index + 1,
+      }));
+  };
+
   useEffect(() => {
-    fetch("/api/leaderboard")
-      .then(res => res.json())
-      .then(data => setLeaders(data));
+    const load = async () => {
+      try {
+        const res = await fetch("/api/leaderboard");
+        if (!res.ok) throw new Error("Leaderboard API failed");
+        const data = await res.json();
+        setLeaders(data);
+      } catch {
+        setLeaders(getLocalLeaderboard());
+      }
+    };
+
+    load();
   }, []);
 
   return (

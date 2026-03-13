@@ -1,22 +1,78 @@
 import React, { useState, useEffect } from "react";
 import { CheckCircle2, AlertCircle } from "lucide-react";
+import { Activity, StoredUser } from "../types";
 
 export const AdminPortal = () => {
   const [pending, setPending] = useState<any[]>([]);
 
+  const getLocalPending = () => {
+    const users: StoredUser[] = JSON.parse(localStorage.getItem("users") || "[]");
+    const activities: Activity[] = JSON.parse(localStorage.getItem("activities") || "[]");
+    const usersById = new Map<number, StoredUser>(users.map((u) => [u.id, u]));
+
+    return activities
+      .filter((activity) => activity.status === "pending")
+      .map((activity) => ({
+        ...activity,
+        user_name: usersById.get(activity.user_id || 0)?.name || "Unknown User",
+      }));
+  };
+
   useEffect(() => {
-    fetch("/api/admin/pending").then(res => res.json()).then(data => setPending(data));
+    const load = async () => {
+      try {
+        const res = await fetch("/api/admin/pending");
+        if (!res.ok) throw new Error("Pending API failed");
+        const data = await res.json();
+        setPending(data);
+      } catch {
+        setPending(getLocalPending());
+      }
+    };
+
+    load();
   }, []);
 
   const handleReview = async (activityId: number, status: string, points: number) => {
-    const res = await fetch("/api/admin/review", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ activityId, status, points })
-    });
-    if (res.ok) {
-      setPending(pending.filter(a => a.id !== activityId));
+    let apiOk = false;
+    try {
+      const res = await fetch("/api/admin/review", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ activityId, status, points })
+      });
+      apiOk = res.ok;
+    } catch {
+      apiOk = false;
     }
+
+    if (!apiOk) {
+      const activities: Activity[] = JSON.parse(localStorage.getItem("activities") || "[]");
+      const users: StoredUser[] = JSON.parse(localStorage.getItem("users") || "[]");
+
+      const updatedActivities = activities.map((activity) =>
+        activity.id === activityId ? { ...activity, status: status as "approved" | "pending" | "rejected" } : activity
+      );
+      localStorage.setItem("activities", JSON.stringify(updatedActivities));
+
+      if (status === "approved" && points > 0) {
+        const reviewed = updatedActivities.find((activity) => activity.id === activityId);
+        if (reviewed?.user_id) {
+          const updatedUsers = users.map((user) => {
+            if (user.id !== reviewed.user_id) return user;
+            const updatedPoints = (user.impact_points || 0) + points;
+            return {
+              ...user,
+              impact_points: updatedPoints,
+              award_progress: Math.min(100, Math.round(updatedPoints / 10)),
+            };
+          });
+          localStorage.setItem("users", JSON.stringify(updatedUsers));
+        }
+      }
+    }
+
+    setPending((prev) => prev.filter((activity) => activity.id !== activityId));
   };
 
   return (
