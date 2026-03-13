@@ -8,6 +8,7 @@ import { Sidebar } from "./components/Sidebar";
 import { Header } from "./components/Header";
 
 import { LandingPage } from "./pages/LandingPage";
+import { LoginPage } from "./pages/LoginPage";
 import { Dashboard } from "./pages/Dashboard";
 import { LogActivity } from "./pages/LogActivity";
 import { Leaderboard } from "./pages/Leaderboard";
@@ -59,12 +60,14 @@ const AppContent = () => {
   if (!user) return <div>Error loading user.</div>;
 
   const isLanding = location.pathname === "/";
+  const isAuthPage = location.pathname === "/login";
+  const hideLayout = isLanding || isAuthPage;
 
   return (
     <div className="flex min-h-screen">
-      {!isLanding && <Sidebar user={user} />}
+      {!hideLayout && <Sidebar user={user} />}
       <main className="flex-1 flex flex-col min-w-0">
-        {!isLanding && <Header title={
+        {!hideLayout && <Header title={
           location.pathname === "/dashboard" ? "Student Dashboard" :
           location.pathname === "/log" ? "Log Activity" :
           location.pathname === "/leaderboard" ? "Leaderboard" :
@@ -82,6 +85,7 @@ const AppContent = () => {
             >
               <Routes>
                 <Route path="/" element={<LandingPage />} />
+                <Route path="/login" element={<LoginPage />} />
                 <Route path="/dashboard" element={<Dashboard user={user} activities={activities} />} />
                 <Route path="/log" element={<LogActivity userId={user.id} onActivityLogged={fetchUserData} />} />
                 <Route path="/leaderboard" element={<Leaderboard />} />
