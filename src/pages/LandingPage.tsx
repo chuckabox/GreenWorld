@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Leaf, Users, Award, CheckCircle2, Trophy, Globe } from "lucide-react";
 import { motion } from "motion/react";
@@ -10,22 +10,35 @@ import universityImg from "../assets/university_recognition.png";
 import analyticsImg from "../assets/impact_analytics.png";
 
 export const LandingPage = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const userEmail = localStorage.getItem("userEmail");
+    if (userEmail) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  const authPath = isLoggedIn ? "/dashboard" : "/login";
+  const authText = isLoggedIn ? "Go to Dashboard" : "Join Now";
+  const heroBtnText = isLoggedIn ? "Back to Dashboard" : "Get Started Today";
+  const ctaBtnText = isLoggedIn ? "Return to Dashboard" : "Join the Movement Now";
+
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <Leaf className="text-primary fill-primary" size={24} />
             <span className="font-display font-bold text-xl tracking-tight">EcoImpact</span>
-          </div>
+          </Link>
           <div className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600">
             <a href="#levels" className="hover:text-primary transition-colors">Levels</a>
             <a href="#how-it-works" className="hover:text-primary transition-colors">How it Works</a>
-            <a href="#winners" className="hover:text-primary transition-colors">Winners</a>
             <a href="#faq" className="hover:text-primary transition-colors">FAQ</a>
           </div>
-          <Link to="/login" className="btn-primary text-sm shadow-md shadow-primary/20">Join Now</Link>
+          <Link to={authPath} className="btn-primary text-sm shadow-md shadow-primary/20">{authText}</Link>
         </div>
       </nav>
 
@@ -50,12 +63,9 @@ export const LandingPage = () => {
               Log your eco actions, get them AI-verified, and earn impact points. Track your CO₂ savings, climb the leaderboard, and unlock badges that prove your commitment.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link to="/login" className="bg-primary hover:bg-primary-dark text-white px-8 py-4 rounded-xl font-bold shadow-lg shadow-primary/30 transition-all hover:-translate-y-1">
-                Get Started Today
+              <Link to={authPath} className="bg-primary hover:bg-primary-dark text-white px-8 py-4 rounded-xl font-bold shadow-lg shadow-primary/30 transition-all hover:-translate-y-1">
+                {heroBtnText}
               </Link>
-              <button className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-xl font-bold text-white transition-all hover:-translate-y-1">
-                View Past Winners
-              </button>
             </div>
           </motion.div>
         </div>
@@ -203,8 +213,8 @@ export const LandingPage = () => {
             <p className="text-slate-300 text-lg mb-10 max-w-xl mx-auto">
               Log real actions, earn AI-verified points, and track your community's CO₂ impact — one eco choice at a time.
             </p>
-            <Link to="/login" className="inline-block bg-primary hover:bg-primary-dark text-white text-lg px-10 py-4 rounded-xl font-bold transition-all hover:scale-105 shadow-xl shadow-primary/20">
-              Join the Movement Now
+            <Link to={authPath} className="inline-block bg-primary hover:bg-primary-dark text-white text-lg px-10 py-4 rounded-xl font-bold transition-all hover:scale-105 shadow-xl shadow-primary/20">
+              {ctaBtnText}
             </Link>
           </div>
         </div>

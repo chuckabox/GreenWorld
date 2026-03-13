@@ -56,14 +56,14 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) =
       <div className="w-full lg:w-[45%] flex flex-col pt-12 p-8 lg:p-16 xl:p-24 overflow-y-auto relative z-10">
         <div className="w-full max-w-[400px] mx-auto flex flex-col h-full">
           
-          <div className="flex items-center gap-3 mb-16">
+          <Link to="/" className="flex items-center gap-3 mb-16 hover:opacity-80 transition-opacity">
             <div className="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center text-primary border border-primary/20">
               <Leaf size={20} className="fill-current" />
             </div>
             <span className="font-display font-bold text-lg text-slate-900 leading-tight">
               Sustainability<br />Impact Award
             </span>
-          </div>
+          </Link>
 
           <div className="mb-10">
             <h1 className="text-4xl font-display font-bold mb-4 text-slate-900 tracking-tight">
