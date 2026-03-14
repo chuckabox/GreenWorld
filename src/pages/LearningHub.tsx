@@ -134,10 +134,6 @@ export const LearningHub = () => {
           <h2 className="text-3xl">Green Hub</h2>
           <p className="text-slate-500">Bite-sized learning materials to level up your climate impact.</p>
         </div>
-        <button className="btn-primary inline-flex items-center gap-2">
-          <BookOpen size={18} />
-          Browse full library
-        </button>
       </div>
 
       <div className="space-y-8">
@@ -148,41 +144,31 @@ export const LearningHub = () => {
               <p className="text-sm text-slate-500">{theme.description}</p>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {theme.paths.slice(0, 3).map((path) => (
-                <div key={path.title} className="card flex flex-col gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${path.accent}`}>
-                      <BookOpen size={22} />
+              {theme.paths.slice(0, 3).map((path) => {
+                const isWaste = path.title === "♻️ Waste & Circular Economy";
+                const CardWrapper = isWaste ? Link : "div";
+                return (
+                  <CardWrapper
+                    key={path.title}
+                    to={isWaste ? "/green-hub/waste-circular" : undefined}
+                    className="card flex flex-col gap-4 hover:border-primary/30 transition-all group cursor-pointer"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${path.accent}`}>
+                          <BookOpen size={22} />
+                        </div>
+                        <div>
+                          <h4 className="text-lg font-bold group-hover:text-primary transition-colors">{path.title}</h4>
+                          <p className="text-xs text-slate-500">{path.modules} modules • {path.duration}</p>
+                        </div>
+                      </div>
+                      <ArrowUpRight size={20} className="text-slate-300 group-hover:text-primary transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </div>
-                    <div>
-                      <h4 className="text-lg font-bold">{path.title}</h4>
-                      <p className="text-xs text-slate-500">{path.modules} modules • {path.duration}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Learning path</span>
-                    {path.title === "♻️ Waste & Circular Economy" ? (
-                      <Link
-                        to="/green-hub/waste-circular"
-                        className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-primary/80"
-                      >
-                        Start
-                        <ArrowUpRight size={16} />
-                      </Link>
-                    ) : (
-                      <button className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-primary/80">
-                        Start
-                        <ArrowUpRight size={16} />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
+                  </CardWrapper>
+                );
+              })}
             </div>
-            <button className="text-sm font-semibold text-primary hover:text-primary/80 inline-flex items-center gap-1">
-              View all
-              <ArrowUpRight size={16} />
-            </button>
           </div>
         ))}
       </div>

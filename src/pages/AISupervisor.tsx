@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
-import { Sparkles, ChevronRight, ChevronDown } from "lucide-react";
+import { Sparkles, ChevronRight, ChevronDown, RotateCw } from "lucide-react";
 import {
   getTaskRecommendations,
   getTaskRecommendationsFromProfile,
@@ -137,9 +137,10 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
                 type="button"
                 onClick={refreshFromProfile}
                 disabled={isLoading}
-                className="text-sm font-medium text-slate-500 hover:text-primary disabled:opacity-50"
+                className="p-2 text-slate-400 hover:text-primary hover:bg-slate-50 rounded-xl transition-all disabled:opacity-50"
+                title="Refresh from your activity"
               >
-                Refresh from your activity
+                <RotateCw size={18} className={cn(isLoading && "animate-spin")} />
               </button>
               <button
                 type="button"

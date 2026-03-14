@@ -87,12 +87,12 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
   const [isInfoDialogOpen, setIsInfoDialogOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
-  const currentLevel = Math.floor(user.impact_points / 500) + 1;
-  const nextLevelThreshold = currentLevel * 500;
-  const progressInLevel = user.impact_points % 500;
-  const progressPercentage = (progressInLevel / 500) * 100;
+  const currentLevel = Math.floor(user.impact_points / 100) + 1;
+  const nextLevelThreshold = currentLevel * 100;
+  const progressInLevel = user.impact_points % 100;
+  const progressPercentage = (progressInLevel / 100) * 100;
 
-  const totalEstimatedCo2 = safeActivities.reduce((sum, activity) => sum + (activity.estimatedCo2Kg ?? 0), 0);
+  const totalEstimatedCo2 = (user.impact_points / 5) * 7.13;
   const totalEventsCompleted = safeActivities.filter(a => a.status === 'approved').length;
 
   const today = new Date().toISOString().split('T')[0];
@@ -134,6 +134,48 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
   ];
 
   const location = useLocation();
+
+  // Inject demo activities for a more populated look if none exist
+  useEffect(() => {
+    const existing = JSON.parse(localStorage.getItem("activities") || "[]");
+    const userActivities = existing.filter((a: any) => a.user_id === user.id);
+    
+    if (userActivities.length < 3) {
+      const demoActivities: Activity[] = [
+        {
+          id: Date.now() - 86400000 * 2,
+          user_id: user.id,
+          category: "Waste Management",
+          hours: 2.5,
+          date: new Date(Date.now() - 86400000 * 2).toISOString().split('T')[0],
+          description: "Organized a neighborhood cleanup drive with 10 volunteers.",
+          status: 'approved'
+        },
+        {
+          id: Date.now() - 86400000 * 5,
+          user_id: user.id,
+          category: "Energy Conservation",
+          hours: 1.5,
+          date: new Date(Date.now() - 86400000 * 5).toISOString().split('T')[0],
+          description: "Installed smart power strips and optimized home energy usage.",
+          status: 'approved'
+        },
+        {
+          id: Date.now() - 86400000 * 10,
+          user_id: user.id,
+          category: "Community Outreach",
+          hours: 4.0,
+          date: new Date(Date.now() - 86400000 * 10).toISOString().split('T')[0],
+          description: "Volunteered at the local botanical garden for sustainable landscaping.",
+          status: 'approved'
+        }
+      ];
+      
+      const newActivities = [...existing, ...demoActivities];
+      localStorage.setItem("activities", JSON.stringify(newActivities));
+      onActivityLogged(); // Trigger refresh in parent
+    }
+  }, [user.id, onActivityLogged]);
 
   // When coming from AI Advisor with a chosen task, open the log dialog prefilled
   useEffect(() => {
@@ -253,7 +295,7 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
         <div className="relative pt-2">
           <div className="flex mb-2 items-center justify-between text-xs">
             <div className="font-bold text-primary bg-primary-light px-2 py-1 rounded-lg">
-              {user.impact_points} / {nextLevelThreshold} pts
+              {progressInLevel / 5} / 20 hours
             </div>
             <div className="text-slate-400 font-bold uppercase tracking-widest">
               {Math.round(progressPercentage)}% to Badge {toRoman(currentLevel + 1)}

@@ -130,12 +130,8 @@ export const LogActivityDialog = ({
       const randomStatus: "approved" | "pending" = Math.random() < 0.6 ? "approved" : "pending";
       const status = randomStatus;
 
-      const earnedPoints =
-        status === "approved"
-          ? aiResult
-            ? Math.max(25, Math.round(aiResult.estimatedCo2Kg * 40))
-            : 25
-          : 0;
+      const earnedPoints = status === "approved" ? formData.hours * 5 : 0;
+      const calculatedCo2 = formData.hours * 7.13;
 
       const localActivity = {
         id: Date.now(),
@@ -147,7 +143,7 @@ export const LogActivityDialog = ({
         evidenceUrl: formData.evidenceUrl,
         aiConfidence: aiResult?.confidence,
         aiRecommendation: aiResult?.reviewRecommendation,
-        estimatedCo2Kg: aiResult?.estimatedCo2Kg,
+        estimatedCo2Kg: aiResult?.estimatedCo2Kg ?? calculatedCo2,
         estimatedPlasticItemsReduced: aiResult?.estimatedPlasticItemsReduced,
         estimatedWaterLitersSaved: aiResult?.estimatedWaterLitersSaved,
         status,
@@ -193,7 +189,7 @@ export const LogActivityDialog = ({
       onActivityLogged();
       setSubmitSuccess({
         status,
-        points: status === "approved" ? 25 : 0,
+        points: status === "approved" ? formData.hours * 5 : 0,
         note: "We had a hiccup talking to AI, but your activity was still logged.",
       });
     } finally {

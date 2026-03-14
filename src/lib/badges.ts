@@ -27,7 +27,7 @@ export const toRoman = (num: number): string => {
 };
 
 export const getLevelLabel = (points: number) => {
-  const level = Math.floor(points / 500) + 1;
+  const level = Math.floor(points / 100) + 1;
   return `Sustainability Badge ${toRoman(level)}`;
 };
 
