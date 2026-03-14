@@ -23,7 +23,7 @@ export const Sidebar = ({ user }: { user: UserData }) => {
     { name: "AI Advisor", path: "/ai-supervisor", icon: Sparkles },
     { name: "Green Hub", path: "/learning", icon: BookOpen },
     { name: "Leaderboard", path: "/leaderboard", icon: Trophy },
-    { name: "Impact Portfolio", path: "/portfolio", icon: User },
+    { name: "Profile", path: "/portfolio", icon: User },
   ];
 
   if (user.role === 'admin') {

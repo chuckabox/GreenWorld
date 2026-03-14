@@ -122,7 +122,7 @@ const AppContent = () => {
           location.pathname === "/ai-supervisor" ? "AI Advisor" :
           location.pathname === "/learning" ? "Green Hub" :
           location.pathname === "/leaderboard" ? "Leaderboard" :
-          location.pathname === "/portfolio" ? "Impact Portfolio" :
+          location.pathname === "/portfolio" ? "Profile" :
           location.pathname === "/admin" ? "Admin Portal" : ""
         } />}
         <div className="flex-1 overflow-y-auto">

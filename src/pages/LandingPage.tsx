@@ -41,9 +41,9 @@ export const LandingPage = () => {
             <span className="font-display font-bold text-xl tracking-tight">EcoImpact</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600">
-            <a href="#levels" className="hover:text-primary transition-colors">Levels</a>
+            <a href="#council" className="hover:text-primary transition-colors">Council</a>
+            <a href="#levels" className="hover:text-primary transition-colors">Badges</a>
             <a href="#how-it-works" className="hover:text-primary transition-colors">How it Works</a>
-            <a href="#council" className="hover:text-primary transition-colors">Council Support</a>
             <a href="#events-tasks" className="hover:text-primary transition-colors">Events & tasks</a>
           </div>
           <Link to={authPath} className="btn-primary text-sm shadow-md">{authText}</Link>
@@ -299,14 +299,14 @@ export const LandingPage = () => {
       </section>
 
       {/* Call to Action Grid */}
-      <section className="py-24 bg-primary-light/50 relative overflow-hidden">
+      <section className="py-24 bg-emerald-50 relative overflow-hidden">
         <div className="max-w-4xl mx-auto px-6 relative z-10">
-          <div className="bg-slate-900 text-white rounded-[2rem] p-12 md:p-16 text-center shadow-2xl">
+          <div className="bg-gradient-to-br from-emerald-900 via-green-900 to-emerald-950 text-white rounded-[2rem] p-12 md:p-16 text-center shadow-2xl border border-emerald-800/50">
             <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">Ready to make your mark?</h2>
-            <p className="text-slate-300 text-lg mb-10 max-w-xl mx-auto">
+            <p className="text-emerald-100/80 text-lg mb-10 max-w-xl mx-auto">
               Log real actions, earn AI-verified points, and track your community's CO₂ impact — one eco choice at a time.
             </p>
-            <Link to={authPath} className="inline-block bg-primary hover:bg-primary-dark text-white text-lg px-10 py-4 rounded-xl font-bold transition-all hover:scale-105 shadow-xl">
+            <Link to={authPath} className="inline-block bg-primary hover:bg-primary-light hover:text-primary text-white text-lg px-10 py-4 rounded-xl font-bold transition-all hover:scale-105 shadow-xl shadow-emerald-900/40">
               {ctaBtnText}
             </Link>
           </div>
@@ -325,15 +325,6 @@ export const LandingPage = () => {
               <p className="text-slate-500 text-sm leading-relaxed max-w-xs mb-8">
                 AI-powered sustainability tracking. Log eco actions, earn verified impact points, and build a greener community.
               </p>
-            </div>
-
-            <div>
-              <h4 className="font-bold mb-6">Resources</h4>
-              <ul className="space-y-4 text-sm text-slate-500">
-                <li><a href="#" className="hover:text-primary transition-colors">Documentation</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Action Guides</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Case Studies</a></li>
-              </ul>
             </div>
 
             <div>
