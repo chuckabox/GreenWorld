@@ -1,0 +1,88 @@
+[
+  {
+    "id": "task-1",
+    "type": "task",
+    "title": "Beach Cleanup Volunteer",
+    "description": "Join a local beach cleanup. Help remove plastic and debris, log your bags collected, and get AI-verified impact.",
+    "category": "Waste Management",
+    "pointsReward": 80,
+    "location": "Various beaches",
+    "deadline": "2025-04-30"
+  },
+  {
+    "id": "task-2",
+    "type": "task",
+    "title": "7-Day Plastic-Free Challenge",
+    "description": "Avoid single-use plastic for one week. Use reusable bags, bottles, and containers. Log daily wins for verification.",
+    "category": "Waste Management",
+    "pointsReward": 100,
+    "location": "At home / campus",
+    "deadline": "2025-05-15"
+  },
+  {
+    "id": "task-3",
+    "type": "task",
+    "title": "Tree Planting Day",
+    "description": "Plant trees at a council or community event. Document with a photo and description for AI verification.",
+    "category": "Biodiversity",
+    "pointsReward": 120,
+    "location": "Parks & reserves",
+    "deadline": "2025-04-20"
+  },
+  {
+    "id": "task-4",
+    "type": "task",
+    "title": "Green Commute Week",
+    "description": "Replace car trips with bus, bike, or walking for 5 days. Log each trip to earn verified CO₂ savings.",
+    "category": "Energy Conservation",
+    "pointsReward": 90,
+    "location": "Your commute",
+    "deadline": "2025-05-01"
+  },
+  {
+    "id": "task-5",
+    "type": "task",
+    "title": "Campus Recycling Ambassador",
+    "description": "Lead a small recycling awareness activity on campus: put up posters, share tips, or run a short workshop.",
+    "category": "Community Outreach",
+    "pointsReward": 110,
+    "location": "Campus",
+    "deadline": "2025-05-10"
+  },
+  {
+    "id": "event-1",
+    "type": "event",
+    "title": "Tree Planting Day",
+    "description": "Community tree planting with Brisbane City Council. All equipment provided.",
+    "date": "Mar 20, 2025",
+    "location": "Riverside Park",
+    "time": "9:00 AM"
+  },
+  {
+    "id": "event-2",
+    "type": "event",
+    "title": "Eco-Tech Workshop",
+    "description": "Learn about solar, EVs, and smart home energy. Hands-on demos and expert Q&A.",
+    "date": "Mar 25, 2025",
+    "location": "Innovation Hub",
+    "time": "2:00 PM"
+  },
+  {
+    "id": "event-3",
+    "type": "event",
+    "title": "Zero Waste Seminar",
+    "description": "Online seminar on reducing waste at home and in the office. Free registration.",
+    "date": "Apr 02, 2025",
+    "location": "Online",
+    "time": "6:00 PM"
+  },
+  {
+    "id": "event-4",
+    "type": "event",
+    "title": "River Cleanup Challenge",
+    "description": "City-wide cleanup along the Brisbane River. Compete by suburb for the Green Neighborhood Grant.",
+    "date": "Apr 12, 2025",
+    "location": "South Bank to West End",
+    "time": "8:00 AM"
+  }
+]
