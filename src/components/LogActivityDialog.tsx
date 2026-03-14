@@ -489,7 +489,7 @@ export const LogActivityDialog = ({
                 <button
                   type="submit"
                   disabled={!canSubmit}
-                  className={`${isDirty ? "sm:flex-[2]" : "sm:flex-1"} w-full sm:w-auto btn-primary h-10 text-sm flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed`}
+                  className="sm:flex-1 w-full sm:w-auto btn-primary h-10 text-sm flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? "Submitting..." : "Submit Activity"}
                 </button>

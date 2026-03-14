@@ -13,6 +13,7 @@ import {
   X,
   Paperclip,
   Mic,
+  Plus,
 } from "lucide-react";
 import { UserData, StoredUser } from "../types";
 import { cn } from "../lib/utils";
@@ -304,16 +305,18 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
       {/* Sidebar: Friends + Channels (desktop) */}
       <aside className="hidden md:flex w-60 shrink-0 border-r border-slate-200 bg-white flex-col overflow-hidden">
         <div className="p-3 border-b border-slate-100">
-          <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Friends</h3>
-          <button
-            type="button"
-            onClick={() => setAddFriendOpen(true)}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-primary hover:bg-primary-light transition-colors"
-          >
-            <UserPlus size={18} />
-            Add friend
-          </button>
-          <ul className="mt-2 space-y-0.5 max-h-40 overflow-y-auto">
+          <div className="flex items-center justify-between mb-2 gap-2">
+            <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Friends</h3>
+            <button
+              type="button"
+              onClick={() => setAddFriendOpen(true)}
+              className="p-1 rounded-lg text-slate-400 hover:text-primary hover:bg-primary-light transition-colors"
+              title="Add friend"
+            >
+              <Plus size={16} />
+            </button>
+          </div>
+          <ul className="space-y-0.5 max-h-40 overflow-y-auto">
             {friends.length === 0 ? (
               <li className="px-3 py-2 text-slate-400 text-sm">No friends yet</li>
             ) : (
@@ -629,19 +632,21 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
             </div>
             <div className="flex-1 flex flex-col">
               <div className="p-3 border-b border-slate-100">
-                <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Friends</h4>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsMobileSidebarOpen(false);
-                    setAddFriendOpen(true);
-                  }}
-                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-primary hover:bg-primary-light transition-colors"
-                >
-                  <UserPlus size={18} />
-                  Add friend
-                </button>
-                <ul className="mt-2 space-y-0.5 max-h-36 overflow-y-auto">
+                <div className="flex items-center justify-between mb-2 gap-2">
+                  <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Friends</h4>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileSidebarOpen(false);
+                      setAddFriendOpen(true);
+                    }}
+                    className="p-1 rounded-lg text-slate-400 hover:text-primary hover:bg-primary-light transition-colors"
+                    title="Add friend"
+                  >
+                    <Plus size={16} />
+                  </button>
+                </div>
+                <ul className="space-y-0.5 max-h-36 overflow-y-auto">
                   {friends.length === 0 ? (
                     <li className="px-3 py-2 text-slate-400 text-sm">No friends yet</li>
                   ) : (
@@ -760,7 +765,6 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
                       />
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-slate-900 truncate">{u.name}</p>
-                        <p className="text-xs text-slate-500 truncate">{u.email}</p>
                       </div>
                       <button
                         type="button"
