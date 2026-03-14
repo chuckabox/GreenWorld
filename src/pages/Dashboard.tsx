@@ -5,6 +5,7 @@ import { cn } from "../lib/utils";
 import { UserData, Activity } from "../types";
 import { getLevelLabel } from "../lib/badges";
 import tasksAndEventsData from "../data/tasksAndEvents.json";
+import { LogActivityDialog } from "../components/LogActivityDialog";
 
 type FilterDropdownOption = {
   value: string;
@@ -74,11 +75,12 @@ const FilterDropdown = ({
 type TaskItem = { id: string; type: string; title: string; description?: string; pointsReward?: number };
 type EventItem = { id: string; type: string; title: string; date?: string; location?: string };
 
-export const Dashboard = ({ user, activities }: { user: UserData; activities: Activity[] }) => {
+export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserData; activities: Activity[]; onActivityLogged: () => void }) => {
   const safeActivities = activities ?? [];
   const [statusFilter, setStatusFilter] = useState<"all" | "approved" | "pending" | "rejected">("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [activityPage, setActivityPage] = useState(1);
+  const [isLogDialogOpen, setIsLogDialogOpen] = useState(false);
   const totalEstimatedCo2 = safeActivities.reduce((sum, activity) => sum + (activity.estimatedCo2Kg ?? 0), 0);
   const tasks = useMemo(() => (tasksAndEventsData as (TaskItem | EventItem)[]).filter((t) => t.type === "task") as TaskItem[], []);
   const events = useMemo(() => (tasksAndEventsData as (TaskItem | EventItem)[]).filter((t) => t.type === "event") as EventItem[], []);
@@ -130,6 +132,14 @@ export const Dashboard = ({ user, activities }: { user: UserData; activities: Ac
             Level: {getLevelLabel(user.impact_points)}
           </p>
         </div>
+        <button
+          type="button"
+          onClick={() => setIsLogDialogOpen(true)}
+          className="btn-primary flex items-center gap-2"
+        >
+          <PlusCircle size={20} />
+          Log New Activity
+        </button>
       </div>
 
       {/* Stats */}
@@ -276,6 +286,15 @@ export const Dashboard = ({ user, activities }: { user: UserData; activities: Ac
           </div>
         </div>
       </div>
+      {isLogDialogOpen && (
+        <LogActivityDialog
+          userId={user.id}
+          onActivityLogged={() => {
+            onActivityLogged();
+          }}
+          onClose={() => setIsLogDialogOpen(false)}
+        />
+      )}
     </div>
   );
 };
