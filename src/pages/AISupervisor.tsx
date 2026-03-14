@@ -86,7 +86,7 @@ export const AISupervisor = ({ userEmail, onPointsAdded }: { userEmail: string; 
                   className="w-full text-left p-4 rounded-xl border border-slate-200 hover:border-primary/40 hover:bg-slate-50 transition-colors flex items-center justify-between gap-4"
                 >
                   <div>
-                    <p className="font-bold text-slate-900">{t.title}</p>
+                    <p className="font-medium text-slate-900">{t.title}</p>
                     {t.pointsReward != null && (
                       <span className="text-sm font-semibold text-primary">{t.pointsReward} pts</span>
                     )}

@@ -250,7 +250,7 @@ export const Dashboard = ({ user, activities }: { user: UserData, activities: Ac
             <ul className="space-y-3">
               {tasks.slice(0, 4).map((t) => (
                 <li key={t.id} className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                  <p className="font-bold text-slate-900">{t.title}</p>
+                  <p className="font-medium text-slate-900">{t.title}</p>
                   {t.pointsReward != null && (
                     <span className="text-sm font-semibold text-primary">{t.pointsReward} pts</span>
                   )}
@@ -277,7 +277,7 @@ export const Dashboard = ({ user, activities }: { user: UserData, activities: Ac
                     <span className="text-xs font-bold text-primary uppercase tracking-wider">{event.date ?? ""}</span>
                     <ChevronRight size={16} className="text-slate-300" />
                   </div>
-                  <p className="font-bold">{event.title}</p>
+                  <p className="font-medium text-slate-900">{event.title}</p>
                   {event.location && <p className="text-xs text-slate-500">{event.location}</p>}
                 </div>
               ))}
