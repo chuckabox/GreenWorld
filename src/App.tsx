@@ -12,7 +12,6 @@ import { LoginPage } from "./pages/LoginPage";
 import { SignUpPage } from "./pages/SignUpPage";
 import { Dashboard } from "./pages/Dashboard";
 import { Leaderboard } from "./pages/Leaderboard";
-import { Portfolio } from "./pages/Portfolio";
 import { AdminPortal } from "./pages/AdminPortal";
 import { AISupervisor } from "./pages/AISupervisor";
 import { LearningHub } from "./pages/LearningHub";
@@ -124,7 +123,6 @@ const AppContent = () => {
           location.pathname === "/green-hub/waste-circular" ? "Waste & Circular Economy" :
           location.pathname === "/community" ? "Community" :
           location.pathname === "/leaderboard" ? "Leaderboard" :
-          location.pathname === "/portfolio" ? "Profile" :
           location.pathname === "/admin" ? "Admin Portal" : ""
         } />}
         <div className="flex-1 overflow-y-auto">
@@ -168,7 +166,6 @@ const AppContent = () => {
               <Route path="/green-hub/waste-circular" element={user ? <GreenHubCategory /> : <Navigate to="/login" replace />} />
               <Route path="/community" element={user ? <DiscussionBoard user={user} /> : <Navigate to="/login" replace />} />
               <Route path="/leaderboard" element={user ? <Leaderboard /> : <Navigate to="/login" replace />} />
-              <Route path="/portfolio" element={user ? <Portfolio user={user} /> : <Navigate to="/login" replace />} />
               <Route path="/admin" element={user ? <AdminPortal /> : <Navigate to="/login" replace />} />
             </Routes>
           </motion.div>

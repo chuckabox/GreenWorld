@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { PlusCircle, Zap, Globe, Clock, AlertCircle, ChevronDown, ChevronLeft, ChevronRight, Target, Calendar } from "lucide-react";
+import { PlusCircle, Zap, Globe, Clock, AlertCircle, ChevronDown, ChevronLeft, ChevronRight, Target, Calendar, ShieldCheck, Info } from "lucide-react";
 import { cn } from "../lib/utils";
 import { UserData, Activity } from "../types";
-import { getLevelLabel } from "../lib/badges";
+import { getLevelLabel, toRoman } from "../lib/badges";
 import tasksAndEventsData from "../data/tasksAndEvents.json";
 import { LogActivityDialog } from "../components/LogActivityDialog";
+import { GreenPassInfoDialog } from "../components/GreenPassInfoDialog";
 
 type FilterDropdownOption = {
   value: string;
@@ -81,9 +82,21 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [activityPage, setActivityPage] = useState(1);
   const [isLogDialogOpen, setIsLogDialogOpen] = useState(false);
+  const [isInfoDialogOpen, setIsInfoDialogOpen] = useState(false);
+  
+  const currentLevel = Math.floor(user.impact_points / 500) + 1;
+  const nextLevelThreshold = currentLevel * 500;
+  const progressInLevel = user.impact_points % 500;
+  const progressPercentage = (progressInLevel / 500) * 100;
+
   const totalEstimatedCo2 = safeActivities.reduce((sum, activity) => sum + (activity.estimatedCo2Kg ?? 0), 0);
+  const totalEventsCompleted = safeActivities.filter(a => a.status === 'approved').length;
+  
+  const today = new Date().toISOString().split('T')[0];
   const tasks = useMemo(() => (tasksAndEventsData as (TaskItem | EventItem)[]).filter((t) => t.type === "task") as TaskItem[], []);
-  const events = useMemo(() => (tasksAndEventsData as (TaskItem | EventItem)[]).filter((t) => t.type === "event") as EventItem[], []);
+  const allEvents = useMemo(() => (tasksAndEventsData as (TaskItem | EventItem)[]).filter((t) => t.type === "event") as EventItem[], []);
+  const upcomingEvents = allEvents.filter(e => e.date && e.date >= today).sort((a, b) => (a.date ?? "").localeCompare(b.date ?? ""));
+  const pastEvents = allEvents.filter(e => e.date && e.date < today).sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
   const activityCategories = useMemo(
     () => Array.from(new Set(activities.map((activity) => activity.category).filter(Boolean))).sort(),
     [activities],
@@ -144,13 +157,34 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="card flex items-center gap-4">
-          <div className="w-12 h-12 bg-primary-light text-primary rounded-xl flex items-center justify-center">
+        <div className="card flex items-center gap-4 relative overflow-hidden">
+          <div className="w-12 h-12 bg-primary-light text-primary rounded-xl flex items-center justify-center shrink-0">
             <Zap size={24} />
           </div>
-          <div>
-            <p className="text-sm text-slate-500 font-medium">Green Points</p>
-            <p className="text-2xl font-bold">{user.impact_points}</p>
+          <div className="flex-1">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5">
+                <p className="text-sm text-slate-500 font-medium">Green Pass</p>
+                <div className="px-1.5 py-0.5 bg-primary/10 text-primary text-[10px] font-bold rounded flex items-center gap-1 border border-primary/20">
+                  <ShieldCheck size={10} />
+                  VERIFIED
+                </div>
+              </div>
+              <button 
+                onClick={() => setIsInfoDialogOpen(true)}
+                className="text-slate-300 hover:text-primary transition-colors p-1"
+                aria-label="Green Pass Info"
+              >
+                <Info size={16} />
+              </button>
+            </div>
+            <div className="flex items-baseline gap-1">
+              <p className="text-2xl font-bold">{user.impact_points}</p>
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">pts</p>
+            </div>
+          </div>
+          <div className="absolute -right-4 -bottom-4 opacity-[0.03] text-primary rotate-12 pointer-events-none">
+            <ShieldCheck size={80} />
           </div>
         </div>
         <div className="card flex items-center gap-4">
@@ -160,6 +194,48 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
           <div>
             <p className="text-sm text-slate-500 font-medium">Verified CO2 Saved</p>
             <p className="text-2xl font-bold">{totalEstimatedCo2.toFixed(2)} kg</p>
+          </div>
+        </div>
+        <div className="card flex items-center gap-4">
+          <div className="w-12 h-12 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center">
+            <Calendar size={24} />
+          </div>
+          <div>
+            <p className="text-sm text-slate-500 font-medium">Events Completed</p>
+            <p className="text-2xl font-bold">{totalEventsCompleted}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Badge Progression */}
+      <div className="card">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-xl font-bold">Badge Progression</h3>
+            <p className="text-sm text-slate-500">Badge {toRoman(currentLevel)} unlocked</p>
+          </div>
+          <div className="text-right">
+            <span className="text-2xl font-display font-black text-primary">
+              {toRoman(currentLevel + 1)}
+            </span>
+            <p className="text-[10px] uppercase font-bold text-slate-400 text-nowrap">Next Milestone</p>
+          </div>
+        </div>
+
+        <div className="relative pt-2">
+          <div className="flex mb-2 items-center justify-between text-xs">
+            <div className="font-bold text-primary bg-primary-light px-2 py-1 rounded-lg">
+              {user.impact_points} / {nextLevelThreshold} pts
+            </div>
+            <div className="text-slate-400 font-bold uppercase tracking-widest">
+              {Math.round(progressPercentage)}% to Badge {toRoman(currentLevel + 1)}
+            </div>
+          </div>
+          <div className="overflow-hidden h-3 mb-2 text-xs flex rounded-full bg-slate-100 border border-slate-200">
+            <div
+              style={{ width: `${progressPercentage}%` }}
+              className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary transition-all duration-1000 ease-out"
+            ></div>
           </div>
         </div>
       </div>
@@ -272,7 +348,7 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
               Upcoming events
             </h3>
             <div className="space-y-4">
-              {events.slice(0, 3).map((event) => (
+              {upcomingEvents.slice(0, 2).map((event) => (
                 <div key={event.id} className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
                   <div className="flex justify-between items-start mb-2">
                     <span className="text-xs font-bold text-primary uppercase tracking-wider">{event.date ?? ""}</span>
@@ -280,6 +356,21 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
                   </div>
                   <p className="font-medium text-slate-900">{event.title}</p>
                   {event.location && <p className="text-xs text-slate-500">{event.location}</p>}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="pt-4 border-t border-slate-100/50">
+            <h3 className="text-lg mb-3 flex items-center gap-2 text-slate-400">
+              <Clock size={18} />
+              Past events
+            </h3>
+            <div className="space-y-3">
+              {pastEvents.slice(0, 2).map((event) => (
+                <div key={event.id} className="p-3 rounded-xl border border-dashed border-slate-200 opacity-60">
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-tight mb-1">{event.date ?? ""}</p>
+                  <p className="text-sm font-medium text-slate-600">{event.title}</p>
                 </div>
               ))}
             </div>
@@ -294,6 +385,9 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
           }}
           onClose={() => setIsLogDialogOpen(false)}
         />
+      )}
+      {isInfoDialogOpen && (
+        <GreenPassInfoDialog onClose={() => setIsInfoDialogOpen(false)} />
       )}
     </div>
   );

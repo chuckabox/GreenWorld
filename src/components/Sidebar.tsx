@@ -26,7 +26,6 @@ export const Sidebar = ({ user }: { user: UserData }) => {
     { name: "Green Hub", path: "/learning", icon: BookOpen },
     { name: "Community", path: "/community", icon: MessageCircle },
     { name: "Leaderboard", path: "/leaderboard", icon: Trophy },
-    { name: "Profile", path: "/portfolio", icon: User },
   ];
 
   const navGroups: NavGroup[] = [
