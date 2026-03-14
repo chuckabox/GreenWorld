@@ -18,8 +18,6 @@ export interface Activity {
   date: string;
   description: string;
   evidenceUrl?: string;
-  taskId?: string;
-  taskTitle?: string;
   aiConfidence?: number;
   aiRecommendation?: "approve" | "manual_review" | "reject";
   estimatedCo2Kg?: number;
