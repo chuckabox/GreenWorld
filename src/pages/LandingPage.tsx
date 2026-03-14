@@ -69,7 +69,7 @@ export const LandingPage = () => {
               <span className="text-primary drop-shadow-md">Earn the Badge.</span>
             </h1>
             <p className="text-lg md:text-xl text-slate-200 mb-10 max-w-2xl mx-auto font-medium drop-shadow">
-              Log your eco actions, get them AI-verified, and earn green points. Track your CO₂ savings, climb the leaderboard, and unlock badges that prove your commitment.
+              A community hub for people who want to take real environmental action.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
               <motion.a
@@ -239,10 +239,10 @@ export const LandingPage = () => {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { icon: <CheckCircle2 className="text-primary" size={24} />, title: "AI Verification", desc: "Instant verification for your eco actions." },
-              { icon: <Trophy className="text-primary" size={24} />, title: "Leaderboard", desc: "Climb rankings in your local community." },
+              { icon: <Target className="text-primary" size={24} />, title: "AI Advisor", desc: "Personalized guidance to help you choose the most impactful tasks." },
               { icon: <Globe className="text-primary" size={24} />, title: "Green Hub", desc: "Access local sustainability initiatives." },
-              { icon: <Target className="text-primary" size={24} />, title: "AI Advisor", desc: "Personalized guidance to help you choose the most impactful tasks." }
+              { icon: <Users className="text-primary" size={24} />, title: "Community Chat", desc: "Connect with like-minded individuals." },
+              { icon: <Trophy className="text-primary" size={24} />, title: "Leaderboard", desc: "Climb rankings in your local community." }
             ].map((feature, i) => (
               <motion.div whileHover={{ y: -5 }} key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                 <div className="mb-4">{feature.icon}</div>
