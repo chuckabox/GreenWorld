@@ -150,17 +150,17 @@ export const LandingPage = () => {
                 <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 group hover:border-primary/30 transition-colors">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-bold text-slate-700">Earnings Rate</span>
-                    <span className="text-primary font-display font-bold text-xl">5 Points</span>
+                    <span className="text-primary font-display font-bold text-xl">5 pts / hr</span>
                   </div>
-                  <p className="text-sm text-slate-500">Every hour of sustainability action adds to your total.</p>
+                  <p className="text-sm text-slate-500">Log your eco-friendly actions to earn points for every hour volunteered.</p>
                 </div>
 
                 <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 group hover:border-primary/30 transition-colors">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-bold text-slate-700">Rank Milestone</span>
-                    <span className="text-primary font-display font-bold text-xl">100 Points</span>
+                    <span className="text-primary font-display font-bold text-xl">20 Hours</span>
                   </div>
-                  <p className="text-sm text-slate-600 font-medium">Reach 20 hours of action to level up your badge rank.</p>
+                  <p className="text-sm text-slate-600 font-medium">Reach this goal to level up your badge rank and unlock new rewards.</p>
                 </div>
               </div>
             </motion.div>
