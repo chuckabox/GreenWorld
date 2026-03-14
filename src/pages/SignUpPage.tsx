@@ -6,16 +6,18 @@ interface SignUpPayload {
   email: string;
   name: string;
   password: string;
-  role: string;
   suburb: string;
 }
 
+import { motion } from 'motion/react';
+
 export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) => void }) => {
+  // ... (rest of state)
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('student');
   const [suburb, setSuburb] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -40,7 +42,6 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) =
         email,
         name,
         password,
-        role,
         suburb,
       });
     }
@@ -48,17 +49,22 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) =
   };
 
   return (
-    <div className="flex min-h-screen bg-white font-sans overflow-hidden">
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="flex min-h-screen bg-white font-sans overflow-hidden"
+    >
       {/* Left Column - Form */}
       <div className="w-full lg:w-[45%] flex flex-col pt-8 p-6 lg:p-12 xl:p-20 overflow-y-auto relative z-10">
-        <div className="w-full max-w-[420px] mx-auto flex flex-col">
+        <div className="w-full max-w-[420px] mx-auto flex flex-col focus-visible:outline-none">
 
           <Link to="/" className="flex items-center gap-3 mb-8 hover:opacity-80 transition-opacity">
             <div className="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center text-primary border border-primary/20">
               <Leaf size={20} className="fill-current" />
             </div>
             <span className="font-display font-bold text-lg text-slate-900 leading-tight">
-              Sustainable<br />Impact Award
+              GreenWorld<br />
             </span>
           </Link>
 
@@ -98,31 +104,16 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) =
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider ml-1">Role</label>
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900 appearance-none"
-                >
-                  <option value="student">Student</option>
-                  <option value="teacher">Teacher</option>
-                  <option value="community">Community</option>
-                </select>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider ml-1">Suburb</label>
-                <input
-                  type="text"
-                  required
-                  value={suburb}
-                  onChange={(e) => setSuburb(e.target.value)}
-                  placeholder="Brisbane"
-                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900"
-                />
-              </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider ml-1">Suburb</label>
+              <input
+                type="text"
+                required
+                value={suburb}
+                onChange={(e) => setSuburb(e.target.value)}
+                placeholder="Brisbane"
+                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900"
+              />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -162,8 +153,8 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) =
 
             {error && <p className="text-xs text-red-600 font-medium ml-1">{error}</p>}
 
-            <div className="flex items-start gap-3 pt-1">
-              <div className="pt-0.5">
+            <div className="flex items-center gap-3 pt-1">
+              <div className="shrink-0">
                 <input
                   type="checkbox"
                   id="terms"
@@ -171,7 +162,7 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) =
                   className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary/20"
                 />
               </div>
-              <label htmlFor="terms" className="text-xs text-slate-500 leading-snug">
+              <label htmlFor="terms" className="text-xs text-slate-500 leading-none">
                 I agree to the <a href="#" className="font-bold text-primary hover:underline">Terms</a> and <a href="#" className="font-bold text-primary hover:underline">Privacy Policy</a>.
               </label>
             </div>
@@ -210,9 +201,9 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) =
         </div>
 
         <div className="absolute inset-0 flex items-center justify-center p-12 z-10">
-          <div className="w-full max-w-[440px] glass bg-primary/20 backdrop-blur-xl border border-white/30 p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
+          <div className="w-full max-w-[440px] bg-primary p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden group border border-white/10">
             <div className="absolute -top-24 -right-24 w-48 h-48 bg-white/10 rounded-full blur-3xl group-hover:bg-white/20 transition-all duration-700"></div>
-            
+
             <div className="w-12 h-12 bg-white text-primary rounded-2xl flex items-center justify-center mb-8 shadow-lg shadow-black/10">
               <Leaf size={24} className="fill-current" />
             </div>
@@ -232,9 +223,9 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) =
 
             <div className="mt-12 flex items-center gap-4 pt-8 border-t border-white/10">
               <div className="flex -space-x-3">
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" className="w-10 h-10 rounded-full border-2 border-white/20 bg-emerald-100" />
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka" alt="User" className="w-10 h-10 rounded-full border-2 border-white/20 bg-rose-100" />
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sam" alt="User" className="w-10 h-10 rounded-full border-2 border-white/20 bg-blue-100" />
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" className="w-10 h-10 rounded-full border-2 border-primary bg-emerald-100" />
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka" alt="User" className="w-10 h-10 rounded-full border-2 border-primary bg-rose-100" />
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sam" alt="User" className="w-10 h-10 rounded-full border-2 border-primary bg-blue-100" />
               </div>
               <p className="text-sm text-white/90 font-medium leading-tight">
                 Join 5,000+ students<br />taking action
@@ -243,7 +234,7 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) =
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
