@@ -133,7 +133,6 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
               disabled={isLoading}
               className="text-sm font-medium text-primary hover:underline"
             >
-              Refresh
             </button>
           </div>
 

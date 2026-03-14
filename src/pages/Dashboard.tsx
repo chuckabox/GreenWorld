@@ -85,7 +85,7 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
   const [isLogDialogOpen, setIsLogDialogOpen] = useState(false);
   const [isInfoDialogOpen, setIsInfoDialogOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  
+
   const currentLevel = Math.floor(user.impact_points / 500) + 1;
   const nextLevelThreshold = currentLevel * 500;
   const progressInLevel = user.impact_points % 500;
@@ -93,7 +93,7 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
 
   const totalEstimatedCo2 = safeActivities.reduce((sum, activity) => sum + (activity.estimatedCo2Kg ?? 0), 0);
   const totalEventsCompleted = safeActivities.filter(a => a.status === 'approved').length;
-  
+
   const today = new Date().toISOString().split('T')[0];
   const tasks = useMemo(() => (tasksAndEventsData as (TaskItem | EventItem)[]).filter((t) => t.type === "task") as TaskItem[], []);
   const allEvents = useMemo(() => (tasksAndEventsData as (TaskItem | EventItem)[]).filter((t) => t.type === "event") as EventItem[], []);
@@ -168,7 +168,7 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
               <div className="flex items-center gap-1.5">
                 <p className="text-sm text-slate-500 font-medium">Green Pass</p>
               </div>
-              <button 
+              <button
                 onClick={() => setIsInfoDialogOpen(true)}
                 className="text-slate-300 hover:text-primary transition-colors p-1"
                 aria-label="Green Pass Info"
@@ -190,7 +190,7 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
             <Globe size={24} />
           </div>
           <div>
-            <p className="text-sm text-slate-500 font-medium">Verified CO2 Saved</p>
+            <p className="text-sm text-slate-500 font-medium">CO2 Saved</p>
             <p className="text-2xl font-bold">{totalEstimatedCo2.toFixed(2)} kg</p>
           </div>
         </div>
@@ -201,7 +201,7 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
           <div className="flex-1">
             <div className="flex items-center justify-between gap-2">
               <p className="text-sm text-slate-500 font-medium">Events Completed</p>
-              <button 
+              <button
                 onClick={() => setIsHistoryOpen(true)}
                 className="text-slate-300 hover:text-orange-600 transition-colors p-1"
                 aria-label="View History"
@@ -397,9 +397,9 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
         <GreenPassInfoDialog onClose={() => setIsInfoDialogOpen(false)} />
       )}
       {isHistoryOpen && (
-        <EventHistoryDialog 
-          activities={safeActivities} 
-          onClose={() => setIsHistoryOpen(false)} 
+        <EventHistoryDialog
+          activities={safeActivities}
+          onClose={() => setIsHistoryOpen(false)}
         />
       )}
     </div>
