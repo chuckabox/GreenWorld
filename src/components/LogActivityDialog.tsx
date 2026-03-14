@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { CheckCircle2, LoaderCircle, Upload, X, Target } from "lucide-react";
+import { CheckCircle2, LoaderCircle, Upload, X, Target, ChevronDown } from "lucide-react";
 import { verifyEcoImageWithGemini } from "../lib/geminiVerifier";
 import tasksAndEventsData from "../data/tasksAndEvents.json";
 import { acquireBodyLock, releaseBodyLock } from "../lib/modalBodyLock";
@@ -72,11 +72,9 @@ export const LogActivityDialog = ({
       setFormData((prev) => ({
         ...prev,
         category: "Sustainability task",
-        description: prev.description.trim().length
-          ? prev.description
-          : task.description?.trim()
-            ? `${task.title}. ${task.description}`
-            : task.title,
+        description: task.description?.trim()
+          ? `${task.title}. ${task.description}`
+          : task.title,
       }));
     }
   };
@@ -304,10 +302,10 @@ export const LogActivityDialog = ({
             <button
               type="button"
               onClick={handleClose}
-              className="p-1 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors"
+              className="p-2 -mr-2 mt-[-4px] rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors"
               aria-label="Close"
             >
-              <X size={18} />
+              <X size={20} />
             </button>
           </div>
 
@@ -346,39 +344,45 @@ export const LogActivityDialog = ({
           ) : (
             <form onSubmit={handleSubmit} className="space-y-3">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                  <Target size={14} className="text-primary" />
+                <label className="text-xs font-bold text-slate-700 flex items-center gap-2">
+                  <Target size={16} className="text-primary" />
                   Choose a task (optional)
                 </label>
-                <select
-                  className="w-full p-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
-                  value={selectedTaskId}
-                  onChange={(e) => handleTaskSelect(e.target.value)}
-                >
-                  <option value="">None / General activity</option>
-                  {tasks.map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.title}{t.pointsReward != null ? ` (${t.pointsReward} pts)` : ""}
-                    </option>
-                  ))}
-                </select>
+                <div className="relative">
+                  <select
+                    className="w-full p-3 pr-10 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none appearance-none"
+                    value={selectedTaskId}
+                    onChange={(e) => handleTaskSelect(e.target.value)}
+                  >
+                    <option value="">None / General activity</option>
+                    {tasks.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.title}{t.pointsReward != null ? ` (${t.pointsReward} pts)` : ""}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
+                </div>
                 <p className="text-[11px] text-slate-500">Selecting a task pre-fills category and description. You can edit them.</p>
               </div>
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Category</label>
-                <select
-                  className="w-full p-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                >
-                  <option>Waste Management</option>
-                  <option>Energy Conservation</option>
-                  <option>Community Outreach</option>
-                  <option>Environmental Advocacy</option>
-                  <option>Biodiversity</option>
-                  <option>Sustainability task</option>
-                </select>
+                <div className="relative">
+                  <select
+                    className="w-full p-3 pr-10 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none appearance-none"
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  >
+                    <option>Waste Management</option>
+                    <option>Energy Conservation</option>
+                    <option>Community Outreach</option>
+                    <option>Environmental Advocacy</option>
+                    <option>Biodiversity</option>
+                    <option>Sustainability task</option>
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
@@ -388,7 +392,7 @@ export const LogActivityDialog = ({
                     type="number"
                     min="0.5"
                     step="0.5"
-                    className="w-full p-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
+                    className="w-full p-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
                     value={formData.hours}
                     onChange={(e) => setFormData({ ...formData, hours: parseFloat(e.target.value) })}
                   />
@@ -397,7 +401,7 @@ export const LogActivityDialog = ({
                   <label className="text-xs font-bold text-slate-700">Date of Activity</label>
                   <input
                     type="date"
-                    className="w-full p-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
+                    className="w-full p-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
                     value={formData.date}
                     onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                   />
@@ -409,7 +413,7 @@ export const LogActivityDialog = ({
                 <textarea
                   rows={3}
                   placeholder="What did you do? What was the impact?"
-                  className="w-full p-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none resize-none"
+                  className="w-full p-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none resize-none"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 />
@@ -423,7 +427,7 @@ export const LogActivityDialog = ({
                 <input
                   type="url"
                   placeholder="Link to photos, reports, or social posts"
-                  className="w-full p-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
+                  className="w-full p-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
                   value={formData.evidenceUrl}
                   onChange={(e) => setFormData({ ...formData, evidenceUrl: e.target.value })}
                 />
@@ -443,11 +447,11 @@ export const LogActivityDialog = ({
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className={`w-full text-left p-2.5 text-sm rounded-xl border transition-all ${proofImage ? "bg-emerald-50 border-emerald-200 text-emerald-900" : "bg-white border-slate-200 hover:border-primary/30 hover:bg-primary-light/40"}`}
+                  className={`w-full text-left p-3 px-4 text-sm rounded-xl border transition-all ${proofImage ? "bg-emerald-50 border-emerald-200 text-emerald-900" : "bg-white border-slate-200 hover:border-primary/30 hover:bg-primary-light/40"}`}
                 >
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      <Upload size={14} />
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <Upload size={18} className="text-slate-400" />
                       <div className="truncate">
                         <p className="text-xs font-semibold truncate">{proofImage ? proofImage.name : "Choose evidence image"}</p>
                         <p className="text-[11px] opacity-80">{proofImage ? `${(proofImage.size / 1024).toFixed(0)} KB selected` : "PNG, JPG or HEIC supported"}</p>
@@ -489,19 +493,10 @@ export const LogActivityDialog = ({
                 <button
                   type="submit"
                   disabled={!canSubmit}
-                  className="sm:flex-1 w-full sm:w-auto btn-primary h-10 text-sm flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full btn-primary h-10 text-sm flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? "Submitting..." : "Submit Activity"}
                 </button>
-                {isDirty ? (
-                  <button
-                    type="button"
-                    onClick={resetForAnotherLog}
-                    className="w-full sm:flex-1 h-10 text-sm flex items-center justify-center border-2 border-red-100 text-red-600 rounded-xl font-bold text-center hover:bg-red-50 hover:text-red-700 transition-colors"
-                  >
-                    Reset
-                  </button>
-                ) : null}
               </div>
             </form>
           )}
