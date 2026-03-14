@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Bell, Menu, X, LayoutDashboard, Sparkles, BookOpen, MessageCircle, Trophy, LogOut } from "lucide-react";
+import { Bell, Menu, X, LayoutDashboard, Sparkles, BookOpen, MessageCircle, Trophy, LogOut, Home } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "../lib/utils";
 import { motion, AnimatePresence } from "motion/react";
@@ -46,6 +46,13 @@ export const Header = ({
           </h1>
         </div>
         <div className="flex items-center gap-4">
+          <Link 
+            to="/" 
+            className="p-2 text-slate-500 hover:bg-slate-100 rounded-xl transition-colors md:hidden"
+            title="Go to Home"
+          >
+            <Home size={20} />
+          </Link>
         </div>
       </header>
 
