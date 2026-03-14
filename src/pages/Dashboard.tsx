@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { PlusCircle, Zap, Globe, Clock, AlertCircle, ChevronDown, ChevronLeft, ChevronRight, Target, Calendar, ShieldCheck, Info, History, X as CloseIcon } from "lucide-react";
 import { cn } from "../lib/utils";
 import { UserData, Activity } from "../types";
@@ -83,6 +83,7 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [activityPage, setActivityPage] = useState(1);
   const [isLogDialogOpen, setIsLogDialogOpen] = useState(false);
+  const [initialTaskForLog, setInitialTaskForLog] = useState<{ taskId: string; taskTitle: string } | null>(null);
   const [isInfoDialogOpen, setIsInfoDialogOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
@@ -131,6 +132,17 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
     { value: "all", label: "All categories" },
     ...activityCategories.map((category) => ({ value: category, label: category })),
   ];
+
+  const location = useLocation();
+
+  // When coming from AI Advisor with a chosen task, open the log dialog prefilled
+  useEffect(() => {
+    const state = location.state as { taskId?: string; taskTitle?: string } | null;
+    if (state?.taskId && state?.taskTitle) {
+      setInitialTaskForLog({ taskId: state.taskId, taskTitle: state.taskTitle });
+      setIsLogDialogOpen(true);
+    }
+  }, [location.state]);
 
   if (!user) return null;
 
@@ -387,6 +399,8 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
       {isLogDialogOpen && (
         <LogActivityDialog
           userId={user.id}
+          initialTaskId={initialTaskForLog?.taskId}
+          initialTaskTitle={initialTaskForLog?.taskTitle}
           onActivityLogged={() => {
             onActivityLogged();
           }}
