@@ -4,7 +4,7 @@ import { Leaf, Users, Award, CheckCircle2, Trophy, Globe, ChevronDown, Target, C
 import { motion } from "motion/react";
 import { cn } from "../lib/utils";
 
-import heroBg from "../assets/hero_background.png";
+import heroBg from "../assets/hero_background.jpeg";
 import reforestationImg from "../assets/reforestation.png";
 import universityImg from "../assets/university_recognition.png";
 import analyticsImg from "../assets/impact_analytics.png";
@@ -87,7 +87,7 @@ export const LandingPage = () => {
           <div className="flex-1 text-center md:text-left">
             <h2 className="text-3xl md:text-4xl font-display font-bold mb-6">Supported by Brisbane City Council</h2>
             <p className="text-slate-600 text-lg leading-relaxed mb-8">
-              We are proud to be supported by the Brisbane City Council in our mission to build a more sustainable future. Through this partnership, we're empowering residents to take verifiable action for our local environment.
+              We're working with Brisbane City Council to help residents take real action for a greener local environment, ahead of the 2032 Olympics.
             </p>
             <div className="flex items-center justify-center md:justify-start gap-4">
               <div className="h-px w-12 bg-slate-200"></div>
@@ -96,14 +96,16 @@ export const LandingPage = () => {
             </div>
           </div>
           <div className="w-full max-w-[320px] md:max-w-none md:flex-1 flex justify-center">
-            <div className="relative group">
-              <div className="absolute -inset-4 bg-gradient-to-tr from-primary/10 to-blue-500/10 rounded-[2.5rem] blur-2xl group-hover:blur-3xl transition-all opacity-70"></div>
-              <img
-                src={councilImg}
-                alt="Brisbane City Council Support"
-                className="relative w-full max-w-[400px] h-auto object-contain drop-shadow-2xl grayscale hover:grayscale-0 transition-all duration-700"
-              />
-            </div>
+            <motion.div whileHover={{ y: -5 }} className="group">
+              <div className="w-full max-w-[400px] aspect-square rounded-3xl overflow-hidden shadow-md relative">
+                <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-transparent transition-colors z-10"></div>
+                <img
+                  src={councilImg}
+                  alt="Brisbane City Council Support"
+                  className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -142,9 +144,6 @@ export const LandingPage = () => {
             {/* Sustainability Badge III (Best, Middle) */}
             <motion.div whileHover={{ y: -5 }} className="bg-white p-8 rounded-3xl shadow-md border-2 border-primary/20 relative overflow-hidden group transform md:-translate-y-4">
               <div className="absolute top-0 left-0 w-full h-1 bg-yellow-400"></div>
-              <div className="absolute top-0 right-0 p-4">
-                <span className="bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full">Popular</span>
-              </div>
               <div className="w-14 h-14 bg-yellow-50 text-yellow-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
                 <Trophy size={28} />
               </div>
