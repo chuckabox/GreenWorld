@@ -74,11 +74,12 @@ const FilterDropdown = ({
 type TaskItem = { id: string; type: string; title: string; description?: string; pointsReward?: number };
 type EventItem = { id: string; type: string; title: string; date?: string; location?: string };
 
-export const Dashboard = ({ user, activities }: { user: UserData, activities: Activity[] }) => {
+export const Dashboard = ({ user, activities }: { user: UserData; activities: Activity[] }) => {
+  const safeActivities = activities ?? [];
   const [statusFilter, setStatusFilter] = useState<"all" | "approved" | "pending" | "rejected">("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [activityPage, setActivityPage] = useState(1);
-  const totalEstimatedCo2 = activities.reduce((sum, activity) => sum + (activity.estimatedCo2Kg ?? 0), 0);
+  const totalEstimatedCo2 = safeActivities.reduce((sum, activity) => sum + (activity.estimatedCo2Kg ?? 0), 0);
   const tasks = useMemo(() => (tasksAndEventsData as (TaskItem | EventItem)[]).filter((t) => t.type === "task") as TaskItem[], []);
   const events = useMemo(() => (tasksAndEventsData as (TaskItem | EventItem)[]).filter((t) => t.type === "event") as EventItem[], []);
   const activityCategories = useMemo(
@@ -94,7 +95,7 @@ export const Dashboard = ({ user, activities }: { user: UserData, activities: Ac
         if (dateDiff !== 0) return dateDiff;
         return right.id - left.id;
       }),
-    [activities, categoryFilter, statusFilter],
+    [safeActivities, categoryFilter, statusFilter],
   );
   const activitiesPerPage = 5;
   const totalActivityPages = Math.max(1, Math.ceil(filteredActivities.length / activitiesPerPage));
@@ -114,11 +115,15 @@ export const Dashboard = ({ user, activities }: { user: UserData, activities: Ac
     ...activityCategories.map((category) => ({ value: category, label: category })),
   ];
 
+  if (!user) return null;
+
+  const firstName = (user.name || "there").trim().split(/\s+/)[0] || "there";
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-3xl">Welcome back, {user.name.split(' ')[0]}! 👋</h2>
+          <h2 className="text-3xl">Welcome back, {firstName}! 👋</h2>
           <p className="text-slate-500">
             {user.suburb ? `${user.suburb} ` : ""}
             {user.team ? `• ${user.team} • ` : ""}

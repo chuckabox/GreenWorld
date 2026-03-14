@@ -1,4 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
+import { GEMINI_API_KEY, USE_GEMINI_LIVE } from "./geminiConfig";
 
 export interface QuestionnaireInput {
   transport: number;
@@ -57,11 +58,6 @@ export interface UserActivityProfile {
   taskIdsDone: string[];
 }
 
-const parseBoolean = (value: string | undefined, defaultValue = false) => {
-  if (value == null) return defaultValue;
-  return value.trim().toLowerCase() === "true";
-};
-
 const cleanJsonText = (text: string) =>
   text
     .replace(/^```json\s*/i, "")
@@ -102,13 +98,9 @@ Close (25-30s): "Log it in EcoImpact and earn points."`,
 });
 
 export const runAiQuestionnaire = async (input: QuestionnaireInput): Promise<QuestionnaireResult> => {
-  const aiDemoMode = parseBoolean(import.meta.env.VITE_AI_DEMO_MODE, false);
-  if (aiDemoMode) return getDemoQuestionnaireResult(input);
+  if (!USE_GEMINI_LIVE) return getDemoQuestionnaireResult(input);
 
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  if (!apiKey) throw new Error("Missing VITE_GEMINI_API_KEY in .env");
-
-  const ai = new GoogleGenAI({ apiKey });
+  const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
   try {
     const response = await ai.models.generateContent({
@@ -134,9 +126,7 @@ Rules: score 0-100, exactly 3 recommendations, realistic and concise, no markdow
       mode: "live",
     };
   } catch {
-    const fallback = parseBoolean(import.meta.env.VITE_AI_FALLBACK_TO_DEMO, false);
-    if (fallback) return getDemoQuestionnaireResult(input);
-    throw new Error("AI questionnaire failed.");
+    return getDemoQuestionnaireResult(input);
   }
 };
 
@@ -144,13 +134,9 @@ export const generateAwarenessContent = async (
   topic: string,
   audience: string,
 ): Promise<AwarenessContentResult> => {
-  const aiDemoMode = parseBoolean(import.meta.env.VITE_AI_DEMO_MODE, false);
-  if (aiDemoMode) return getDemoAwarenessContent(topic, audience);
+  if (!USE_GEMINI_LIVE) return getDemoAwarenessContent(topic, audience);
 
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  if (!apiKey) throw new Error("Missing VITE_GEMINI_API_KEY in .env");
-
-  const ai = new GoogleGenAI({ apiKey });
+  const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
   try {
     const response = await ai.models.generateContent({
@@ -177,9 +163,7 @@ Rules: shortScript under 90 words, caption under 35 words, hashtags 3-6 items, n
       mode: "live",
     };
   } catch {
-    const fallback = parseBoolean(import.meta.env.VITE_AI_FALLBACK_TO_DEMO, false);
-    if (fallback) return getDemoAwarenessContent(topic, audience);
-    throw new Error("AI content generation failed.");
+    return getDemoAwarenessContent(topic, audience);
   }
 };
 
@@ -213,13 +197,9 @@ export const runTaskFitAnalysis = async (
   answers: QuestionnaireInput,
   feelingText?: string,
 ): Promise<TaskFitResult> => {
-  const aiDemoMode = parseBoolean(import.meta.env.VITE_AI_DEMO_MODE, false);
-  if (aiDemoMode) return getDemoTaskFitResult(task, answers, feelingText);
+  if (!USE_GEMINI_LIVE) return getDemoTaskFitResult(task, answers, feelingText);
 
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  if (!apiKey) throw new Error("Missing VITE_GEMINI_API_KEY in .env");
-
-  const ai = new GoogleGenAI({ apiKey });
+  const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
   const feeling = (feelingText ?? "").trim() ? `User's feeling about the task: "${feelingText.trim()}"` : "No extra comment.";
   const prompt = `You are an AI sustainability supervisor. Assess how well this user fits the given task.
 
@@ -251,9 +231,7 @@ Rules: fit = high if they're well aligned, medium if doable with small changes, 
       mode: "live",
     };
   } catch {
-    const fallback = parseBoolean(import.meta.env.VITE_AI_FALLBACK_TO_DEMO, false);
-    if (fallback) return getDemoTaskFitResult(task, answers, feelingText);
-    throw new Error("Task fit analysis failed.");
+    return getDemoTaskFitResult(task, answers, feelingText);
   }
 };
 
@@ -284,13 +262,9 @@ export const getTaskRecommendations = async (
 ): Promise<TaskRecommendation[]> => {
   if (tasks.length === 0) return [];
 
-  const aiDemoMode = parseBoolean(import.meta.env.VITE_AI_DEMO_MODE, false);
-  if (aiDemoMode) return getDemoTaskRecommendations(tasks, answers, feelingText);
+  if (!USE_GEMINI_LIVE) return getDemoTaskRecommendations(tasks, answers, feelingText);
 
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  if (!apiKey) throw new Error("Missing VITE_GEMINI_API_KEY in .env");
-
-  const ai = new GoogleGenAI({ apiKey });
+  const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
   const taskList = tasks
     .map((t) => `- id: "${t.id}", title: "${t.title}"${t.description ? `, description: ${t.description}` : ""}`)
     .join("\n");
@@ -334,9 +308,7 @@ Rules: taskId must be one of the ids above. fit = high (well aligned), medium (d
       };
     });
   } catch {
-    const fallback = parseBoolean(import.meta.env.VITE_AI_FALLBACK_TO_DEMO, false);
-    if (fallback) return getDemoTaskRecommendations(tasks, answers, feelingText);
-    throw new Error("Task recommendations failed.");
+    return getDemoTaskRecommendations(tasks, answers, feelingText);
   }
 };
 
@@ -380,18 +352,14 @@ export const getTaskRecommendationsFromProfile = async (
 ): Promise<TaskRecommendation[]> => {
   if (tasks.length === 0) return [];
 
-  const aiDemoMode = parseBoolean(import.meta.env.VITE_AI_DEMO_MODE, false);
   const hasHistory = profile.totalCount > 0;
-  if (aiDemoMode) {
+  if (!USE_GEMINI_LIVE) {
     return hasHistory
       ? getDemoRecommendationsFromProfile(tasks, profile)
       : getDemoStarterRecommendations(tasks);
   }
 
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  if (!apiKey) throw new Error("Missing VITE_GEMINI_API_KEY in .env");
-
-  const ai = new GoogleGenAI({ apiKey });
+  const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
   const taskList = tasks
     .map((t) => `- id: "${t.id}", title: "${t.title}"${t.description ? `, description: ${t.description}` : ""}`)
     .join("\n");
@@ -434,12 +402,8 @@ Rules: taskId must be one of the ids above. reason under 15 words. No markdown.`
       };
     });
   } catch {
-    const fallback = parseBoolean(import.meta.env.VITE_AI_FALLBACK_TO_DEMO, false);
-    if (fallback) {
-      return hasHistory
-        ? getDemoRecommendationsFromProfile(tasks, profile)
-        : getDemoStarterRecommendations(tasks);
-    }
-    throw new Error("Recommendations failed.");
+    return hasHistory
+      ? getDemoRecommendationsFromProfile(tasks, profile)
+      : getDemoStarterRecommendations(tasks);
   }
 };
