@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Leaf, Users, Award, CheckCircle2, Trophy, Globe, ChevronDown, Target, Calendar } from "lucide-react";
+import { Leaf, Users, Award, CheckCircle2, Trophy, Globe, ChevronDown, Target, Calendar, Instagram, ExternalLink } from "lucide-react";
 import { motion } from "motion/react";
 import { cn } from "../lib/utils";
 
@@ -41,7 +41,7 @@ export const LandingPage = () => {
             <span className="font-display font-bold text-xl tracking-tight">EcoImpact</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600">
-            <a href="#council" className="hover:text-primary transition-colors">Council</a>
+            <a href="#what-we-have" className="hover:text-primary transition-colors">What we have</a>
             <a href="#levels" className="hover:text-primary transition-colors">Badges</a>
             <a href="#how-it-works" className="hover:text-primary transition-colors">How it Works</a>
             <a href="#events-tasks" className="hover:text-primary transition-colors">Events & tasks</a>
@@ -220,8 +220,12 @@ export const LandingPage = () => {
       </section>
 
       {/* Impact Cards */}
-      <section className="py-24 bg-slate-50">
+      <section id="what-we-have" className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-display font-bold mb-4">What we have</h2>
+            <div className="w-16 h-1 bg-primary mx-auto rounded-full"></div>
+          </div>
           <div className="grid md:grid-cols-3 gap-8">
             {[
               { img: reforestationImg, title: "AI-Verified Actions", desc: "Upload a photo of your eco action. Our AI checks it, scores the impact, and awards points." },
@@ -320,26 +324,53 @@ export const LandingPage = () => {
             </div>
 
             <div>
-              <h4 className="font-bold mb-6">Company</h4>
-              <ul className="space-y-4 text-sm text-slate-500">
-                <li><a href="#" className="hover:text-primary transition-colors">About Us</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Partners</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Contact</a></li>
-              </ul>
-            </div>
-
-            <div>
               <h4 className="font-bold mb-6">Social</h4>
               <div className="flex gap-4">
-                <a href="#" className="w-10 h-10 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
-                  <span className="font-bold">X</span>
+
+                {/* UQSIC Instagram */}
+                <a
+                  href="https://www.instagram.com/uq_sic/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
+                  title="UQSIC Instagram"
+                >
+                  <Instagram size={18} />
                 </a>
-                <a href="#" className="w-10 h-10 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+
+                {/* UQSIC Club */}
+                <a
+                  href="https://uqu.com.au/clubs-and-societies/uq-sustainable-innovators-club-uqsic/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
+                  title="UQSIC Club"
+                >
+                  <ExternalLink size={18} />
+                </a>
+
+                {/* Brisbane City Council */}
+                <a
+                  href="https://www.brisbane.qld.gov.au"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
+                  title="Brisbane City Council"
+                >
                   <Globe size={18} />
                 </a>
-                <a href="#" className="w-10 h-10 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
-                  <span className="font-bold">in</span>
+
+                {/* UQ Library */}
+                <a
+                  href="https://library.uq.edu.au"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
+                  title="UQ Library"
+                >
+                  <Globe size={18} />
                 </a>
+
               </div>
             </div>
           </div>
