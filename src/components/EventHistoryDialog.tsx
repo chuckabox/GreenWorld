@@ -3,12 +3,12 @@ import { createPortal } from "react-dom";
 import { X, History, TrendingUp, Calendar, CheckCircle2 } from "lucide-react";
 import { Activity } from "../types";
 
-export const EventHistoryDialog = ({ 
-  activities, 
-  onClose 
-}: { 
-  activities: Activity[]; 
-  onClose: () => void 
+export const EventHistoryDialog = ({
+  activities,
+  onClose
+}: {
+  activities: Activity[];
+  onClose: () => void
 }) => {
   const approvedActivities = activities.filter(a => a.status === 'approved');
 
@@ -19,7 +19,7 @@ export const EventHistoryDialog = ({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div 
+      <div
         className="relative max-w-2xl w-full bg-white rounded-3xl p-8 shadow-2xl space-y-8"
         onMouseDown={(e) => e.stopPropagation()}
       >
@@ -63,15 +63,15 @@ export const EventHistoryDialog = ({
                   </div>
                 </div>
                 <div className="text-right shrink-0">
-                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Impact</p>
-                   <p className="text-sm font-black text-slate-700">{activity.hours}h</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Hours</p>
+                  <p className="text-sm font-black text-slate-700">{activity.hours}h</p>
                 </div>
               </div>
             ))
           ) : (
             <div className="text-center py-20 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
-               <TrendingUp size={48} className="mx-auto text-slate-200 mb-4" />
-               <p className="text-slate-400 font-medium">No verified actions yet. Start your journey!</p>
+              <TrendingUp size={48} className="mx-auto text-slate-200 mb-4" />
+              <p className="text-slate-400 font-medium">No verified actions yet. Start your journey!</p>
             </div>
           )}
         </div>

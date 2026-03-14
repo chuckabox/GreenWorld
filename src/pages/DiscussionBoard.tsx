@@ -178,10 +178,13 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
     }));
   }, []);
 
-  const addFriend = useCallback(
+  const toggleFriend = useCallback(
     (u: StoredUser) => {
-      setFriends((prev) => (prev.some((f) => f.id === u.id) ? prev : [...prev, { id: u.id, name: u.name }]));
-      setAddFriendOpen(false);
+      setFriends((prev) => {
+        const isFriend = prev.some((f) => f.id === u.id);
+        if (isFriend) return prev.filter((f) => f.id !== u.id);
+        return [...prev, { id: u.id, name: u.name }];
+      });
     },
     []
   );
@@ -453,54 +456,82 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
         {/* Messages area */}
         <div className="flex-1 min-h-0 overflow-y-auto px-4 py-4 space-y-3">
           {viewMode === "dm" && activeFriendId != null ? (
-            (dmMessages[activeFriendId] ?? []).map((msg) => {
+            (dmMessages[activeFriendId] ?? []).map((msg, i, arr) => {
+              const prevMsg = arr[i - 1];
+              const isGrouped = prevMsg && prevMsg.fromUserId === msg.fromUserId;
               const isMe = msg.fromUserId === user.id;
+
               return (
                 <article
                   key={msg.id}
-                  className={cn("flex gap-3", isMe ? "flex-row-reverse text-right" : "flex-row text-left")}
+                  className={cn(
+                    "flex gap-3",
+                    isMe ? "flex-row-reverse text-right" : "flex-row text-left",
+                    isGrouped ? "-mt-2" : "mt-2"
+                  )}
                 >
-                  <img
-                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${isMe ? user.id : activeFriendId}`}
-                    alt=""
-                    className="w-8 h-8 rounded-full object-cover shrink-0 mt-1"
-                  />
+                  <div className="w-8 shrink-0">
+                    {!isGrouped && (
+                      <img
+                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${isMe ? user.id : activeFriendId}`}
+                        alt=""
+                        className="w-8 h-8 rounded-full object-cover mt-1"
+                      />
+                    )}
+                  </div>
                   <div className="flex-1 min-w-0">
                     <div
                       className={cn(
-                        "inline-block rounded-2xl px-3 py-2 max-w-full",
+                        "inline-block rounded-2xl px-3 py-2 max-w-[85%]",
                         isMe ? "bg-primary text-white" : "bg-slate-50 text-slate-800",
+                        isGrouped && (isMe ? "rounded-tr-md" : "rounded-tl-md")
                       )}
                     >
                       <p className="text-sm leading-relaxed whitespace-pre-line">{msg.body}</p>
                     </div>
-                    <p className="mt-1 text-[10px] text-slate-400">{msg.time}</p>
+                    {!isGrouped && <p className="mt-1 text-[10px] text-slate-400">{msg.time}</p>}
                   </div>
                 </article>
               );
             })
           ) : (
-            visiblePosts.map((post) => (
-              <article key={post.id} className="flex gap-3">
-                <img
-                  src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${post.avatarSeed}`}
-                  alt=""
-                  className="w-9 h-9 rounded-full object-cover shrink-0 mt-1"
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-baseline gap-2">
-                    <span className="font-semibold text-slate-900 text-sm">{post.author}</span>
-                    <span className="text-xs text-slate-400">{post.time}</span>
-                    <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-primary-light text-primary">
-                      {post.topic}
-                    </span>
+            visiblePosts.map((post, i, arr) => {
+              const prevPost = arr[i - 1];
+              const isGrouped = prevPost && prevPost.author === post.author;
+
+              return (
+                <article key={post.id} className={cn("flex gap-3", isGrouped ? "-mt-1" : "mt-2")}>
+                  <div className="w-9 shrink-0">
+                    {!isGrouped && (
+                      <img
+                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${post.avatarSeed}`}
+                        alt=""
+                        className="w-9 h-9 rounded-full object-cover mt-1"
+                      />
+                    )}
                   </div>
-                  <div className="mt-1 inline-block rounded-2xl bg-slate-50 px-3 py-2 max-w-full">
-                    <p className="text-slate-700 text-sm leading-relaxed whitespace-pre-line">{post.body}</p>
+                  <div className="flex-1 min-w-0">
+                    {!isGrouped && (
+                      <div className="flex flex-wrap items-baseline gap-2">
+                        <span className="font-semibold text-slate-900 text-sm">{post.author}</span>
+                        <span className="text-xs text-slate-400">{post.time}</span>
+                        <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-primary-light text-primary">
+                          {post.topic}
+                        </span>
+                      </div>
+                    )}
+                    <div
+                      className={cn(
+                        "mt-1 inline-block rounded-2xl bg-slate-50 px-3 py-2 max-w-full",
+                        isGrouped && "rounded-tl-md"
+                      )}
+                    >
+                      <p className="text-slate-700 text-sm leading-relaxed whitespace-pre-line">{post.body}</p>
+                    </div>
                   </div>
-                </div>
-              </article>
-            ))
+                </article>
+              );
+            })
           )}
         </div>
 
@@ -578,28 +609,40 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
               </button>
             </div>
             <div className="overflow-y-auto p-4 space-y-2">
-              {addableUsers.length === 0 ? (
-                <p className="text-slate-500 text-sm">No one left to add. You’re friends with everyone here!</p>
+              {allUsers.length === 0 ? (
+                <p className="text-slate-500 text-sm">No other users found.</p>
               ) : (
-                addableUsers.map((u) => (
-                  <button
-                    key={u.id}
-                    type="button"
-                    onClick={() => addFriend(u)}
-                    className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-colors text-left"
-                  >
-                    <img
-                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${u.id}`}
-                      alt=""
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-slate-900 truncate">{u.name}</p>
-                      <p className="text-xs text-slate-500 truncate">{u.email}</p>
+                allUsers.map((u) => {
+                  const isFriend = friends.some((f) => f.id === u.id);
+                  return (
+                    <div
+                      key={u.id}
+                      className="w-full flex items-center gap-3 p-3 rounded-xl bg-slate-50/50 border border-slate-100 transition-colors"
+                    >
+                      <img
+                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${u.id}`}
+                        alt=""
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-slate-900 truncate">{u.name}</p>
+                        <p className="text-xs text-slate-500 truncate">{u.email}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => toggleFriend(u)}
+                        className={cn(
+                          "px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap",
+                          isFriend 
+                            ? "bg-slate-200 text-slate-600 hover:bg-red-50 hover:text-red-500 hover:border-red-100" 
+                            : "bg-primary text-white hover:bg-primary/90"
+                        )}
+                      >
+                        {isFriend ? "Unfriend" : "Add Friend"}
+                      </button>
                     </div>
-                    <UserPlus size={18} className="text-primary shrink-0" />
-                  </button>
-                ))
+                  );
+                })
               )}
             </div>
           </div>
