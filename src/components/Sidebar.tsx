@@ -20,27 +20,13 @@ type NavGroup = { label: string; items: NavItem[] };
 export const Sidebar = ({ user }: { user: UserData }) => {
   const location = useLocation();
   const navigate = useNavigate();
-
-  const navGroups: NavGroup[] = [
-    {
-      label: "Your impact",
-      items: [
-        { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-        { name: "Log Activity", path: "/log", icon: PlusCircle },
-        { name: "Impact Portfolio", path: "/portfolio", icon: User },
-      ],
-    },
-    {
-      label: "Discover",
-      items: [
-        { name: "AI Advisor", path: "/ai-supervisor", icon: Sparkles },
-        { name: "Green Hub", path: "/learning", icon: BookOpen },
-      ],
-    },
-    {
-      label: "Community",
-      items: [{ name: "Leaderboard", path: "/leaderboard", icon: Trophy }],
-    },
+  const navItems = [
+    { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
+    { name: "Log Activity", path: "/log", icon: PlusCircle },
+    { name: "AI Advisor", path: "/ai-supervisor", icon: Sparkles },
+    { name: "Green Hub", path: "/learning", icon: BookOpen },
+    { name: "Leaderboard", path: "/leaderboard", icon: Trophy },
+    { name: "Profile", path: "/portfolio", icon: User },
   ];
 
   if (user.role === "admin") {

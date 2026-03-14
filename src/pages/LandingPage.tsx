@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Leaf, Users, Award, CheckCircle2, Trophy, Globe, ChevronDown, Target, Calendar } from "lucide-react";
+import { Leaf, Users, Award, CheckCircle2, Trophy, Globe, ChevronDown, Target, Calendar, Instagram, ExternalLink } from "lucide-react";
 import { motion } from "motion/react";
 import { cn } from "../lib/utils";
 
-import heroBg from "../assets/hero_background.png";
+import heroBg from "../assets/hero_background.jpeg";
 import reforestationImg from "../assets/reforestation.png";
 import universityImg from "../assets/university_recognition.png";
 import analyticsImg from "../assets/impact_analytics.png";
@@ -41,9 +41,9 @@ export const LandingPage = () => {
             <span className="font-display font-bold text-xl tracking-tight">EcoImpact</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600">
-            <a href="#levels" className="hover:text-primary transition-colors">Levels</a>
+            <a href="#what-we-have" className="hover:text-primary transition-colors">What we have</a>
+            <a href="#levels" className="hover:text-primary transition-colors">Badges</a>
             <a href="#how-it-works" className="hover:text-primary transition-colors">How it Works</a>
-            <a href="#council" className="hover:text-primary transition-colors">Council Support</a>
             <a href="#events-tasks" className="hover:text-primary transition-colors">Events & tasks</a>
           </div>
           <Link to={authPath} className="btn-primary text-sm shadow-md">{authText}</Link>
@@ -60,9 +60,6 @@ export const LandingPage = () => {
 
         <div className="relative z-20 max-w-4xl mx-auto px-6 text-center text-white flex flex-col items-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <span className="inline-block px-4 py-1.5 bg-primary/20 backdrop-blur-md border border-primary/30 text-primary-light rounded-full text-xs font-bold tracking-widest uppercase mb-8 shadow-sm">
-              AI-Powered Eco Verification
-            </span>
             <h1 className="text-5xl md:text-7xl font-display font-bold leading-tight mb-4 drop-shadow-lg">
               Make an impact.<br />
               <span className="text-primary drop-shadow-md">Earn the Badge.</span>
@@ -88,13 +85,9 @@ export const LandingPage = () => {
       <section id="council" className="py-16 bg-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
           <div className="flex-1 text-center md:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-bold uppercase tracking-wider mb-6">
-              <Globe size={14} />
-              Official City Partner
-            </div>
             <h2 className="text-3xl md:text-4xl font-display font-bold mb-6">Supported by Brisbane City Council</h2>
             <p className="text-slate-600 text-lg leading-relaxed mb-8">
-              We are proud to be supported by the Brisbane City Council in our mission to build a more sustainable future. Through this partnership, we're empowering residents to take verifiable action for our local environment.
+              We're working with Brisbane City Council to help residents take real action for a greener local environment, ahead of the 2032 Olympics.
             </p>
             <div className="flex items-center justify-center md:justify-start gap-4">
               <div className="h-px w-12 bg-slate-200"></div>
@@ -103,14 +96,16 @@ export const LandingPage = () => {
             </div>
           </div>
           <div className="w-full max-w-[320px] md:max-w-none md:flex-1 flex justify-center">
-            <div className="relative group">
-              <div className="absolute -inset-4 bg-gradient-to-tr from-primary/10 to-blue-500/10 rounded-[2.5rem] blur-2xl group-hover:blur-3xl transition-all opacity-70"></div>
-              <img 
-                src={councilImg} 
-                alt="Brisbane City Council Support" 
-                className="relative w-full max-w-[400px] h-auto object-contain drop-shadow-2xl grayscale hover:grayscale-0 transition-all duration-700"
-              />
-            </div>
+            <motion.div whileHover={{ y: -5 }} className="group">
+              <div className="w-full max-w-[400px] aspect-square rounded-3xl overflow-hidden shadow-md relative">
+                <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-transparent transition-colors z-10"></div>
+                <img
+                  src={councilImg}
+                  alt="Brisbane City Council Support"
+                  className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -149,9 +144,6 @@ export const LandingPage = () => {
             {/* Sustainability Badge III (Best, Middle) */}
             <motion.div whileHover={{ y: -5 }} className="bg-white p-8 rounded-3xl shadow-md border-2 border-primary/20 relative overflow-hidden group transform md:-translate-y-4">
               <div className="absolute top-0 left-0 w-full h-1 bg-yellow-400"></div>
-              <div className="absolute top-0 right-0 p-4">
-                <span className="bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full">Popular</span>
-              </div>
               <div className="w-14 h-14 bg-yellow-50 text-yellow-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
                 <Trophy size={28} />
               </div>
@@ -228,8 +220,12 @@ export const LandingPage = () => {
       </section>
 
       {/* Impact Cards */}
-      <section className="py-24 bg-slate-50">
+      <section id="what-we-have" className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-display font-bold mb-4">What we have</h2>
+            <div className="w-16 h-1 bg-primary mx-auto rounded-full"></div>
+          </div>
           <div className="grid md:grid-cols-3 gap-8">
             {[
               { img: reforestationImg, title: "AI-Verified Actions", desc: "Upload a photo of your eco action. Our AI checks it, scores the impact, and awards points." },
@@ -299,14 +295,14 @@ export const LandingPage = () => {
       </section>
 
       {/* Call to Action Grid */}
-      <section className="py-24 bg-primary-light/50 relative overflow-hidden">
+      <section className="py-24 bg-emerald-50 relative overflow-hidden">
         <div className="max-w-4xl mx-auto px-6 relative z-10">
-          <div className="bg-slate-900 text-white rounded-[2rem] p-12 md:p-16 text-center shadow-2xl">
+          <div className="bg-gradient-to-br from-emerald-900 via-green-900 to-emerald-950 text-white rounded-[2rem] p-12 md:p-16 text-center shadow-2xl border border-emerald-800/50">
             <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">Ready to make your mark?</h2>
-            <p className="text-slate-300 text-lg mb-10 max-w-xl mx-auto">
+            <p className="text-emerald-100/80 text-lg mb-10 max-w-xl mx-auto">
               Log real actions, earn AI-verified points, and track your community's CO₂ impact — one eco choice at a time.
             </p>
-            <Link to={authPath} className="inline-block bg-primary hover:bg-primary-dark text-white text-lg px-10 py-4 rounded-xl font-bold transition-all hover:scale-105 shadow-xl">
+            <Link to={authPath} className="inline-block bg-primary hover:bg-primary-light hover:text-primary text-white text-lg px-10 py-4 rounded-xl font-bold transition-all hover:scale-105 shadow-xl shadow-emerald-900/40">
               {ctaBtnText}
             </Link>
           </div>
@@ -328,35 +324,53 @@ export const LandingPage = () => {
             </div>
 
             <div>
-              <h4 className="font-bold mb-6">Resources</h4>
-              <ul className="space-y-4 text-sm text-slate-500">
-                <li><a href="#" className="hover:text-primary transition-colors">Documentation</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Action Guides</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Case Studies</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-bold mb-6">Company</h4>
-              <ul className="space-y-4 text-sm text-slate-500">
-                <li><a href="#" className="hover:text-primary transition-colors">About Us</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Partners</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Contact</a></li>
-              </ul>
-            </div>
-
-            <div>
               <h4 className="font-bold mb-6">Social</h4>
               <div className="flex gap-4">
-                <a href="#" className="w-10 h-10 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
-                  <span className="font-bold">X</span>
+
+                {/* UQSIC Instagram */}
+                <a
+                  href="https://www.instagram.com/uq_sic/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
+                  title="UQSIC Instagram"
+                >
+                  <Instagram size={18} />
                 </a>
-                <a href="#" className="w-10 h-10 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+
+                {/* UQSIC Club */}
+                <a
+                  href="https://uqu.com.au/clubs-and-societies/uq-sustainable-innovators-club-uqsic/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
+                  title="UQSIC Club"
+                >
+                  <ExternalLink size={18} />
+                </a>
+
+                {/* Brisbane City Council */}
+                <a
+                  href="https://www.brisbane.qld.gov.au"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
+                  title="Brisbane City Council"
+                >
                   <Globe size={18} />
                 </a>
-                <a href="#" className="w-10 h-10 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
-                  <span className="font-bold">in</span>
+
+                {/* UQ Library */}
+                <a
+                  href="https://library.uq.edu.au"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
+                  title="UQ Library"
+                >
+                  <Globe size={18} />
                 </a>
+
               </div>
             </div>
           </div>
