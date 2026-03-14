@@ -163,16 +163,16 @@ export const LandingPage = () => {
           <div>
             <h2 className="text-4xl font-display font-bold mb-6">How Your Journey<br />to Impact Works</h2>
             <p className="text-slate-500 text-lg mb-8 max-w-md leading-relaxed">
-              We've simplified the path to making a difference. Follow our evidence-based framework to build sustainable habits and scale your influence.
+              Make a difference step by step. Use our framework to build green habits and grow your impact.
             </p>
             <button className="btn-primary">Learn More About Scoring</button>
           </div>
 
           <div className="space-y-8">
             {[
-              { num: "1", title: "Log Your Actions", desc: "Use our mobile app to record daily sustainable choices—from composting to commuting green." },
-              { num: "2", title: "Earn Impact Points", desc: "Watch your dashboard grow as you collect points for every eco-friendly milestone you hit." },
-              { num: "3", title: "Lead Your Community", desc: "Unlock project funding and mentorship as you transition from local action to leadership." }
+              { num: "1", title: "Log Your Actions", desc: "Record your sustainability activities like recycling, volunteering, or saving energy." },
+              { num: "2", title: "AI Verification", desc: "Our AI reviews your submissions and verifies that the activity meets sustainability criteria." },
+              { num: "3", title: "Earn Points & Climb", desc: "Receive impact points for verified actions and move up the community leaderboard." }
             ].map((step, i) => (
               <div key={i} className="flex gap-6">
                 <div className="shrink-0 w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-display font-bold text-xl shadow-lg">
@@ -193,9 +193,9 @@ export const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { img: reforestationImg, title: "AI-Verified Actions", desc: "Upload a photo of your eco action. Our Gemini-powered AI checks the evidence, scores the impact, and awards points automatically." },
-              { img: universityImg, title: "Community Leaderboard", desc: "See how your suburb, team, and school rank. Every verified action moves you up and earns you recognition." },
-              { img: analyticsImg, title: "Impact Analytics", desc: "Track your total CO₂ saved, plastic reduced, and water conserved — updated every time an action is verified." }
+              { img: reforestationImg, title: "AI-Verified Actions", desc: "Upload a photo of your eco action. Our AI checks it, scores the impact, and awards points." },
+              { img: universityImg, title: "Leaderboard", desc: "See your rank in your volunteering community. Verified activities move you up." },
+              { img: analyticsImg, title: "Impact Stats", desc: "Track CO₂ saved, plastic reduced, and water conserved." }
             ].map((card, i) => (
               <motion.div whileHover={{ y: -5 }} key={i} className="group">
                 <div className="w-full aspect-[4/3] rounded-3xl overflow-hidden mb-6 shadow-md relative">
