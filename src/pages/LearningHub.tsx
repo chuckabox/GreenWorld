@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { ArrowUpRight, BookOpen, CheckCircle, Clock, PlayCircle } from "lucide-react";
 
 const learningThemes = [
@@ -160,10 +161,20 @@ export const LearningHub = () => {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Learning path</span>
-                    <button className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-primary/80">
-                      Start
-                      <ArrowUpRight size={16} />
-                    </button>
+                    {path.title === "♻️ Waste & Circular Economy" ? (
+                      <Link
+                        to="/green-hub/waste-circular"
+                        className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-primary/80"
+                      >
+                        Start
+                        <ArrowUpRight size={16} />
+                      </Link>
+                    ) : (
+                      <button className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-primary/80">
+                        Start
+                        <ArrowUpRight size={16} />
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
