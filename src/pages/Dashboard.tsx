@@ -155,8 +155,7 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
           <h2 className="text-3xl">Welcome back, {firstName}! 👋</h2>
           <p className="text-slate-500">
             {user.suburb ? `${user.suburb} ` : ""}
-            {user.team ? `• ${user.team} • ` : ""}
-            Level: {getLevelLabel(user.impact_points)}
+            {user.team ? `• ${user.team}` : ""}
           </p>
         </div>
         <button
@@ -230,16 +229,10 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
       <div className="card">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-xl font-bold">Badge Progression</h3>
+            <h3 className="text-xl font-bold">Sustainability Badge Progression</h3>
             <p className="text-sm text-slate-500">Badge {toRoman(currentLevel)} unlocked</p>
           </div>
-          <div className="flex flex-col items-end gap-2">
-            <div className="text-right">
-              <span className="text-2xl font-display font-black text-primary">
-                {toRoman(currentLevel + 1)}
-              </span>
-              <p className="text-[10px] uppercase font-bold text-slate-400 text-nowrap">Next Milestone</p>
-            </div>
+          <div className="flex items-center gap-4">
             <button
               type="button"
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 text-[11px] font-bold text-slate-600 hover:bg-slate-50 hover:text-primary hover:border-primary/30 transition-all shadow-sm group"

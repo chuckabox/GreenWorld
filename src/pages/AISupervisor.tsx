@@ -13,6 +13,7 @@ import {
 import tasksAndEventsData from "../data/tasksAndEvents.json";
 import { cn } from "../lib/utils";
 import type { Activity } from "../types";
+import { LogActivityDialog } from "../components/LogActivityDialog";
 
 type TaskItem = { id: string; type: string; title: string; description?: string; pointsReward?: number };
 
@@ -58,6 +59,8 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
   const [answers, setAnswers] = useState<QuestionnaireInput>(defaultAnswers);
   const [feelingText, setFeelingText] = useState("");
   const [refineLoading, setRefineLoading] = useState(false);
+  const [isLogDialogOpen, setIsLogDialogOpen] = useState(false);
+  const [selectedTaskForLog, setSelectedTaskForLog] = useState<{ taskId: string; taskTitle: string } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -179,11 +182,10 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
                     </div>
                     <button
                       type="button"
-                      onClick={() =>
-                        navigate("/dashboard", {
-                          state: { taskId: rec.taskId, taskTitle: rec.taskTitle },
-                        })
-                      }
+                      onClick={() => {
+                        setSelectedTaskForLog({ taskId: rec.taskId, taskTitle: rec.taskTitle });
+                        setIsLogDialogOpen(true);
+                      }}
                       className="btn-primary shrink-0 flex items-center justify-center gap-2 py-2.5 px-4"
                     >
                       I'll do this task
@@ -283,6 +285,19 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
           </div>,
           document.body,
         )}
+
+      {isLogDialogOpen && selectedTaskForLog && (
+        <LogActivityDialog
+          userId={user.id}
+          initialTaskId={selectedTaskForLog.taskId}
+          initialTaskTitle={selectedTaskForLog.taskTitle}
+          onActivityLogged={() => {
+            onPointsAdded();
+            setIsLogDialogOpen(false);
+          }}
+          onClose={() => setIsLogDialogOpen(false)}
+        />
+      )}
     </div>
   );
 };

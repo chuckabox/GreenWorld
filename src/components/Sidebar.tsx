@@ -57,20 +57,21 @@ export const Sidebar = ({
       "bg-white border-r border-slate-200 h-screen sticky top-0 flex flex-col transition-all duration-300 ease-in-out z-20 overflow-hidden",
       isOpen ? "w-64" : "w-0 border-r-0"
     )}>
-      <div className="p-6 flex items-center justify-between gap-2 overflow-hidden whitespace-nowrap">
-        <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity min-w-0">
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shrink-0">
-            <Leaf size={24} />
-          </div>
-          <span className="font-display font-bold text-xl tracking-tight text-slate-900">GreenWorld</span>
-        </Link>
-        <button 
-          onClick={onToggle}
-          className="p-2 text-slate-400 hover:bg-slate-100 rounded-xl transition-colors shrink-0"
-        >
-          <ChevronLeft size={20} />
-        </button>
-      </div>
+      <div className="min-w-[256px] flex flex-col h-full bg-white">
+        <div className="h-16 px-6 flex items-center justify-between gap-2 overflow-hidden whitespace-nowrap">
+          <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity min-w-0">
+            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shrink-0">
+              <Leaf size={24} />
+            </div>
+            <span className="font-display font-bold text-xl tracking-tight text-slate-900">GreenWorld</span>
+          </Link>
+          <button 
+            onClick={onToggle}
+            className="p-2 -mr-2 text-slate-400 hover:bg-slate-100 rounded-xl transition-colors shrink-0"
+          >
+            <ChevronLeft size={20} />
+          </button>
+        </div>
 
       <nav className="flex-1 px-4 py-4 space-y-6 overflow-y-auto">
         {navGroups.map((group) => (
@@ -122,6 +123,7 @@ export const Sidebar = ({
             <LogOut size={18} />
           </button>
         </div>
+      </div>
       </div>
     </div>
   );

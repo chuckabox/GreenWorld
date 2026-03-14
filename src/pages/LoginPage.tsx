@@ -63,7 +63,7 @@ export const LoginPage = ({ onLogin }: { onLogin?: (email: string) => void }) =>
           <div className="w-8 h-8 bg-primary rounded flex items-center justify-center text-white">
             <Leaf size={18} />
           </div>
-          <span className="font-display font-bold text-lg text-slate-900 tracking-tight">Sustainability Impact Award</span>
+          <span className="font-display font-bold text-lg text-slate-900 tracking-tight">Sustainable Impact Award</span>
         </Link>
         <div className="hidden md:flex gap-6 text-sm font-medium text-slate-600">
           <a href="#" className="hover:text-slate-900 transition-colors">Program Info</a>
@@ -155,7 +155,7 @@ export const LoginPage = ({ onLogin }: { onLogin?: (email: string) => void }) =>
       {/* Footer */}
       <footer className="w-full px-8 py-6 relative z-10 flex flex-col md:flex-row items-center justify-between text-xs font-medium text-slate-500 mt-auto">
         <div className="flex gap-4 md:gap-6 items-center">
-          <span>© 2024 Sustainability Impact Award</span>
+          <span>© 2024 Sustainable Impact Award</span>
           <a href="#" className="hover:text-slate-800 transition-colors">Privacy Policy</a>
           <a href="#" className="hover:text-slate-800 transition-colors">Terms of Service</a>
         </div>
