@@ -94,9 +94,9 @@ const getDemoAwarenessContent = (topic: string, audience: string): AwarenessCont
     `Hook (0-5s): "Small actions, big impact."
 Proof (5-15s): show one real action related to ${topic.toLowerCase()}.
 Call to Action (15-25s): invite ${audience.toLowerCase()} to copy the action today.
-Close (25-30s): "Log it in EcoImpact and earn points."`,
-  caption: `Today I took one step for the planet through ${topic.toLowerCase()}. Join me and log your impact in EcoImpact.`,
-  hashtags: ["#EcoImpact", "#ClimateAction", "#Sustainability", "#EcoChallenge"],
+Close (25-30s): "Log it in GreenWorld and earn points."`,
+  caption: `Today I took one step for the planet through ${topic.toLowerCase()}. Join me and log your impact in GreenWorld.`,
+  hashtags: ["#GreenWorld", "#ClimateAction", "#Sustainability", "#EcoChallenge"],
   bonusPoints: 40,
   mode: "demo",
 });
@@ -172,7 +172,7 @@ Rules: shortScript under 90 words, caption under 35 words, hashtags 3-6 items, n
       title: String(parsed.title ?? "Eco Action Spotlight"),
       shortScript: String(parsed.shortScript ?? "Show one practical eco action and invite others to participate."),
       caption: String(parsed.caption ?? "Join me in taking one climate-positive action today."),
-      hashtags: Array.isArray(parsed.hashtags) ? parsed.hashtags.map(String).slice(0, 6) : ["#EcoImpact", "#Sustainability"],
+      hashtags: Array.isArray(parsed.hashtags) ? parsed.hashtags.map(String).slice(0, 6) : ["#GreenWorld", "#Sustainability"],
       bonusPoints: Number(parsed.bonusPoints ?? 40),
       mode: "live",
     };

@@ -1,11 +1,11 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { 
-  LayoutDashboard, 
-  PlusCircle, 
-  Trophy, 
-  User, 
-  LogOut, 
+import {
+  LayoutDashboard,
+  PlusCircle,
+  Trophy,
+  User,
+  LogOut,
   Leaf,
   ShieldCheck,
   Sparkles,
@@ -49,7 +49,7 @@ export const Sidebar = ({ user }: { user: UserData }) => {
         <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white">
           <Leaf size={24} />
         </div>
-        <span className="font-display font-bold text-xl tracking-tight">EcoImpact</span>
+        <span className="font-display font-bold text-xl tracking-tight">GreenWorld</span>
       </Link>
 
       <nav className="flex-1 px-4 py-4 space-y-6 overflow-y-auto">

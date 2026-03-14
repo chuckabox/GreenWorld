@@ -42,7 +42,7 @@ export const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <Leaf className="text-primary fill-primary" size={24} />
-            <span className="font-display font-bold text-xl tracking-tight">EcoImpact</span>
+            <span className="font-display font-bold text-xl tracking-tight">GreenWorld</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600">
             <a href="#what-we-have" className="hover:text-primary transition-colors">What we have</a>
@@ -304,7 +304,7 @@ export const LandingPage = () => {
             <div className="col-span-2 lg:col-span-2">
               <div className="flex items-center gap-2 mb-6">
                 <Leaf className="text-primary fill-primary" size={24} />
-                <span className="font-display font-bold text-xl tracking-tight">EcoImpact</span>
+                <span className="font-display font-bold text-xl tracking-tight">GreenWorld</span>
               </div>
               <p className="text-slate-500 text-sm leading-relaxed max-w-xs mb-8">
                 AI-powered sustainability tracking. Log eco actions, earn verified impact points, and build a greener community.
@@ -349,7 +349,7 @@ export const LandingPage = () => {
           </div>
 
           <div className="pt-8 border-t border-slate-100 text-center text-sm text-slate-400">
-            © 2026 EcoImpact. All rights reserved.
+            © 2026 GreenWorld. All rights reserved.
           </div>
         </div>
       </footer>
