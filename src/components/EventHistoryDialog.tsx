@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { X, History, TrendingUp, Calendar, CheckCircle2 } from "lucide-react";
 import { Activity } from "../types";
+import { acquireBodyLock, releaseBodyLock } from "../lib/modalBodyLock";
 
 export const EventHistoryDialog = ({
   activities,
@@ -16,10 +17,9 @@ export const EventHistoryDialog = ({
   const [dragTranslateY, setDragTranslateY] = useState(0);
 
   useEffect(() => {
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    acquireBodyLock();
     return () => {
-      document.body.style.overflow = previousOverflow;
+      releaseBodyLock();
     };
   }, []);
 

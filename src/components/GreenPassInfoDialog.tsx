@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { X, Gift, Store, Sparkles, TrendingUp, ShieldCheck } from "lucide-react";
+import { acquireBodyLock, releaseBodyLock } from "../lib/modalBodyLock";
 
 export const GreenPassInfoDialog = ({ onClose }: { onClose: () => void }) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -8,10 +9,9 @@ export const GreenPassInfoDialog = ({ onClose }: { onClose: () => void }) => {
   const [dragTranslateY, setDragTranslateY] = useState(0);
 
   useEffect(() => {
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    acquireBodyLock();
     return () => {
-      document.body.style.overflow = previousOverflow;
+      releaseBodyLock();
     };
   }, []);
 

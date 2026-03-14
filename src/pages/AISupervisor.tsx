@@ -14,6 +14,7 @@ import tasksAndEventsData from "../data/tasksAndEvents.json";
 import { cn } from "../lib/utils";
 import type { Activity } from "../types";
 import { LogActivityDialog } from "../components/LogActivityDialog";
+import { acquireBodyLock, releaseBodyLock } from "../lib/modalBodyLock";
 
 type TaskItem = { id: string; type: string; title: string; description?: string; pointsReward?: number };
 
@@ -67,10 +68,9 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
 
   useEffect(() => {
     if (!refineOpen) return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    acquireBodyLock();
     return () => {
-      document.body.style.overflow = previousOverflow;
+      releaseBodyLock();
     };
   }, [refineOpen]);
 

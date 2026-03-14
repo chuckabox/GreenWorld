@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { CheckCircle2, LoaderCircle, Upload, X, Target } from "lucide-react";
 import { verifyEcoImageWithGemini } from "../lib/geminiVerifier";
 import tasksAndEventsData from "../data/tasksAndEvents.json";
+import { acquireBodyLock, releaseBodyLock } from "../lib/modalBodyLock";
 
 type TaskItem = { id: string; type: string; title: string; description?: string; pointsReward?: number };
 
@@ -45,10 +46,9 @@ export const LogActivityDialog = ({
   const minDescriptionLength = 15;
 
   React.useEffect(() => {
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    acquireBodyLock();
     return () => {
-      document.body.style.overflow = previousOverflow;
+      releaseBodyLock();
     };
   }, []);
   const hasEnoughDescription = formData.description.trim().length >= minDescriptionLength;
