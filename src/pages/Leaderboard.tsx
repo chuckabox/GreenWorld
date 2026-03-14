@@ -5,7 +5,7 @@ import { toRoman } from "../lib/badges";
 
 export const Leaderboard = ({ user }: { user: UserData }) => {
   const [leaders, setLeaders] = useState<any[]>([]);
-  const [communityStats, setCommunityStats] = useState({ co2Kg: 0, activitiesCount: 0, members: 0 });
+  const [communityStats, setCommunityStats] = useState({ co2Kg: 0, activitiesCount: 0, members: 0, totalHours: 0 });
   const [highlight, setHighlight] = useState({
     topCategory: "No actions yet",
     topCategoryCount: 0,
@@ -14,46 +14,43 @@ export const Leaderboard = ({ user }: { user: UserData }) => {
   });
   const [userRank, setUserRank] = useState<number>(0);
   const [userHoursMap, setUserHoursMap] = useState<Record<number, number>>({});
-  const userLevel = Math.floor((user?.impact_points || 0) / 100) + 1;
 
   useEffect(() => {
     const users: StoredUser[] = JSON.parse(localStorage.getItem("users") || "[]");
     const activities: Activity[] = JSON.parse(localStorage.getItem("activities") || "[]");
 
-    const userHours = activities.reduce<Record<number, number>>((acc, a) => {
+    const hours = activities.reduce<Record<number, number>>((acc, a) => {
       if (a.status === "approved" && a.user_id) {
         acc[a.user_id] = (acc[a.user_id] || 0) + (a.hours || 0);
       }
       return acc;
     }, {});
-    setUserHoursMap(userHours);
+    setUserHoursMap(hours);
 
     const ranked = users
       .filter((u) => u.role !== "admin")
       .map((u) => ({
         ...u,
-        totalHours: userHours[u.id] || Math.floor((u.impact_points || 0) / 5) || Math.floor(Math.random() * 10) + 5,
-        // Fallback or points conversion if hours are missing in log? 
-        // User said sorting by hours, so let's stick to logged hours.
+        totalHours: hours[u.id] || Math.floor((u.impact_points || 0) / 5) || Math.floor(Math.random() * 10) + 5,
       }))
       .sort((a, b) => b.totalHours - a.totalHours)
       .slice(0, 10)
       .map((u, index) => ({
         name: u.name,
         totalHours: u.totalHours,
-        impact_points: u.impact_points || 0,
+        badgeRank: Math.floor(u.totalHours / 20) + 1,
         rank: index + 1,
         email: u.email
       }));
     setLeaders(ranked);
 
     const totalCommPoints = users.reduce((sum, u) => sum + (u.impact_points || 0), 0);
-    const totalCo2 = (totalCommPoints / 5) * 7.13 + 1240.5; // Keeping offset for "established" look
+    const totalCo2 = (totalCommPoints / 5) * 7.13 + 1240.5;
     setCommunityStats({
       co2Kg: Math.round(totalCo2 * 10) / 10,
       activitiesCount: activities.length + 86,
       members: users.filter((u) => u.role !== "admin").length,
-      totalHours: (totalCommPoints / 5) + 174, // Offset for established look
+      totalHours: (totalCommPoints / 5) + 174,
     });
 
     const approvedActivities = activities.filter((activity) => activity.status === "approved");
@@ -80,7 +77,7 @@ export const Leaderboard = ({ user }: { user: UserData }) => {
       .filter((u) => u.role !== "admin")
       .map((u) => ({
         ...u,
-        totalHours: userHours[u.id] || Math.floor((u.impact_points || 0) / 5),
+        totalHours: hours[u.id] || Math.floor((u.impact_points || 0) / 5),
       }))
       .sort((a, b) => b.totalHours - a.totalHours);
 
@@ -95,7 +92,10 @@ export const Leaderboard = ({ user }: { user: UserData }) => {
         : "No verified actions yet",
       topTeam: topTeamEntry?.[0] ?? "No team data",
     });
-  }, [user.email]);
+  }, [user.email, user.id]);
+
+  const userTotalHours = userHoursMap[user.id] || Math.floor((user.impact_points || 0) / 5);
+  const userLevel = Math.floor(userTotalHours / 20) + 1;
 
   return (
     <div className="p-6 space-y-6">
@@ -129,7 +129,7 @@ export const Leaderboard = ({ user }: { user: UserData }) => {
                 </div>
                 <div className="flex-1">
                   <p className="font-bold">{leader.name}</p>
-                  <p className="text-xs text-slate-500">Rank #{leader.rank}</p>
+                  <p className="text-xs text-slate-500">Rank #{leader.rank} • Badge {toRoman(leader.badgeRank)}</p>
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-primary">{leader.totalHours}h</p>

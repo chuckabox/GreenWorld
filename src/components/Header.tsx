@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Bell, Menu, X, LayoutDashboard, Sparkles, BookOpen, MessageCircle, Trophy, LogOut } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "../lib/utils";
+import { motion, AnimatePresence } from "motion/react";
 
 export const Header = ({ 
   title, 
@@ -44,7 +45,7 @@ export const Header = ({
             }}
             className="p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-xl transition-colors"
           >
-            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            {window.innerWidth < 768 && isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
           <Link to="/" className="hover:opacity-70 transition-opacity">
             <h1 className="text-xl font-display font-bold text-slate-900">{title}</h1>
@@ -59,41 +60,56 @@ export const Header = ({
       </header>
 
       {/* Mobile Dropdown */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-30 bg-slate-950/20 backdrop-blur-sm pt-16 h-screen" onClick={() => setIsMobileMenuOpen(false)}>
-          <div className="bg-white border-b border-slate-200 p-4 space-y-1 shadow-2xl animate-in slide-in-from-top-4 duration-200" onClick={(e) => e.stopPropagation()}>
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.path;
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
-                    isActive
-                      ? "bg-primary-light text-primary font-semibold"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                  )}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="md:hidden fixed inset-0 z-30 bg-slate-950/20 backdrop-blur-sm pt-16 h-screen" 
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <motion.div 
+              initial={{ opacity: 0, y: -20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="bg-white border-b border-slate-200 p-4 space-y-1 shadow-2xl" 
+              onClick={(e) => e.stopPropagation()}
+            >
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.path;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={cn(
+                      "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
+                      isActive
+                        ? "bg-primary-light text-primary font-semibold"
+                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                    )}
+                  >
+                    <Icon size={20} className={cn(isActive ? "text-primary" : "text-slate-400")} />
+                    {item.name}
+                  </Link>
+                );
+              })}
+              <div className="pt-2 mt-2 border-t border-slate-100">
+                <button
+                  onClick={handleSignOut}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-all font-medium"
                 >
-                  <Icon size={20} className={cn(isActive ? "text-primary" : "text-slate-400")} />
-                  {item.name}
-                </Link>
-              );
-            })}
-            <div className="pt-2 mt-2 border-t border-slate-100">
-              <button
-                onClick={handleSignOut}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-all font-medium"
-              >
-                <LogOut size={20} />
-                Sign Out
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+                  <LogOut size={20} />
+                  Sign Out
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };

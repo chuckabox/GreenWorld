@@ -123,10 +123,7 @@ const AppContent = () => {
           onToggle={() => setIsSidebarOpen(!isSidebarOpen)} 
         />
       )}
-      <main className={cn(
-        "flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out",
-        !hideLayout && user && isSidebarOpen ? "md:ml-0" : ""
-      )}>
+      <main className="flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out">
         {!hideLayout && (
           <Header 
             title={
@@ -139,7 +136,7 @@ const AppContent = () => {
               location.pathname === "/admin" ? "Admin Portal" : ""
             } 
             isSidebarOpen={isSidebarOpen}
-            onMenuClick={() => setIsSidebarOpen(true)}
+            onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)}
           />
         )}
         <div className="flex-1 overflow-y-auto">
@@ -154,7 +151,7 @@ const AppContent = () => {
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<LoginPage onLogin={(email: string) => { localStorage.setItem("userEmail", email); setUserEmail(email); }} />} />
               <Route path="/signup" element={<SignUpPage onSignUp={(payload) => {
-                const { email, name, password, role, suburb, team } = payload;
+                const { email, name, password, suburb } = payload;
                 if (name) {
                   const storedUsers: StoredUser[] = JSON.parse(localStorage.getItem("users") || "[]");
                   const userExists = storedUsers.find((u) => u.email.toLowerCase() === email.toLowerCase());
@@ -163,12 +160,11 @@ const AppContent = () => {
                       id: Date.now(),
                       email,
                       name,
-                      role,
+                      role: "user",
                       impact_points: 0,
                       award_progress: 0,
                       rank: 0,
                       suburb,
-                      team,
                       password,
                     };
                     localStorage.setItem("users", JSON.stringify([...storedUsers, newUser]));
