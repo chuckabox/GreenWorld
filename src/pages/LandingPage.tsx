@@ -4,11 +4,14 @@ import { Leaf, Users, Award, CheckCircle2, Trophy, Globe, ChevronDown, Target, C
 import { motion } from "motion/react";
 import { cn } from "../lib/utils";
 
-import heroBg from "../assets/hero_background.jpeg";
-import reforestationImg from "../assets/reforestation.png";
-import universityImg from "../assets/university_recognition.png";
-import analyticsImg from "../assets/impact_analytics.png";
 import councilImg from "../assets/council_support.png";
+import brisbane1 from "../assets/brisbane_1.png";
+import brisbane2 from "../assets/brisbane_2.png";
+import brisbane3 from "../assets/brisbane_3.png";
+import eventBeach from "../assets/event_beach.png";
+import eventTrees from "../assets/event_trees.png";
+import eventWorkshop from "../assets/event_workshop.png";
+import { ImageCarousel } from "../components/ImageCarousel";
 import tasksAndEventsData from "../data/tasksAndEvents.json";
 
 export const LandingPage = () => {
@@ -44,7 +47,7 @@ export const LandingPage = () => {
             <a href="#what-we-have" className="hover:text-primary transition-colors">What we have</a>
             <a href="#levels" className="hover:text-primary transition-colors">Badges</a>
             <a href="#how-it-works" className="hover:text-primary transition-colors">How it Works</a>
-            <a href="#events-tasks" className="hover:text-primary transition-colors">Events & tasks</a>
+            <a href="#events-tasks" className="hover:text-primary transition-colors">Events</a>
           </div>
           <Link to={authPath} className="btn-primary text-sm shadow-md">{authText}</Link>
         </div>
@@ -219,77 +222,61 @@ export const LandingPage = () => {
         </div>
       </section>
 
-      {/* Impact Cards */}
+      {/* What We Have (Compact Features) */}
       <section id="what-we-have" className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-display font-bold mb-4">What we have</h2>
             <div className="w-16 h-1 bg-primary mx-auto rounded-full"></div>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { img: reforestationImg, title: "AI-Verified Actions", desc: "Upload a photo of your eco action. Our AI checks it, scores the impact, and awards points." },
-              { img: universityImg, title: "Leaderboard", desc: "See your rank in your volunteering community. Verified activities move you up." },
-              { img: analyticsImg, title: "Impact Stats", desc: "Track CO₂ saved, plastic reduced, and water conserved." }
-            ].map((card, i) => (
-              <motion.div whileHover={{ y: -5 }} key={i} className="group">
-                <div className="w-full aspect-[4/3] rounded-3xl overflow-hidden mb-6 shadow-md relative">
-                  <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-transparent transition-colors z-10"></div>
-                  <img src={card.img} alt={card.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                </div>
-                <h4 className="text-lg font-bold mb-2">{card.title}</h4>
-                <p className="text-slate-500 text-sm leading-relaxed">{card.desc}</p>
+              { icon: <CheckCircle2 className="text-primary" size={24} />, title: "AI Verification", desc: "Instant verification for your eco actions." },
+              { icon: <Trophy className="text-primary" size={24} />, title: "Leaderboard", desc: "Climb rankings in your local community." },
+              { icon: <Globe className="text-primary" size={24} />, title: "Green Hub", desc: "Access local sustainability initiatives." },
+              { icon: <Users className="text-primary" size={24} />, title: "Personal Profile", desc: "Track your impact stats and CO₂ savings." }
+            ].map((feature, i) => (
+              <motion.div whileHover={{ y: -5 }} key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <div className="mb-4">{feature.icon}</div>
+                <h4 className="text-lg font-bold mb-2">{feature.title}</h4>
+                <p className="text-slate-500 text-sm leading-relaxed">{feature.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Current events & tasks */}
+      {/* Current Events (Image Cards) */}
       <section id="events-tasks" className="py-24 bg-white border-y border-slate-100">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-display font-bold mb-4">Current events & tasks</h2>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-display font-bold mb-4">Current Events</h2>
             <p className="text-slate-500 max-w-xl mx-auto">
-              Join challenges and events. Use AI Advisor to see if a task fits you.
+              Join local challenges and eco-friendly gatherings.
             </p>
             <div className="w-16 h-1 bg-primary mx-auto rounded-full mt-4" />
           </div>
-          <div className="grid md:grid-cols-2 gap-10 max-w-4xl mx-auto">
-            <div className="card">
-              <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <Target size={22} className="text-primary" />
-                Active tasks
-              </h3>
-              <ul className="space-y-3">
-                {tasks.slice(0, 4).map((t) => (
-                  <li key={t.id} className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                    <p className="font-medium text-slate-900">{t.title}</p>
-                    {t.pointsReward != null && (
-                      <span className="text-sm font-semibold text-primary">{t.pointsReward} pts</span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-              <Link to={isLoggedIn ? "/ai-supervisor" : authPath} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline">
-                {isLoggedIn ? "Check fit in AI Advisor" : "Sign in to use AI Advisor"}
-                <ChevronDown size={16} className="rotate-[-90deg]" />
-              </Link>
-            </div>
-            <div className="card">
-              <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <Calendar size={22} className="text-primary" />
-                Upcoming events
-              </h3>
-              <ul className="space-y-3">
-                {events.slice(0, 4).map((e) => (
-                  <li key={e.id} className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                    <p className="font-bold text-slate-900">{e.title}</p>
-                    <p className="text-sm text-slate-500">{e.date}{e.location ? ` · ${e.location}` : ""}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { img: eventBeach, title: "Beach Cleanup Drive", date: "Mar 20, 2026", desc: "Help us keep our coastlines clean and protect marine life." },
+              { img: eventTrees, title: "Community Tree Planting", date: "Mar 25, 2026", desc: "Join us in planting 500 new saplings in the local park." },
+              { img: eventWorkshop, title: "Zero Waste Workshop", date: "Apr 02, 2026", desc: "Learn practical tips for reducing your daily plastic footprint." }
+            ].map((event, i) => (
+              <motion.div whileHover={{ y: -5 }} key={i} className="group cursor-pointer">
+                <div className="w-full aspect-[4/3] rounded-3xl overflow-hidden mb-6 shadow-md relative">
+                  <div className="absolute inset-0 bg-slate-900/20 group-hover:bg-transparent transition-colors z-10"></div>
+                  <img src={event.img} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <div className="absolute top-4 left-4 z-20">
+                    <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-primary text-xs font-bold rounded-full shadow-sm">
+                      {event.date}
+                    </span>
+                  </div>
+                </div>
+                <h4 className="text-xl font-bold mb-2">{event.title}</h4>
+                <p className="text-slate-500 text-sm leading-relaxed">{event.desc}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
