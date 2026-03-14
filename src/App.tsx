@@ -11,13 +11,13 @@ import { LandingPage } from "./pages/LandingPage";
 import { LoginPage } from "./pages/LoginPage";
 import { SignUpPage } from "./pages/SignUpPage";
 import { Dashboard } from "./pages/Dashboard";
-import { LogActivity } from "./pages/LogActivity";
 import { Leaderboard } from "./pages/Leaderboard";
 import { Portfolio } from "./pages/Portfolio";
 import { AdminPortal } from "./pages/AdminPortal";
 import { AISupervisor } from "./pages/AISupervisor";
 import { LearningHub } from "./pages/LearningHub";
 import { GreenHubCategory } from "./pages/GreenHubCategory";
+import { DiscussionBoard } from "./pages/DiscussionBoard";
 import demoAccounts from "./data/demoAccounts.json";
 
 const AppContent = () => {
@@ -119,10 +119,10 @@ const AppContent = () => {
       <main className="flex-1 flex flex-col min-w-0">
         {!hideLayout && <Header title={
           location.pathname === "/dashboard" ? "Dashboard" :
-          location.pathname === "/log" ? "Log Activity" :
           location.pathname === "/ai-supervisor" ? "AI Advisor" :
           location.pathname === "/learning" ? "Green Hub" :
           location.pathname === "/green-hub/waste-circular" ? "Waste & Circular Economy" :
+          location.pathname === "/community" ? "Community" :
           location.pathname === "/leaderboard" ? "Leaderboard" :
           location.pathname === "/portfolio" ? "Profile" :
           location.pathname === "/admin" ? "Admin Portal" : ""
@@ -162,11 +162,11 @@ const AppContent = () => {
                 localStorage.setItem("userEmail", email); 
                 setUserEmail(email); 
               }} />} />
-              <Route path="/dashboard" element={user ? <Dashboard user={user} activities={activities} /> : <Navigate to="/login" replace />} />
-              <Route path="/log" element={user ? <LogActivity userId={user.id} onActivityLogged={loadUserData} /> : <Navigate to="/login" replace />} />
+              <Route path="/dashboard" element={user ? <Dashboard user={user} activities={activities} onActivityLogged={loadUserData} /> : <Navigate to="/login" replace />} />
               <Route path="/ai-supervisor" element={user ? <AISupervisor user={user} activities={activities} onPointsAdded={loadUserData} /> : <Navigate to="/login" replace />} />
               <Route path="/learning" element={user ? <LearningHub /> : <Navigate to="/login" replace />} />
               <Route path="/green-hub/waste-circular" element={user ? <GreenHubCategory /> : <Navigate to="/login" replace />} />
+              <Route path="/community" element={user ? <DiscussionBoard user={user} /> : <Navigate to="/login" replace />} />
               <Route path="/leaderboard" element={user ? <Leaderboard /> : <Navigate to="/login" replace />} />
               <Route path="/portfolio" element={user ? <Portfolio user={user} /> : <Navigate to="/login" replace />} />
               <Route path="/admin" element={user ? <AdminPortal /> : <Navigate to="/login" replace />} />

@@ -2,7 +2,6 @@ import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { 
   LayoutDashboard, 
-  PlusCircle, 
   Trophy, 
   User, 
   LogOut, 
@@ -10,6 +9,7 @@ import {
   ShieldCheck,
   Sparkles,
   BookOpen,
+  MessageCircle,
 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { UserData } from "../types";
@@ -22,9 +22,9 @@ export const Sidebar = ({ user }: { user: UserData }) => {
   const navigate = useNavigate();
   const navItems = [
     { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-    { name: "Log Activity", path: "/log", icon: PlusCircle },
     { name: "AI Advisor", path: "/ai-supervisor", icon: Sparkles },
     { name: "Green Hub", path: "/learning", icon: BookOpen },
+    { name: "Community", path: "/community", icon: MessageCircle },
     { name: "Leaderboard", path: "/leaderboard", icon: Trophy },
     { name: "Profile", path: "/portfolio", icon: User },
   ];
