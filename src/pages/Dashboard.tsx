@@ -10,9 +10,11 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import { PlusCircle, Zap, Globe, Clock, AlertCircle, ChevronDown, ChevronLeft, ChevronRight, Target, Calendar } from "lucide-react";
 import { cn } from "../lib/utils";
 import { UserData, Activity } from "../types";
 import { getLevelLabel, getNextBadge, getUnlockedBadges } from "../lib/badges";
+import tasksAndEventsData from "../data/tasksAndEvents.json";
 
 type FilterDropdownOption = {
   value: string;
@@ -163,6 +165,9 @@ export const Dashboard = ({
       label: category,
     })),
   ];
+
+  const tasks = useMemo(() => (tasksAndEventsData as { id: string; type: string; title: string; description?: string; pointsReward?: number; location?: string; deadline?: string }[]).filter((t) => t.type === "task"), []);
+  const events = useMemo(() => (tasksAndEventsData as { id: string; type: string; title: string; description?: string; date?: string; location?: string; time?: string }[]).filter((t) => t.type === "event"), []);
 
   return (
     <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
@@ -323,6 +328,23 @@ export const Dashboard = ({
                   >
                     {activity.status}
                   </div>
+          <div className="space-y-4">
+            {pagedActivities.length > 0 ? pagedActivities.map((activity) => (
+              <div key={activity.id} className="flex items-center gap-4 p-4 rounded-2xl border border-slate-50 hover:bg-slate-50 transition-colors">
+                <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-slate-600">
+                  <Clock size={20} />
+                </div>
+                <div className="flex-1">
+                  <p className="font-semibold">{activity.taskTitle ?? activity.category}</p>
+                  <p className="text-xs text-slate-500">{activity.date} • {activity.hours} hours{activity.taskTitle ? ` • ${activity.category}` : ""}</p>
+                </div>
+                <div className={cn(
+                  "px-3 py-1 rounded-full text-xs font-bold capitalize",
+                  activity.status === 'approved' ? "bg-green-100 text-green-700" :
+                    activity.status === 'pending' ? "bg-yellow-100 text-yellow-700" :
+                      "bg-red-100 text-red-700"
+                )}>
+                  {activity.status}
                 </div>
               ))
             ) : (
@@ -410,6 +432,44 @@ export const Dashboard = ({
           <button className="w-full mt-5 sm:mt-6 py-3 border-2 border-slate-100 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors">
             Explore All Events
           </button>
+        {/* Current tasks & events */}
+        <div className="space-y-6">
+          <div className="card">
+            <h3 className="text-xl mb-4 flex items-center gap-2">
+              <Target size={20} className="text-primary" />
+              Current tasks
+            </h3>
+            <div className="space-y-3">
+              {tasks.slice(0, 3).map((t) => (
+                <div key={t.id} className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                  <p className="font-bold text-sm">{t.title}</p>
+                  {t.pointsReward != null && <p className="text-xs text-primary font-semibold">{t.pointsReward} pts</p>}
+                </div>
+              ))}
+            </div>
+            <Link to="/ai-supervisor" className="mt-4 w-full py-3 border-2 border-primary/30 rounded-xl text-sm font-bold text-primary hover:bg-primary-light/40 transition-colors flex items-center justify-center gap-2">
+              Check fit in AI Supervisor
+              <ChevronRight size={16} />
+            </Link>
+          </div>
+          <div className="card">
+            <h3 className="text-xl mb-4 flex items-center gap-2">
+              <Calendar size={20} className="text-primary" />
+              Upcoming events
+            </h3>
+            <div className="space-y-3">
+              {events.slice(0, 4).map((e) => (
+                <div key={e.id} className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                  <div className="flex justify-between items-start gap-2">
+                    <span className="text-xs font-bold text-primary uppercase tracking-wider shrink-0">{e.date ?? ""}</span>
+                    <ChevronRight size={14} className="text-slate-300 shrink-0" />
+                  </div>
+                  <p className="font-bold text-sm mt-1">{e.title}</p>
+                  <p className="text-xs text-slate-500">{e.location ?? ""}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
