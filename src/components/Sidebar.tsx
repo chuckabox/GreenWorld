@@ -29,6 +29,13 @@ export const Sidebar = ({ user }: { user: UserData }) => {
     { name: "Profile", path: "/portfolio", icon: User },
   ];
 
+  const navGroups: NavGroup[] = [
+    {
+      label: "Main",
+      items: navItems,
+    },
+  ];
+
   if (user.role === "admin") {
     navGroups.push({
       label: "Admin",
