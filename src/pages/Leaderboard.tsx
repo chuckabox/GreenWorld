@@ -36,7 +36,7 @@ export const Leaderboard = () => {
 
     const approvedActivities = activities.filter((activity) => activity.status === "approved");
     const categoryCount = approvedActivities.reduce<Record<string, number>>((acc, activity) => {
-      const key = activity.activity_type || "Other";
+      const key = activity.category || "Other";
       acc[key] = (acc[key] || 0) + 1;
       return acc;
     }, {});
@@ -58,7 +58,7 @@ export const Leaderboard = () => {
       topCategory: topCategoryEntry?.[0] ?? "No actions yet",
       topCategoryCount: topCategoryEntry?.[1] ?? 0,
       recentAction: recentApproved
-        ? `${recentApproved.activity_type} (${Math.round((recentApproved.estimatedCo2Kg || 0) * 100) / 100} kg CO2)`
+        ? `${recentApproved.category} (${Math.round((recentApproved.estimatedCo2Kg || 0) * 100) / 100} kg CO2)`
         : "No verified actions yet",
       topTeam: topTeamEntry?.[0] ?? "No team data",
     });
@@ -100,7 +100,7 @@ export const Leaderboard = () => {
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-primary">{leader.impact_points}</p>
-                  <p className="text-xs text-slate-400">Points</p>
+                  <p className="text-xs text-slate-400">Green Points</p>
                 </div>
               </div>
             ))}
@@ -108,37 +108,20 @@ export const Leaderboard = () => {
         </div>
 
         <div className="space-y-6">
-          <div className="card bg-gradient-to-br from-emerald-700 via-green-700 to-emerald-800 text-white border-emerald-600 shadow-xl shadow-emerald-900/20">
+          <div className="card bg-gradient-to-br from-primary via-primary-dark to-primary text-white border-primary-dark shadow-xl shadow-primary/20">
             <h3 className="text-xl mb-4">Community Impact</h3>
             <div className="space-y-4">
               <div>
-                <p className="text-sm text-emerald-100">Total Estimated CO2 Saved</p>
+                <p className="text-sm opacity-80">Total Estimated CO2 Saved</p>
                 <p className="text-3xl font-bold">{communityStats.co2Kg} kg</p>
               </div>
               <div>
-                <p className="text-sm text-emerald-100">Verified Actions</p>
+                <p className="text-sm opacity-80">Verified Actions</p>
                 <p className="text-3xl font-bold">{communityStats.activitiesCount}</p>
               </div>
               <div>
-                <p className="text-sm text-emerald-100">Active Members</p>
+                <p className="text-sm opacity-80">Active Members</p>
                 <p className="text-3xl font-bold">{communityStats.members}</p>
-              </div>
-            </div>
-          </div>
-          <div className="card">
-            <h3 className="text-xl mb-4">Proof of Impact</h3>
-            <div className="space-y-4 text-sm">
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                <p className="text-slate-500">Top Action Category</p>
-                <p className="font-bold">{highlight.topCategory} {highlight.topCategoryCount > 0 ? `(${highlight.topCategoryCount})` : ""}</p>
-              </div>
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                <p className="text-slate-500">Latest Verified Action</p>
-                <p className="font-bold">{highlight.recentAction}</p>
-              </div>
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                <p className="text-slate-500">Most Active Team</p>
-                <p className="font-bold">{highlight.topTeam}</p>
               </div>
             </div>
           </div>

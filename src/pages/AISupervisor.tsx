@@ -156,7 +156,7 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
                         className={cn(
                           "inline-block mt-2 px-2.5 py-0.5 rounded-full text-xs font-bold",
                           rec.fit === "high"
-                            ? "bg-emerald-100 text-emerald-800"
+                            ? "bg-primary-light text-primary"
                             : rec.fit === "medium"
                               ? "bg-amber-100 text-amber-800"
                               : "bg-slate-200 text-slate-700"

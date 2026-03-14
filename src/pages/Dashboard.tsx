@@ -125,10 +125,6 @@ export const Dashboard = ({ user, activities }: { user: UserData, activities: Ac
             Level: {getLevelLabel(user.impact_points)}
           </p>
         </div>
-        <Link to="/log" className="btn-primary flex items-center gap-2">
-          <PlusCircle size={20} />
-          Log New Activity
-        </Link>
       </div>
 
       {/* Stats */}
@@ -138,19 +134,9 @@ export const Dashboard = ({ user, activities }: { user: UserData, activities: Ac
             <Zap size={24} />
           </div>
           <div>
-            <p className="text-sm text-slate-500 font-medium">Impact Points</p>
+            <p className="text-sm text-slate-500 font-medium">Green Points</p>
             <p className="text-2xl font-bold">{user.impact_points}</p>
           </div>
-        </div>
-        <div className="card">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-sm text-slate-500 font-medium">Award Progress</p>
-            <span className="text-sm font-bold text-primary">{user.award_progress}%</span>
-          </div>
-          <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-            <div className="h-full bg-primary" style={{ width: `${user.award_progress}%` }}></div>
-          </div>
-          <p className="text-xs text-slate-400 mt-2">Next: Silver Award (500 pts)</p>
         </div>
         <div className="card flex items-center gap-4">
           <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
@@ -199,7 +185,7 @@ export const Dashboard = ({ user, activities }: { user: UserData, activities: Ac
                 </div>
                 <div className={cn(
                   "px-3 py-1 rounded-full text-xs font-bold capitalize",
-                  activity.status === 'approved' ? "bg-green-100 text-green-700" :
+                  activity.status === 'approved' ? "bg-primary-light text-primary" :
                     activity.status === 'pending' ? "bg-yellow-100 text-yellow-700" :
                       "bg-red-100 text-red-700"
                 )}>

@@ -6,7 +6,7 @@ export const badgeCatalog: BadgeDefinition[] = [
     name: "Eco Beginner",
     description: "Started your first verified eco actions.",
     minPoints: 0,
-    colorClass: "from-emerald-400 to-emerald-600",
+    colorClass: "from-primary-light to-primary",
   },
   {
     id: "recycling-champion",

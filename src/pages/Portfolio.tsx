@@ -59,7 +59,7 @@ export const Portfolio = ({ user }: { user: UserData }) => {
         <div className="grid grid-cols-2 gap-4 w-full md:w-auto">
           <div className="bg-slate-50 p-4 rounded-2xl text-center">
             <p className="text-2xl font-bold text-primary">{user.impact_points}</p>
-            <p className="text-xs text-slate-500 uppercase tracking-wider font-bold">Impact Points</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wider font-bold">Green Points</p>
           </div>
           <div className="bg-slate-50 p-4 rounded-2xl text-center">
             <p className="text-2xl font-bold text-blue-600">{unlockedBadges.length}</p>

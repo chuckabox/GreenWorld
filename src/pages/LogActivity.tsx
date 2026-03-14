@@ -185,7 +185,7 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
 
       {submitSuccess ? (
         <div className="card space-y-6">
-          <div className={`rounded-xl p-4 border ${submitSuccess.status === "approved" ? "border-emerald-200 bg-emerald-50 text-emerald-900" : "border-amber-200 bg-amber-50 text-amber-900"}`}>
+          <div className={`rounded-xl p-4 border ${submitSuccess.status === "approved" ? "border-primary-light bg-primary-light/30 text-primary" : "border-amber-200 bg-amber-50 text-amber-900"}`}>
             <div className="flex items-center gap-2 font-bold text-lg">
               <CheckCircle2 size={20} />
               {submitSuccess.status === "approved" ? "Activity approved" : "Activity submitted for review"}
@@ -285,7 +285,7 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           />
-          <p className={`text-xs ${hasEnoughDescription ? "text-emerald-600" : "text-slate-500"}`}>
+          <p className={`text-xs ${hasEnoughDescription ? "text-primary" : "text-slate-500"}`}>
             {formData.description.trim().length}/{minDescriptionLength} minimum characters
           </p>
         </div>
@@ -315,7 +315,7 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className={`w-full text-left p-3 rounded-xl border transition-all ${proofImage ? "bg-emerald-50 border-emerald-200 text-emerald-900" : "bg-white border-slate-200 hover:border-primary/30 hover:bg-primary-light/40"}`}
+            className={`w-full text-left p-3 rounded-xl border transition-all ${proofImage ? "bg-primary-light/50 border-primary-light text-primary" : "bg-white border-slate-200 hover:border-primary/30 hover:bg-primary-light/40"}`}
           >
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 min-w-0">
@@ -326,7 +326,7 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
                 </div>
               </div>
               {proofImage ? (
-                <span className="text-xs font-semibold px-2 py-1 rounded bg-emerald-100 text-emerald-800">Selected</span>
+                <span className="text-xs font-semibold px-2 py-1 rounded bg-primary text-white">Selected</span>
               ) : (
                 <span className="text-xs font-semibold px-2 py-1 rounded bg-slate-100 text-slate-600">Browse</span>
               )}

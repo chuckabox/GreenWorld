@@ -69,7 +69,7 @@ export const LandingPage = () => {
               <span className="text-primary drop-shadow-md">Earn the Badge.</span>
             </h1>
             <p className="text-lg md:text-xl text-slate-200 mb-10 max-w-2xl mx-auto font-medium drop-shadow">
-              Log your eco actions, get them AI-verified, and earn impact points. Track your CO₂ savings, climb the leaderboard, and unlock badges that prove your commitment.
+              Log your eco actions, get them AI-verified, and earn green points. Track your CO₂ savings, climb the leaderboard, and unlock badges that prove your commitment.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
               <motion.a
@@ -195,14 +195,13 @@ export const LandingPage = () => {
             <p className="text-slate-500 text-lg mb-8 max-w-md leading-relaxed">
               Make a difference step by step. Use our framework to build green habits and grow your impact.
             </p>
-            <button className="btn-primary">Learn More About Scoring</button>
           </div>
 
           <div className="space-y-8">
             {[
               { num: "1", title: "Log Your Actions", desc: "Record your sustainability activities like recycling, volunteering, or saving energy." },
               { num: "2", title: "AI Verification", desc: "Our AI reviews your submissions and verifies that the activity meets sustainability criteria." },
-              { num: "3", title: "Earn Points & Climb", desc: "Receive impact points for verified actions and move up the community leaderboard." }
+              { num: "3", title: "Earn Points & Climb", desc: "Receive green points for verified actions and move up the community leaderboard." }
             ].map((step, i) => (
               <div key={i} className="flex gap-6">
                 <div className="shrink-0 w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-display font-bold text-xl shadow-lg">
@@ -278,14 +277,14 @@ export const LandingPage = () => {
       </section>
 
       {/* Call to Action Grid */}
-      <section className="py-24 bg-emerald-50 relative overflow-hidden">
+      <section className="py-24 bg-primary-light/30 relative overflow-hidden">
         <div className="max-w-4xl mx-auto px-6 relative z-10">
-          <div className="bg-gradient-to-br from-emerald-900 via-green-900 to-emerald-950 text-white rounded-[2rem] p-12 md:p-16 text-center shadow-2xl border border-emerald-800/50">
+          <div className="bg-gradient-to-br from-primary via-primary-dark to-primary text-white rounded-[2rem] p-12 md:p-16 text-center shadow-2xl border border-primary-dark/20">
             <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">Ready to make your mark?</h2>
-            <p className="text-emerald-100/80 text-lg mb-10 max-w-xl mx-auto">
+            <p className="text-white/90 text-lg mb-10 max-w-xl mx-auto">
               Log real actions, earn AI-verified points, and track your CO₂ impact, one eco choice at a time.
             </p>
-            <Link to={authPath} className="inline-block bg-primary hover:bg-primary-light hover:text-primary text-white text-lg px-10 py-4 rounded-xl font-bold transition-all hover:scale-105 shadow-xl shadow-emerald-900/40">
+            <Link to={authPath} className="inline-block bg-white text-primary hover:bg-slate-50 text-lg px-10 py-4 rounded-xl font-bold transition-all hover:scale-105 shadow-xl shadow-primary/20">
               {ctaBtnText}
             </Link>
           </div>
@@ -302,7 +301,7 @@ export const LandingPage = () => {
                 <span className="font-display font-bold text-xl tracking-tight">GreenWorld</span>
               </div>
               <p className="text-slate-500 text-sm leading-relaxed max-w-xs mb-8">
-                AI-powered sustainability tracking. Log eco actions, earn verified impact points, and build a greener community.
+                AI-powered sustainability tracking. Log eco actions, earn verified green points, and build a greener community.
               </p>
             </div>
 
