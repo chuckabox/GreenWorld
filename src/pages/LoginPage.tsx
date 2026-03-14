@@ -53,14 +53,14 @@ export const LoginPage = ({ onLogin }: { onLogin?: (email: string) => void }) =>
   return (
     <div className="min-h-screen bg-[#f8faf9] font-sans flex flex-col relative overflow-hidden">
       {/* Background Graphic */}
-      <div className="absolute -bottom-48 -right-48 text-[#00c914] opacity-[0.1] -z-0 pointer-events-none transform rotate-[-25deg]">
+      <div className="absolute -bottom-48 -right-48 text-primary opacity-[0.1] -z-0 pointer-events-none transform rotate-[-25deg]">
         <Leaf strokeWidth={0} fill="currentColor" size={600} />
       </div>
 
       {/* Header */}
       <header className="px-8 py-6 flex items-center justify-between relative z-10">
         <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-          <div className="w-8 h-8 bg-[#00c914] rounded flex items-center justify-center text-white">
+          <div className="w-8 h-8 bg-primary rounded flex items-center justify-center text-white">
             <Leaf size={18} />
           </div>
           <span className="font-display font-bold text-lg text-slate-900 tracking-tight">Sustainability Impact Award</span>
@@ -77,7 +77,7 @@ export const LoginPage = ({ onLogin }: { onLogin?: (email: string) => void }) =>
         <div className="w-full max-w-[460px] bg-white rounded-2xl shadow-sm border border-slate-100 p-8 sm:p-10">
           <div className="mb-8">
             <h1 className="text-3xl font-display font-bold mb-2 text-slate-900">Welcome Back</h1>
-            <p className="text-[#00c914] font-semibold">Log in to your impact dashboard</p>
+            <p className="text-primary font-semibold">Log in to your impact dashboard</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
@@ -93,7 +93,7 @@ export const LoginPage = ({ onLogin }: { onLogin?: (email: string) => void }) =>
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@university.edu"
-                  className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#00c914]/20 focus:border-[#00c914] transition-all text-slate-900"
+                  className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900"
                 />
               </div>
             </div>
@@ -112,7 +112,7 @@ export const LoginPage = ({ onLogin }: { onLogin?: (email: string) => void }) =>
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-11 pr-11 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#00c914]/20 focus:border-[#00c914] transition-all text-slate-900 font-medium tracking-widest placeholder:tracking-normal"
+                  className="w-full pl-11 pr-11 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900 font-medium tracking-widest placeholder:tracking-normal"
                 />
                 <button
                   type="button"
@@ -128,7 +128,7 @@ export const LoginPage = ({ onLogin }: { onLogin?: (email: string) => void }) =>
               <input
                 type="checkbox"
                 id="remember"
-                className="w-4 h-4 rounded border-slate-300 text-[#00c914] focus:ring-[#00c914]/20"
+                className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary/20"
               />
               <label htmlFor="remember" className="text-sm text-slate-500 font-medium">Remember this device</label>
             </div>
@@ -137,7 +137,7 @@ export const LoginPage = ({ onLogin }: { onLogin?: (email: string) => void }) =>
 
             <button
               type="submit"
-              className="w-full bg-[#0cb80f] hover:bg-[#0ba60d] text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-[0_4px_14px_0_rgba(12,184,15,0.39)]"
+              className="w-full bg-primary hover:bg-primary-dark text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg"
             >
               Welcome Back <LogIn size={18} />
             </button>
@@ -145,7 +145,7 @@ export const LoginPage = ({ onLogin }: { onLogin?: (email: string) => void }) =>
 
           <div className="mt-10 text-center text-sm font-medium text-slate-500">
             New to the program?{' '}
-            <Link to="/signup" className="text-[#00c914] font-bold hover:underline">
+            <Link to="/signup" className="text-primary font-bold hover:underline">
               Sign up
             </Link>
           </div>

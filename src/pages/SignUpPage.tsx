@@ -191,7 +191,7 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) =
 
             <button
               type="submit"
-              className="w-full bg-[#0cb80f] hover:bg-[#0ba60d] text-white py-3.5 rounded-xl font-bold flex items-center justify-between px-6 transition-all shadow-[0_4px_14px_0_rgba(12,184,15,0.39)] hover:shadow-[0_6px_20px_rgba(12,184,15,0.3)] hover:-translate-y-0.5"
+              className="w-full bg-primary hover:bg-primary-dark text-white py-3.5 rounded-xl font-bold flex items-center justify-between px-6 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
             >
               <span>Join the Movement</span>
               <ArrowRight size={20} />
@@ -219,7 +219,7 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) =
             alt="Forest from above" 
             className="w-full h-full object-cover object-center opacity-90 mix-blend-luminosity brightness-75 contrast-125"
           />
-          <div className="absolute inset-0 bg-gradient-to-tr from-[#0cb80f]/40 via-transparent to-transparent mix-blend-multiply"></div>
+          <div className="absolute inset-0 bg-primary/20 mix-blend-multiply"></div>
         </div>
 
         <div className="absolute inset-0 flex items-center justify-center p-12 z-10">
