@@ -10,10 +10,14 @@ export const LogActivityDialog = ({
   userId,
   onActivityLogged,
   onClose,
+  initialTaskId,
+  initialTaskTitle,
 }: {
   userId: number;
   onActivityLogged: () => void;
   onClose: () => void;
+  initialTaskId?: string;
+  initialTaskTitle?: string;
 }) => {
   const defaultDate = new Date().toISOString().split("T")[0];
   const tasks = useMemo(
@@ -28,7 +32,7 @@ export const LogActivityDialog = ({
     description: "",
     evidenceUrl: "",
   });
-  const [selectedTaskId, setSelectedTaskId] = useState<string>("");
+  const [selectedTaskId, setSelectedTaskId] = useState<string>(initialTaskId ?? "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [proofImage, setProofImage] = useState<File | null>(null);
   const [submitStage, setSubmitStage] = useState("Saving your activity...");
@@ -57,10 +61,32 @@ export const LogActivityDialog = ({
       setFormData((prev) => ({
         ...prev,
         category: "Sustainability task",
-        description: task.description?.trim() ? `${task.title}. ${task.description}` : task.title,
+        description: prev.description.trim().length
+          ? prev.description
+          : task.description?.trim()
+            ? `${task.title}. ${task.description}`
+            : task.title,
       }));
     }
   };
+
+  // Prefill from AI Advisor / Dashboard when initial task is provided
+  React.useEffect(() => {
+    if (initialTaskId && initialTaskTitle) {
+      setSelectedTaskId(initialTaskId);
+      const task = tasks.find((t) => t.id === initialTaskId);
+      setFormData((prev) => ({
+        ...prev,
+        category: "Sustainability task",
+        description:
+          prev.description.trim().length > 0
+            ? prev.description
+            : task?.description?.trim()
+              ? `${initialTaskTitle}. ${task.description}`
+              : initialTaskTitle,
+      }));
+    }
+  }, [initialTaskId, initialTaskTitle, tasks]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -176,12 +202,12 @@ export const LogActivityDialog = ({
   };
 
   const resetForAnotherLog = () => {
-    setSelectedTaskId("");
+    setSelectedTaskId(initialTaskId ?? "");
     setFormData({
-      category: "Waste Management",
+      category: initialTaskId ? "Sustainability task" : "Waste Management",
       hours: 1,
       date: defaultDate,
-      description: "",
+      description: initialTaskTitle ?? "",
       evidenceUrl: "",
     });
     setProofImage(null);
