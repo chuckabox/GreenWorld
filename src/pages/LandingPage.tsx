@@ -69,7 +69,7 @@ export const LandingPage = () => {
               <span className="text-primary drop-shadow-md">Earn the Badge.</span>
             </h1>
             <p className="text-lg md:text-xl text-slate-200 mb-10 max-w-2xl mx-auto font-medium drop-shadow">
-              A community hub for people who want to take real environmental action.
+              A community hub where you meet people, discover amazing opportunities, and learn what it truly means to be sustainable.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
               <motion.a
@@ -239,10 +239,10 @@ export const LandingPage = () => {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { icon: <Target className="text-primary" size={24} />, title: "AI Advisor", desc: "Personalized guidance to help you choose the most impactful tasks." },
-              { icon: <Globe className="text-primary" size={24} />, title: "Green Hub", desc: "Access local sustainability initiatives." },
-              { icon: <Users className="text-primary" size={24} />, title: "Community Chat", desc: "Connect with like-minded individuals." },
-              { icon: <Trophy className="text-primary" size={24} />, title: "Leaderboard", desc: "Climb rankings in your local community." }
+              { icon: <Target className="text-primary" size={24} />, title: "AI Advisor", desc: "Provides your most suitable tasks." },
+              { icon: <Globe className="text-primary" size={24} />, title: "Green Hub", desc: "Learn about sustainability." },
+              { icon: <Users className="text-primary" size={24} />, title: "Community Chat", desc: "Connect with like-minded people." },
+              { icon: <Trophy className="text-primary" size={24} />, title: "Leaderboard", desc: "Climb rankings in your community." }
             ].map((feature, i) => (
               <motion.div whileHover={{ y: -5 }} key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                 <div className="mb-4">{feature.icon}</div>
@@ -297,7 +297,7 @@ export const LandingPage = () => {
           <div className="bg-primary text-white rounded-[2rem] p-12 md:p-16 text-center shadow-2xl">
             <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">Ready to make your mark?</h2>
             <p className="text-white/90 text-lg mb-10 max-w-xl mx-auto">
-              Log real actions, earn AI-verified points, and track your CO₂ impact, one eco choice at a time.
+              Join a community taking real action for the environment through events, collaboration, and shared impact.
             </p>
             <Link to={authPath} className="inline-block bg-white text-primary hover:bg-slate-50 text-lg px-10 py-4 rounded-xl font-bold transition-all hover:scale-105 shadow-xl shadow-primary/20">
               {ctaBtnText}
@@ -316,7 +316,7 @@ export const LandingPage = () => {
                 <span className="font-display font-bold text-xl tracking-tight">GreenWorld</span>
               </div>
               <p className="text-slate-500 text-sm leading-relaxed max-w-xs mb-8">
-                AI-powered sustainability tracking. Log eco actions, earn verified green points, and build a greener community.
+                AI-powered sustainability platform. Log actions, earn green points, and connect with a community.
               </p>
             </div>
 
