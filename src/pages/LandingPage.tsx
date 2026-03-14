@@ -312,54 +312,39 @@ export const LandingPage = () => {
             </div>
 
             <div>
-              <h4 className="font-bold mb-6">Social</h4>
-              <div className="flex gap-4">
+              <h4 className="font-bold mb-6">Socials</h4>
+              <ul className="space-y-4 text-sm text-slate-500">
+                <li>
+                  <a href="https://www.instagram.com/uq_sic/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors flex items-center gap-2">
+                    <Instagram size={16} />
+                    <span>Instagram</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="https://uqu.com.au/clubs-and-societies/uq-sustainable-innovators-club-uqsic/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors flex items-center gap-2">
+                    <ExternalLink size={16} />
+                    <span>UQSIC Club Page</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
 
-                {/* UQSIC Instagram */}
-                <a
-                  href="https://www.instagram.com/uq_sic/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
-                  title="UQSIC Instagram"
-                >
-                  <Instagram size={18} />
-                </a>
-
-                {/* UQSIC Club */}
-                <a
-                  href="https://uqu.com.au/clubs-and-societies/uq-sustainable-innovators-club-uqsic/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
-                  title="UQSIC Club"
-                >
-                  <ExternalLink size={18} />
-                </a>
-
-                {/* Brisbane City Council */}
-                <a
-                  href="https://www.brisbane.qld.gov.au"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
-                  title="Brisbane City Council"
-                >
-                  <Globe size={18} />
-                </a>
-
-                {/* UQ Library */}
-                <a
-                  href="https://library.uq.edu.au"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
-                  title="UQ Library"
-                >
-                  <Globe size={18} />
-                </a>
-
-              </div>
+            <div>
+              <h4 className="font-bold mb-6">Partners</h4>
+              <ul className="space-y-4 text-sm text-slate-500">
+                <li>
+                  <a href="https://www.brisbane.qld.gov.au" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors flex items-center gap-2">
+                    <Globe size={16} />
+                    <span>Brisbane City Council</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="https://library.uq.edu.au" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors flex items-center gap-2">
+                    <Globe size={16} />
+                    <span>UQ Library</span>
+                  </a>
+                </li>
+              </ul>
             </div>
           </div>
 
