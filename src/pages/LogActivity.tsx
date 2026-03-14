@@ -216,167 +216,167 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
           </div>
         </div>
       ) : (
-      <form onSubmit={handleSubmit} className="card space-y-5">
-        <div className="space-y-2">
-          <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-            <Target size={16} className="text-primary" />
-            Choose a task (optional)
-          </label>
-          <select
-            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
-            value={selectedTaskId}
-            onChange={(e) => handleTaskSelect(e.target.value)}
-          >
-            <option value="">None / General activity</option>
-            {tasks.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.title}{t.pointsReward != null ? ` (${t.pointsReward} pts)` : ""}
-              </option>
-            ))}
-          </select>
-          <p className="text-xs text-slate-500">Selecting a task pre-fills category and description. You can edit them.</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit} className="card space-y-5">
           <div className="space-y-2">
-            <label className="text-sm font-bold text-slate-700">Category</label>
+            <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+              <Target size={16} className="text-primary" />
+              Choose a task (optional)
+            </label>
             <select
               className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
-              value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              value={selectedTaskId}
+              onChange={(e) => handleTaskSelect(e.target.value)}
             >
-              <option>Waste Management</option>
-              <option>Energy Conservation</option>
-              <option>Community Outreach</option>
-              <option>Environmental Advocacy</option>
-              <option>Biodiversity</option>
-              <option>Sustainability task</option>
+              <option value="">None / General activity</option>
+              {tasks.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.title}{t.pointsReward != null ? ` (${t.pointsReward} pts)` : ""}
+                </option>
+              ))}
             </select>
+            <p className="text-xs text-slate-500">Selecting a task pre-fills category and description. You can edit them.</p>
           </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-slate-700">Category</label>
+              <select
+                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              >
+                <option>Waste Management</option>
+                <option>Energy Conservation</option>
+                <option>Community Outreach</option>
+                <option>Environmental Advocacy</option>
+                <option>Biodiversity</option>
+                <option>Sustainability task</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-slate-700">Hours Involved</label>
+              <input
+                type="number"
+                min="0.5"
+                step="0.5"
+                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
+                value={formData.hours}
+                onChange={(e) => setFormData({ ...formData, hours: parseFloat(e.target.value) })}
+              />
+            </div>
+          </div>
+
           <div className="space-y-2">
-            <label className="text-sm font-bold text-slate-700">Hours Involved</label>
+            <label className="text-sm font-bold text-slate-700">Date of Activity</label>
             <input
-              type="number"
-              min="0.5"
-              step="0.5"
+              type="date"
               className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
-              value={formData.hours}
-              onChange={(e) => setFormData({ ...formData, hours: parseFloat(e.target.value) })}
+              value={formData.date}
+              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
             />
           </div>
-        </div>
 
-        <div className="space-y-2">
-          <label className="text-sm font-bold text-slate-700">Date of Activity</label>
-          <input
-            type="date"
-            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
-            value={formData.date}
-            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-          />
-        </div>
+          <div className="space-y-2">
+            <label className="text-sm font-bold text-slate-700">Description</label>
+            <textarea
+              rows={4}
+              placeholder="What did you do? What was the impact?"
+              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none resize-none"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            />
+            <p className={`text-xs ${hasEnoughDescription ? "text-primary" : "text-slate-500"}`}>
+              {formData.description.trim().length}/{minDescriptionLength} minimum characters
+            </p>
+          </div>
 
-        <div className="space-y-2">
-          <label className="text-sm font-bold text-slate-700">Description</label>
-          <textarea
-            rows={4}
-            placeholder="What did you do? What was the impact?"
-            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none resize-none"
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          />
-          <p className={`text-xs ${hasEnoughDescription ? "text-primary" : "text-slate-500"}`}>
-            {formData.description.trim().length}/{minDescriptionLength} minimum characters
-          </p>
-        </div>
+          <div className="space-y-2">
+            <label className="text-sm font-bold text-slate-700">Evidence</label>
+            <input
+              type="url"
+              placeholder="Link to photos, reports, or social posts"
+              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
+              value={formData.evidenceUrl}
+              onChange={(e) => setFormData({ ...formData, evidenceUrl: e.target.value })}
+            />
+            <p className="text-xs text-slate-500">Or upload a photo by browsing. AI verification will run automatically after you submit.</p>
 
-        <div className="space-y-2">
-          <label className="text-sm font-bold text-slate-700">Evidence (Optional)</label>
-          <input
-            type="url"
-            placeholder="Link to photos, reports, or social posts"
-            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
-            value={formData.evidenceUrl}
-            onChange={(e) => setFormData({ ...formData, evidenceUrl: e.target.value })}
-          />
-          <p className="text-xs text-slate-500">Or upload a photo by browsing. AI verification will run automatically after you submit.</p>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0] ?? null;
+                setProofImage(file);
+              }}
+            />
 
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => {
-              const file = e.target.files?.[0] ?? null;
-              setProofImage(file);
-            }}
-          />
-
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className={`w-full text-left p-3 rounded-xl border transition-all ${proofImage ? "bg-primary-light/50 border-primary-light text-primary" : "bg-white border-slate-200 hover:border-primary/30 hover:bg-primary-light/40"}`}
-          >
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2 min-w-0">
-                <Upload size={16} />
-                <div className="truncate">
-                  <p className="text-sm font-semibold truncate">{proofImage ? proofImage.name : "Choose evidence image"}</p>
-                  <p className="text-xs opacity-80">{proofImage ? `${(proofImage.size / 1024).toFixed(0)} KB selected` : "PNG, JPG or HEIC supported"}</p>
-                </div>
-              </div>
-              {proofImage ? (
-                <span className="text-xs font-semibold px-2 py-1 rounded bg-primary text-white">Selected</span>
-              ) : (
-                <span className="text-xs font-semibold px-2 py-1 rounded bg-slate-100 text-slate-600">Browse</span>
-              )}
-            </div>
-          </button>
-
-          {proofImage && (
             <button
               type="button"
-              onClick={() => {
-                setProofImage(null);
-                if (fileInputRef.current) fileInputRef.current.value = "";
-              }}
-              className="inline-flex items-center gap-1 text-xs text-red-600 hover:text-red-700"
+              onClick={() => fileInputRef.current?.click()}
+              className={`w-full text-left p-3 rounded-xl border transition-all ${proofImage ? "bg-primary-light/50 border-primary-light text-primary" : "bg-white border-slate-200 hover:border-primary/30 hover:bg-primary-light/40"}`}
             >
-              <X size={14} />
-              Remove selected image
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Upload size={16} />
+                  <div className="truncate">
+                    <p className="text-sm font-semibold truncate">{proofImage ? proofImage.name : "Choose evidence image"}</p>
+                    <p className="text-xs opacity-80">{proofImage ? `${(proofImage.size / 1024).toFixed(0)} KB selected` : "PNG, JPG or HEIC supported"}</p>
+                  </div>
+                </div>
+                {proofImage ? (
+                  <span className="text-xs font-semibold px-2 py-1 rounded bg-primary text-white">Selected</span>
+                ) : (
+                  <span className="text-xs font-semibold px-2 py-1 rounded bg-slate-100 text-slate-600">Browse</span>
+                )}
+              </div>
             </button>
+
+            {proofImage && (
+              <button
+                type="button"
+                onClick={() => {
+                  setProofImage(null);
+                  if (fileInputRef.current) fileInputRef.current.value = "";
+                }}
+                className="inline-flex items-center gap-1 text-xs text-red-600 hover:text-red-700"
+              >
+                <X size={14} />
+                Remove selected image
+              </button>
+            )}
+
+          </div>
+
+          {submitError && <p className="text-sm text-red-600 font-semibold">{submitError}</p>}
+
+          {isSubmitting && (
+            <div className="flex items-center gap-2 text-sm text-slate-600">
+              <LoaderCircle size={16} className="animate-spin" />
+              {submitStage}
+            </div>
           )}
 
-        </div>
-
-        {submitError && <p className="text-sm text-red-600 font-semibold">{submitError}</p>}
-
-        {isSubmitting && (
-          <div className="flex items-center gap-2 text-sm text-slate-600">
-            <LoaderCircle size={16} className="animate-spin" />
-            {submitStage}
-          </div>
-        )}
-
-        <div className="pt-0 flex items-center gap-3">
-          <button
-            type="submit"
-            disabled={!canSubmit}
-            className={`${isDirty ? "flex-[2]" : "flex-1"} btn-primary h-14 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed`}
-          >
-            {isSubmitting ? "Submitting..." : "Submit Activity"}
-          </button>
-          {isDirty ? (
+          <div className="pt-0 flex items-center gap-3">
             <button
-              type="button"
-              onClick={resetForAnotherLog}
-              className="flex-1 h-14 flex items-center justify-center border-2 border-red-100 text-red-600 rounded-xl font-bold text-center hover:bg-red-50 hover:text-red-700 transition-colors"
+              type="submit"
+              disabled={!canSubmit}
+              className={`${isDirty ? "flex-[2]" : "flex-1"} btn-primary h-14 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed`}
             >
-              Reset
+              {isSubmitting ? "Submitting..." : "Submit Activity"}
             </button>
-          ) : null}
-        </div>
-      </form>
+            {isDirty ? (
+              <button
+                type="button"
+                onClick={resetForAnotherLog}
+                className="flex-1 h-14 flex items-center justify-center border-2 border-red-100 text-red-600 rounded-xl font-bold text-center hover:bg-red-50 hover:text-red-700 transition-colors"
+              >
+                Reset
+              </button>
+            ) : null}
+          </div>
+        </form>
       )}
     </div>
   );

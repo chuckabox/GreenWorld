@@ -1,53 +1,37 @@
 import { BadgeDefinition } from "../types";
 
-export const badgeCatalog: BadgeDefinition[] = [
-  {
-    id: "eco-beginner",
-    name: "Eco Beginner",
-    description: "Started your first verified eco actions.",
-    minPoints: 0,
-    colorClass: "from-primary-light to-primary",
-  },
-  {
-    id: "recycling-champion",
-    name: "Recycling Champion",
-    description: "Consistently reduced waste and single-use plastics.",
-    minPoints: 150,
-    colorClass: "from-cyan-400 to-cyan-600",
-  },
-  {
-    id: "tree-guardian",
-    name: "Tree Guardian",
-    description: "Built measurable impact through local green actions.",
-    minPoints: 300,
-    colorClass: "from-lime-400 to-green-600",
-  },
-  {
-    id: "planet-protector",
-    name: "Planet Protector",
-    description: "Top-tier climate impact leader in your community.",
-    minPoints: 500,
-    colorClass: "from-amber-400 to-orange-600",
-  },
-  {
-    id: "climate-action-hero",
-    name: "Climate Action Hero",
-    description: "Elite contributor driving city-scale sustainability outcomes.",
-    minPoints: 800,
-    colorClass: "from-violet-500 to-indigo-700",
-  },
-];
-
-export const getUnlockedBadges = (points: number) =>
-  badgeCatalog.filter((badge) => points >= badge.minPoints);
-
-export const getNextBadge = (points: number) =>
-  badgeCatalog.find((badge) => points < badge.minPoints) ?? null;
+export const toRoman = (num: number): string => {
+  const lookup: { [key: string]: number } = {
+    M: 1000,
+    CM: 900,
+    D: 500,
+    CD: 400,
+    C: 100,
+    XC: 90,
+    L: 50,
+    XL: 40,
+    X: 10,
+    IX: 9,
+    V: 5,
+    IV: 4,
+    I: 1,
+  };
+  let roman = "";
+  for (const i in lookup) {
+    while (num >= lookup[i]) {
+      roman += i;
+      num -= lookup[i];
+    }
+  }
+  return roman;
+};
 
 export const getLevelLabel = (points: number) => {
-  if (points >= 800) return "Earth Champion";
-  if (points >= 500) return "Eco Leader";
-  if (points >= 300) return "Sustainability Advocate";
-  if (points >= 150) return "Green Explorer";
-  return "Eco Learner";
+  const level = Math.floor(points / 500) + 1;
+  return `Sustainability Badge ${toRoman(level)}`;
 };
+
+export const badgeCatalog: BadgeDefinition[] = []; // Empty or keep minimal as fallback
+
+export const getUnlockedBadges = (points: number) => []; // No longer using static list
+export const getNextBadge = (points: number) => null; // Using progression bar instead

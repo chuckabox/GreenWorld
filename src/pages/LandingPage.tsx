@@ -279,7 +279,7 @@ export const LandingPage = () => {
       {/* Call to Action Grid */}
       <section className="py-24 bg-primary-light/30 relative overflow-hidden">
         <div className="max-w-4xl mx-auto px-6 relative z-10">
-          <div className="bg-gradient-to-br from-primary via-primary-dark to-primary text-white rounded-[2rem] p-12 md:p-16 text-center shadow-2xl border border-primary-dark/20">
+          <div className="bg-primary text-white rounded-[2rem] p-12 md:p-16 text-center shadow-2xl">
             <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">Ready to make your mark?</h2>
             <p className="text-white/90 text-lg mb-10 max-w-xl mx-auto">
               Log real actions, earn AI-verified points, and track your CO₂ impact, one eco choice at a time.

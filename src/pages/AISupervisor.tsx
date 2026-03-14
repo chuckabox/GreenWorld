@@ -113,8 +113,8 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
         <h2 className="text-3xl">AI Advisor</h2>
         <p className="text-slate-500">
           {profile.totalCount > 0
-            ? "Recommendations based on your impact history. Refine with a short quiz if you like."
-            : "Here are some good first tasks. You can refine with a short quiz for a more personal list."}
+            ? "Recommendations based on your impact history. Personalise your AI with a quiz."
+            : "Here are some good first tasks. You can personalise your AI with a quiz."}
         </p>
       </div>
 
@@ -186,11 +186,11 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
               className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900"
             >
               <ChevronDown size={16} className={cn("transition-transform", refineOpen && "rotate-180")} />
-              {refineOpen ? "Hide quiz" : "Refine with a short quiz"}
+              {refineOpen ? "Hide quiz" : "Take quiz"}
             </button>
             {refineOpen && (
               <div className="mt-4 space-y-5 pl-6 border-l-2 border-slate-100">
-                <p className="text-sm text-slate-500">Optional: answer a few questions for more personal recommendations.</p>
+                <p className="text-sm text-slate-500">Answer a few questions for more personal recommendations.</p>
                 {questions.map((q) => (
                   <div key={q.key} className="space-y-2">
                     <label className="text-sm text-slate-600 block">{q.label}</label>

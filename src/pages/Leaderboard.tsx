@@ -108,7 +108,7 @@ export const Leaderboard = () => {
         </div>
 
         <div className="space-y-6">
-          <div className="card bg-gradient-to-br from-primary via-primary-dark to-primary text-white border-primary-dark shadow-xl shadow-primary/20">
+          <div className="card bg-primary text-white shadow-xl shadow-primary/20 mb-6">
             <h3 className="text-xl mb-4">Community Impact</h3>
             <div className="space-y-4">
               <div>
@@ -124,6 +124,30 @@ export const Leaderboard = () => {
                 <p className="text-3xl font-bold">{communityStats.members}</p>
               </div>
             </div>
+          </div>
+
+          <div className="card">
+            <h3 className="text-xl mb-4">Verified Impact</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="aspect-square bg-slate-100 rounded-2xl overflow-hidden relative group cursor-pointer border border-slate-200">
+                  <img
+                    src={`https://images.unsplash.com/photo-${[
+                      '1542601906990-b4d3fb778b09',
+                      '1536676052345-037041a996cb',
+                      '1595273670150-db0a3bf3cb0c',
+                      '1532996122724-e3c354a0b15b'
+                    ][i - 1]}?auto=format&fit=crop&w=300&q=80`}
+                    alt="Proof"
+                    className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span className="text-white text-[10px] font-bold px-2 py-1 bg-primary rounded-full">Verified</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button className="w-full mt-4 py-2 text-sm font-semibold text-primary hover:underline">View All Proof</button>
           </div>
         </div>
       </div>

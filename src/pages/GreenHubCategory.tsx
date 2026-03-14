@@ -45,7 +45,7 @@ export const GreenHubCategory = () => {
   return (
     <div className="p-6 space-y-10">
       <section className="card overflow-hidden relative">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-light/50 via-white to-white" />
+        <div className="absolute inset-0 bg-primary-light/30" />
         <div className="relative grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-8 items-center">
           <div className="space-y-5">
             <h1 className="text-4xl lg:text-5xl">Waste & Circular Economy</h1>
@@ -61,7 +61,7 @@ export const GreenHubCategory = () => {
           </div>
           <div className="relative">
             <div className="aspect-square rounded-3xl bg-white border border-primary-light shadow-lg p-6 flex items-center justify-center">
-              <div className="w-full h-full rounded-3xl bg-gradient-to-br from-primary-light via-white to-slate-50 flex items-center justify-center relative overflow-hidden">
+              <div className="w-full h-full rounded-3xl bg-slate-50 flex items-center justify-center relative overflow-hidden">
                 <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary-light/60 rounded-full" />
                 <div className="absolute -bottom-12 -left-10 w-36 h-36 bg-primary-light/40 rounded-full" />
                 <div className="relative w-36 h-36 rounded-full bg-white shadow-md flex items-center justify-center">
