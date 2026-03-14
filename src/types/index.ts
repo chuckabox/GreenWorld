@@ -24,6 +24,8 @@ export interface Activity {
   estimatedPlasticItemsReduced?: number;
   estimatedWaterLitersSaved?: number;
   status: 'pending' | 'approved' | 'rejected';
+  taskId?: string;
+  taskTitle?: string;
 }
 
 export interface StoredUser extends UserData {

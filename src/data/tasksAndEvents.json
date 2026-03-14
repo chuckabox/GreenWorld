@@ -1,0 +1,72 @@
+[
+  {
+    "id": "task-1",
+    "type": "task",
+    "title": "Beach or park cleanup",
+    "description": "Organise or join a local cleanup and log bags collected.",
+    "pointsReward": 25
+  },
+  {
+    "id": "task-2",
+    "type": "task",
+    "title": "Plastic-free week",
+    "description": "Avoid single-use plastic for 7 days and log your experience.",
+    "pointsReward": 30
+  },
+  {
+    "id": "task-3",
+    "type": "task",
+    "title": "Energy audit at home",
+    "description": "Check appliances and switches, note improvements made.",
+    "pointsReward": 20
+  },
+  {
+    "id": "task-4",
+    "type": "task",
+    "title": "Compost or food-waste log",
+    "description": "Track food waste reduced or composted for one week.",
+    "pointsReward": 15
+  },
+  {
+    "id": "task-5",
+    "type": "task",
+    "title": "Sustainable transport week",
+    "description": "Walk, cycle, or use public transport and log trips.",
+    "pointsReward": 25
+  },
+  {
+    "id": "event-1",
+    "type": "event",
+    "title": "Tree Planting Day",
+    "date": "Mar 20, 2026",
+    "location": "Central Park"
+  },
+  {
+    "id": "event-2",
+    "type": "event",
+    "title": "Eco-Tech Workshop",
+    "date": "Mar 25, 2026",
+    "location": "Innovation Hub"
+  },
+  {
+    "id": "event-3",
+    "type": "event",
+    "title": "Zero Waste Seminar",
+    "date": "Apr 2, 2026",
+    "location": "Online"
+  },
+  {
+    "id": "event-4",
+    "type": "event",
+    "title": "Community Garden Open Day",
+    "date": "Apr 10, 2026",
+    "location": "Riverside Gardens"
+  },
+  {
+    "id": "event-5",
+    "type": "event",
+    "title": "Climate Action Forum",
+    "date": "Apr 18, 2026",
+    "location": "City Hall"
+  }
+]
