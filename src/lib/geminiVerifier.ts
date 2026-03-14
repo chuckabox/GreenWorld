@@ -1,4 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
+import { GEMINI_API_KEY, USE_GEMINI_LIVE } from "./geminiConfig";
 
 export interface EcoVerificationResult {
   isRelevant: boolean;
@@ -11,11 +12,6 @@ export interface EcoVerificationResult {
   reviewRecommendation: "approve" | "manual_review" | "reject";
   verificationMode: "demo" | "live";
 }
-
-const parseBoolean = (value: string | undefined, defaultValue = false) => {
-  if (value == null) return defaultValue;
-  return value.trim().toLowerCase() === "true";
-};
 
 const extractNumberBeforeKeyword = (text: string, keywords: string[]) => {
   for (const keyword of keywords) {
@@ -190,12 +186,8 @@ Rules:
         },
       ],
     });
-  } catch (error) {
-    const fallbackToDemo = parseBoolean(import.meta.env.VITE_AI_FALLBACK_TO_DEMO, false);
-    if (fallbackToDemo) {
-      return getDemoVerification(activityCategory, activityDescription);
-    }
-    throw error;
+  } catch {
+    return getDemoVerification(activityCategory, activityDescription);
   }
 
   const rawText = response.text?.trim();
