@@ -6,13 +6,16 @@ import {
   Trophy, 
   User, 
   LogOut, 
-  Leaf, 
+  Leaf,
   ShieldCheck,
   Sparkles,
   BookOpen,
 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { UserData } from "../types";
+
+type NavItem = { name: string; path: string; icon: React.ComponentType<{ size?: number; className?: string }> };
+type NavGroup = { label: string; items: NavItem[] };
 
 export const Sidebar = ({ user }: { user: UserData }) => {
   const location = useLocation();
@@ -26,8 +29,11 @@ export const Sidebar = ({ user }: { user: UserData }) => {
     { name: "Profile", path: "/portfolio", icon: User },
   ];
 
-  if (user.role === 'admin') {
-    navItems.push({ name: "Admin Portal", path: "/admin", icon: ShieldCheck });
+  if (user.role === "admin") {
+    navGroups.push({
+      label: "Admin",
+      items: [{ name: "Admin Portal", path: "/admin", icon: ShieldCheck }],
+    });
   }
 
   return (
@@ -39,26 +45,35 @@ export const Sidebar = ({ user }: { user: UserData }) => {
         <span className="font-display font-bold text-xl tracking-tight">EcoImpact</span>
       </Link>
 
-      <nav className="flex-1 px-4 py-4 space-y-1">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = location.pathname === item.path;
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group",
-                isActive
-                  ? "bg-primary-light text-primary font-semibold"
-                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
-              )}
-            >
-              <Icon size={20} className={cn(isActive ? "text-primary" : "text-slate-400 group-hover:text-slate-600")} />
-              {item.name}
-            </Link>
-          );
-        })}
+      <nav className="flex-1 px-4 py-4 space-y-6 overflow-y-auto">
+        {navGroups.map((group) => (
+          <div key={group.label}>
+            <p className="px-4 mb-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              {group.label}
+            </p>
+            <div className="space-y-1">
+              {group.items.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.path;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={cn(
+                      "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group",
+                      isActive
+                        ? "bg-primary-light text-primary font-semibold"
+                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                    )}
+                  >
+                    <Icon size={20} className={cn(isActive ? "text-primary" : "text-slate-400 group-hover:text-slate-600")} />
+                    {item.name}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
       <div className="p-4 border-t border-slate-100">
