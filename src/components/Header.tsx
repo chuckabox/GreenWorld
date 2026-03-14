@@ -40,9 +40,9 @@ export const Header = ({
           >
             {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
-          <Link to="/" className="hover:opacity-70 transition-opacity">
-            <h1 className="text-xl font-display font-bold text-slate-900">{title}</h1>
-          </Link>
+          <h1 className="text-xl font-display font-bold text-slate-900 select-none cursor-default">
+            {title}
+          </h1>
         </div>
         <div className="flex items-center gap-4">
           <button className="p-2 text-slate-500 hover:bg-slate-100 rounded-xl relative">

@@ -55,8 +55,8 @@ export const Sidebar = ({
   return (
     <div
       className={cn(
-        "bg-white border-r border-slate-200 h-screen sticky top-0 flex flex-col transition-all duration-300 ease-in-out z-20 overflow-hidden",
-        isOpen ? "w-64" : "w-16",
+        "hidden md:flex bg-white border-r border-slate-200 h-screen sticky top-0 flex-col transition-all duration-300 ease-in-out z-20 overflow-hidden",
+        isOpen ? "md:w-64" : "md:w-16",
       )}
     >
       {isOpen ? (
