@@ -91,13 +91,8 @@ export const LandingPage = () => {
           <div className="flex-1 text-center md:text-left">
             <h2 className="text-3xl md:text-4xl font-display font-bold mb-6">Supported by Brisbane City Council</h2>
             <p className="text-slate-600 text-lg leading-relaxed mb-8">
-              We're working with Brisbane City Council to help residents take real action for a greener local environment, ahead of the 2032 Olympics.
+              We're working with Brisbane City Council to help residents take real action for a greener local environment ahead of the 2032 Olympics. This local pilot will guide improvements before expanding the platform to communities worldwide.
             </p>
-            <div className="flex items-center justify-center md:justify-start gap-4">
-              <div className="h-px w-12 bg-slate-200"></div>
-              <span className="text-slate-400 font-medium text-sm">Working together for a cleaner Brisbane</span>
-              <div className="h-px w-12 bg-slate-200"></div>
-            </div>
           </div>
           <div className="w-full max-w-[320px] md:max-w-none md:flex-1 flex justify-center">
             <motion.div whileHover={{ y: -5 }} className="group">
