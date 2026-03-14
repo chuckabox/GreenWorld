@@ -162,7 +162,7 @@ const AppContent = () => {
               }} />} />
               <Route path="/dashboard" element={user ? <Dashboard user={user} activities={activities} /> : <Navigate to="/login" replace />} />
               <Route path="/log" element={user ? <LogActivity userId={user.id} onActivityLogged={loadUserData} /> : <Navigate to="/login" replace />} />
-              <Route path="/ai-supervisor" element={user ? <AISupervisor userEmail={user.email} onPointsAdded={loadUserData} /> : <Navigate to="/login" replace />} />
+              <Route path="/ai-supervisor" element={user ? <AISupervisor user={user} activities={activities} onPointsAdded={loadUserData} /> : <Navigate to="/login" replace />} />
               <Route path="/learning" element={user ? <LearningHub /> : <Navigate to="/login" replace />} />
               <Route path="/leaderboard" element={user ? <Leaderboard /> : <Navigate to="/login" replace />} />
               <Route path="/portfolio" element={user ? <Portfolio user={user} /> : <Navigate to="/login" replace />} />
