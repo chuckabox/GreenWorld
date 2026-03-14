@@ -1,65 +1,33 @@
-import React, { useRef, useState, useMemo } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle2, LoaderCircle, Upload, X, Target } from "lucide-react";
+import { CheckCircle2, LoaderCircle, Upload, X } from "lucide-react";
 import { verifyEcoImageWithGemini } from "../lib/geminiVerifier";
-import tasksAndEventsData from "../data/tasksAndEvents.json";
 
-type TaskItem = { id: string; type: string; title: string; description: string; category?: string; pointsReward?: number };
-
-export const LogActivity = ({
-  userId,
-  onActivityLogged,
-}: {
-  userId: number;
-  onActivityLogged: () => void;
-}) => {
+export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onActivityLogged: () => void }) => {
   const navigate = useNavigate();
-  const defaultDate = new Date().toISOString().split("T")[0];
   const defaultDate = new Date().toISOString().split('T')[0];
-  const tasks = useMemo(() => (tasksAndEventsData as TaskItem[]).filter((t) => t.type === "task"), []);
-
   const [formData, setFormData] = useState({
-    selectedTaskId: "" as string,
     category: "Waste Management",
     hours: 1,
     date: defaultDate,
     description: "",
-    evidenceUrl: "",
+    evidenceUrl: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [proofImage, setProofImage] = useState<File | null>(null);
   const [submitStage, setSubmitStage] = useState("Saving your activity...");
-  const [submitSuccess, setSubmitSuccess] = useState<null | {
-    status: "approved" | "pending";
-    points: number;
-    note: string;
-  }>(null);
+  const [submitSuccess, setSubmitSuccess] = useState<null | { status: "approved" | "pending"; points: number; note: string }>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
   const minDescriptionLength = 15;
-  const hasEnoughDescription =
-    formData.description.trim().length >= minDescriptionLength;
+  const hasEnoughDescription = formData.description.trim().length >= minDescriptionLength;
   const isDirty =
-    formData.selectedTaskId !== "" ||
     formData.category !== "Waste Management" ||
     formData.hours !== 1 ||
     formData.date !== defaultDate ||
     formData.description.trim().length > 0 ||
     formData.evidenceUrl.trim().length > 0 ||
     proofImage !== null;
-
-  const selectedTask = formData.selectedTaskId ? tasks.find((t) => t.id === formData.selectedTaskId) : null;
-
-  const handleTaskChange = (taskId: string) => {
-    const task = taskId ? tasks.find((t) => t.id === taskId) : null;
-    setFormData((prev) => ({
-      ...prev,
-      selectedTaskId: taskId,
-      category: task?.category ?? prev.category,
-      description: task ? task.description : prev.description,
-    }));
-  };
   const canSubmit = hasEnoughDescription && !isSubmitting;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -67,9 +35,7 @@ export const LogActivity = ({
     setSubmitError(null);
 
     if (proofImage && !hasEnoughDescription) {
-      setSubmitError(
-        `Please describe your action in at least ${minDescriptionLength} characters when uploading a photo.`,
-      );
+      setSubmitError(`Please describe your action in at least ${minDescriptionLength} characters when uploading a photo.`);
       return;
     }
 
@@ -88,16 +54,10 @@ export const LogActivity = ({
     }, 850);
 
     try {
-      let aiResult: Awaited<
-        ReturnType<typeof verifyEcoImageWithGemini>
-      > | null = null;
+      let aiResult: Awaited<ReturnType<typeof verifyEcoImageWithGemini>> | null = null;
       if (proofImage) {
         setSubmitStage("Verifying evidence with AI...");
-        aiResult = await verifyEcoImageWithGemini(
-          proofImage,
-          formData.category,
-          formData.description,
-        );
+        aiResult = await verifyEcoImageWithGemini(proofImage, formData.category, formData.description);
       }
 
       const enrichedDescription = aiResult
@@ -105,15 +65,12 @@ export const LogActivity = ({
         : formData.description;
 
       const status = aiResult
-        ? aiResult.reviewRecommendation === "approve"
-          ? "approved"
-          : "pending"
+        ? (aiResult.reviewRecommendation === "approve" ? "approved" : "pending")
         : "pending";
 
-      const earnedPoints =
-        aiResult && aiResult.reviewRecommendation === "approve"
-          ? Math.max(25, Math.round(aiResult.estimatedCo2Kg * 40))
-          : 0;
+      const earnedPoints = aiResult && aiResult.reviewRecommendation === "approve"
+        ? Math.max(25, Math.round(aiResult.estimatedCo2Kg * 40))
+        : 0;
 
       const localActivity = {
         id: Date.now(),
@@ -123,8 +80,6 @@ export const LogActivity = ({
         date: formData.date,
         description: enrichedDescription,
         evidenceUrl: formData.evidenceUrl,
-        taskId: selectedTask?.id,
-        taskTitle: selectedTask?.title,
         aiConfidence: aiResult?.confidence,
         aiRecommendation: aiResult?.reviewRecommendation,
         estimatedCo2Kg: aiResult?.estimatedCo2Kg,
@@ -133,27 +88,8 @@ export const LogActivity = ({
         status,
       };
 
-      const currentActivities = JSON.parse(
-        localStorage.getItem("activities") || "[]",
-      );
-      localStorage.setItem(
-        "activities",
-        JSON.stringify([...currentActivities, localActivity]),
-      );
-
-      if (status === "approved" && earnedPoints > 0) {
-        const users = JSON.parse(localStorage.getItem("users") || "[]");
-        const updated = users.map((u: { id: number; impact_points?: number; award_progress?: number }) =>
-          u.id === userId
-            ? {
-                ...u,
-                impact_points: (u.impact_points || 0) + earnedPoints,
-                award_progress: Math.min(100, Math.round(((u.impact_points || 0) + earnedPoints) / 10)),
-              }
-            : u
-        );
-        localStorage.setItem("users", JSON.stringify(updated));
-      }
+      const currentActivities = JSON.parse(localStorage.getItem("activities") || "[]");
+      localStorage.setItem("activities", JSON.stringify([...currentActivities, localActivity]));
 
       onActivityLogged();
       clearInterval(submitTimer);
@@ -177,7 +113,6 @@ export const LogActivity = ({
 
   const resetForAnotherLog = () => {
     setFormData({
-      selectedTaskId: "",
       category: "Waste Management",
       hours: 1,
       date: defaultDate,
@@ -187,38 +122,26 @@ export const LogActivity = ({
     setProofImage(null);
     setSubmitError(null);
     setSubmitSuccess(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   return (
-    <div className="p-4 sm:p-6 max-w-3xl mx-auto">
-      {/* ── Header ── */}
-      <div className="mb-6 sm:mb-8">
-        <h2 className="text-2xl sm:text-3xl font-bold">Log Your Impact</h2>
-        <p className="text-slate-500 text-sm sm:text-base mt-0.5">
-          Snap, verify, and submit your sustainability action for points.
-        </p>
+    <div className="p-6 max-w-3xl mx-auto">
+      <div className="mb-8">
+        <h2 className="text-3xl">Log Your Impact</h2>
+        <p className="text-slate-500">Snap, verify, and submit your sustainability action for points.</p>
       </div>
 
-      {/* ── Success state ── */}
       {submitSuccess ? (
-        <div className="card space-y-5 sm:space-y-6">
-          <div
-            className={`rounded-xl p-4 border ${
-              submitSuccess.status === "approved"
-                ? "border-emerald-200 bg-emerald-50 text-emerald-900"
-                : "border-amber-200 bg-amber-50 text-amber-900"
-            }`}
-          >
-            <div className="flex items-start gap-2 font-bold text-base sm:text-lg">
-              <CheckCircle2 size={20} className="shrink-0 mt-0.5" />
-              <span>
-                {submitSuccess.status === "approved"
-                  ? "Activity approved"
-                  : "Activity submitted for review"}
-              </span>
+        <div className="card space-y-6">
+          <div className={`rounded-xl p-4 border ${submitSuccess.status === "approved" ? "border-emerald-200 bg-emerald-50 text-emerald-900" : "border-amber-200 bg-amber-50 text-amber-900"}`}>
+            <div className="flex items-center gap-2 font-bold text-lg">
+              <CheckCircle2 size={20} />
+              {submitSuccess.status === "approved" ? "Activity approved" : "Activity submitted for review"}
             </div>
-            <p className="mt-2 text-sm leading-relaxed">
+            <p className="mt-2 text-sm">
               {submitSuccess.status === "approved"
                 ? `Great work. Your activity has been logged successfully and ${submitSuccess.points} Green Points were added.`
                 : "Your activity is now in review. You can keep logging more actions while this one is pending."}
@@ -226,91 +149,25 @@ export const LogActivity = ({
             <p className="mt-1 text-xs opacity-80">{submitSuccess.note}</p>
           </div>
 
-          {/* Action buttons — stack on mobile */}
-          <div className="flex flex-col sm:flex-row items-stretch gap-3">
+          <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={resetForAnotherLog}
-              className="btn-primary flex-1 h-12 sm:h-14 flex items-center justify-center"
+              className="btn-primary flex-1 h-14 flex items-center justify-center"
             >
               Add Another Log
             </button>
             <button
               type="button"
               onClick={() => navigate("/dashboard")}
-              className="flex-1 h-12 sm:h-14 flex items-center justify-center border-2 border-slate-100 rounded-xl font-bold hover:bg-slate-50 transition-colors"
+              className="flex-1 h-14 flex items-center justify-center border-2 border-slate-100 rounded-xl font-bold hover:bg-slate-50 transition-colors"
             >
               Go to Dashboard
             </button>
           </div>
         </div>
       ) : (
-        /* ── Form ── */
-        <form onSubmit={handleSubmit} className="card space-y-5">
-          {/* Category + Hours — side by side on sm+, stacked on mobile */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700 block">
-                Category
-              </label>
-              <select
-                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none text-sm"
-                value={formData.category}
-                onChange={(e) =>
-                  setFormData({ ...formData, category: e.target.value })
-                }
-              >
-                <option>Waste Management</option>
-                <option>Energy Conservation</option>
-                <option>Community Outreach</option>
-                <option>Environmental Advocacy</option>
-                <option>Biodiversity</option>
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700 block">
-                Hours Involved
-              </label>
-              <input
-                type="number"
-                min="0.5"
-                step="0.5"
-                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none text-sm"
-                value={formData.hours}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    hours: parseFloat(e.target.value),
-                  })
-                }
-              />
-            </div>
       <form onSubmit={handleSubmit} className="card space-y-5">
-        <div className="space-y-2">
-          <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-            <Target size={16} className="text-primary" />
-            Choose a task (optional)
-          </label>
-          <select
-            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
-            value={formData.selectedTaskId}
-            onChange={(e) => handleTaskChange(e.target.value)}
-          >
-            <option value="">None — log any activity</option>
-            {tasks.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.title} {t.pointsReward != null ? `(up to ${t.pointsReward} pts)` : ""}
-              </option>
-            ))}
-          </select>
-          {selectedTask && (
-            <p className="text-xs text-slate-500">
-              Category set to {selectedTask.category}. Add your own details below.
-            </p>
-          )}
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <label className="text-sm font-bold text-slate-700">Category</label>
@@ -326,164 +183,130 @@ export const LogActivity = ({
               <option>Biodiversity</option>
             </select>
           </div>
-
-          {/* Date */}
           <div className="space-y-2">
-            <label className="text-sm font-bold text-slate-700 block">
-              Date of Activity
-            </label>
+            <label className="text-sm font-bold text-slate-700">Hours Involved</label>
             <input
-              type="date"
-              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none text-sm"
-              value={formData.date}
-              onChange={(e) =>
-                setFormData({ ...formData, date: e.target.value })
-              }
+              type="number"
+              min="0.5"
+              step="0.5"
+              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
+              value={formData.hours}
+              onChange={(e) => setFormData({ ...formData, hours: parseFloat(e.target.value) })}
             />
           </div>
+        </div>
 
-          {/* Description */}
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-slate-700 block">
-              Description
-            </label>
-            <textarea
-              rows={4}
-              placeholder="What did you do? What was the impact?"
-              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none resize-none text-sm"
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-            />
-            <p
-              className={`text-xs ${
-                hasEnoughDescription ? "text-emerald-600" : "text-slate-500"
-              }`}
-            >
-              {formData.description.trim().length}/{minDescriptionLength}{" "}
-              minimum characters
-            </p>
-          </div>
+        <div className="space-y-2">
+          <label className="text-sm font-bold text-slate-700">Date of Activity</label>
+          <input
+            type="date"
+            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
+            value={formData.date}
+            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+          />
+        </div>
 
-          {/* Evidence */}
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-slate-700 block">
-              Evidence (Optional)
-            </label>
-            <input
-              type="url"
-              placeholder="Link to photos, reports, or social posts"
-              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none text-sm"
-              value={formData.evidenceUrl}
-              onChange={(e) =>
-                setFormData({ ...formData, evidenceUrl: e.target.value })
-              }
-            />
-            <p className="text-xs text-slate-500">
-              Or upload a photo below. AI verification runs automatically after
-              submission.
-            </p>
+        <div className="space-y-2">
+          <label className="text-sm font-bold text-slate-700">Description</label>
+          <textarea
+            rows={4}
+            placeholder="What did you do? What was the impact?"
+            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none resize-none"
+            value={formData.description}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          />
+          <p className={`text-xs ${hasEnoughDescription ? "text-emerald-600" : "text-slate-500"}`}>
+            {formData.description.trim().length}/{minDescriptionLength} minimum characters
+          </p>
+        </div>
 
-            {/* Hidden file input */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0] ?? null;
-                setProofImage(file);
-              }}
-            />
+        <div className="space-y-2">
+          <label className="text-sm font-bold text-slate-700">Evidence (Optional)</label>
+          <input
+            type="url"
+            placeholder="Link to photos, reports, or social posts"
+            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
+            value={formData.evidenceUrl}
+            onChange={(e) => setFormData({ ...formData, evidenceUrl: e.target.value })}
+          />
+          <p className="text-xs text-slate-500">Or upload a photo by browsing. AI verification will run automatically after you submit.</p>
 
-            {/* Upload button */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0] ?? null;
+              setProofImage(file);
+            }}
+          />
+
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className={`w-full text-left p-3 rounded-xl border transition-all ${proofImage ? "bg-emerald-50 border-emerald-200 text-emerald-900" : "bg-white border-slate-200 hover:border-primary/30 hover:bg-primary-light/40"}`}
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 min-w-0">
+                <Upload size={16} />
+                <div className="truncate">
+                  <p className="text-sm font-semibold truncate">{proofImage ? proofImage.name : "Choose evidence image"}</p>
+                  <p className="text-xs opacity-80">{proofImage ? `${(proofImage.size / 1024).toFixed(0)} KB selected` : "PNG, JPG or HEIC supported"}</p>
+                </div>
+              </div>
+              {proofImage ? (
+                <span className="text-xs font-semibold px-2 py-1 rounded bg-emerald-100 text-emerald-800">Selected</span>
+              ) : (
+                <span className="text-xs font-semibold px-2 py-1 rounded bg-slate-100 text-slate-600">Browse</span>
+              )}
+            </div>
+          </button>
+
+          {proofImage && (
             <button
               type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className={`w-full text-left p-3 rounded-xl border transition-all ${
-                proofImage
-                  ? "bg-emerald-50 border-emerald-200 text-emerald-900"
-                  : "bg-white border-slate-200 hover:border-primary/30 hover:bg-primary-light/40"
-              }`}
+              onClick={() => {
+                setProofImage(null);
+                if (fileInputRef.current) fileInputRef.current.value = "";
+              }}
+              className="inline-flex items-center gap-1 text-xs text-red-600 hover:text-red-700"
             >
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2 min-w-0">
-                  <Upload size={16} className="shrink-0" />
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold truncate">
-                      {proofImage ? proofImage.name : "Choose evidence image"}
-                    </p>
-                    <p className="text-xs opacity-80">
-                      {proofImage
-                        ? `${(proofImage.size / 1024).toFixed(0)} KB selected`
-                        : "PNG, JPG or HEIC supported"}
-                    </p>
-                  </div>
-                </div>
-                <span
-                  className={`text-xs font-semibold px-2 py-1 rounded shrink-0 ${
-                    proofImage
-                      ? "bg-emerald-100 text-emerald-800"
-                      : "bg-slate-100 text-slate-600"
-                  }`}
-                >
-                  {proofImage ? "Selected" : "Browse"}
-                </span>
-              </div>
+              <X size={14} />
+              Remove selected image
             </button>
+          )}
 
-            {/* Remove image */}
-            {proofImage && (
-              <button
-                type="button"
-                onClick={() => {
-                  setProofImage(null);
-                  if (fileInputRef.current) fileInputRef.current.value = "";
-                }}
-                className="inline-flex items-center gap-1 text-xs text-red-600 hover:text-red-700 transition-colors"
-              >
-                <X size={14} />
-                Remove selected image
-              </button>
-            )}
+        </div>
+
+        {submitError && <p className="text-sm text-red-600 font-semibold">{submitError}</p>}
+
+        {isSubmitting && (
+          <div className="flex items-center gap-2 text-sm text-slate-600">
+            <LoaderCircle size={16} className="animate-spin" />
+            {submitStage}
           </div>
+        )}
 
-          {/* Error */}
-          {submitError && (
-            <p className="text-sm text-red-600 font-semibold">{submitError}</p>
-          )}
-
-          {/* Loading state */}
-          {isSubmitting && (
-            <div className="flex items-center gap-2 text-sm text-slate-600">
-              <LoaderCircle size={16} className="animate-spin shrink-0" />
-              <span>{submitStage}</span>
-            </div>
-          )}
-
-          {/* Submit / Reset — stack on mobile */}
-          <div className="pt-1 flex flex-col sm:flex-row items-stretch gap-3">
+        <div className="pt-0 flex items-center gap-3">
+          <button
+            type="submit"
+            disabled={!canSubmit}
+            className={`${isDirty ? "flex-[2]" : "flex-1"} btn-primary h-14 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            {isSubmitting ? "Submitting..." : "Submit Activity"}
+          </button>
+          {isDirty ? (
             <button
-              type="submit"
-              disabled={!canSubmit}
-              className={`${
-                isDirty ? "sm:flex-[2]" : "sm:flex-1"
-              } btn-primary h-12 sm:h-14 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed`}
+              type="button"
+              onClick={resetForAnotherLog}
+              className="flex-1 h-14 flex items-center justify-center border-2 border-red-100 text-red-600 rounded-xl font-bold text-center hover:bg-red-50 hover:text-red-700 transition-colors"
             >
-              {isSubmitting ? "Submitting..." : "Submit Activity"}
+              Reset
             </button>
-            {isDirty && (
-              <button
-                type="button"
-                onClick={resetForAnotherLog}
-                className="sm:flex-1 h-12 sm:h-14 flex items-center justify-center border-2 border-red-100 text-red-600 rounded-xl font-bold hover:bg-red-50 hover:text-red-700 transition-colors"
-              >
-                Reset
-              </button>
-            )}
-          </div>
-        </form>
+          ) : null}
+        </div>
+      </form>
       )}
     </div>
   );
