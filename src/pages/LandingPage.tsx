@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { cn } from "../lib/utils";
 
 import councilImg from "../assets/council_support.png";
+import heroBg from "../assets/hero_background.jpeg";
 import brisbane1 from "../assets/brisbane_1.png";
 import brisbane2 from "../assets/brisbane_2.png";
 import brisbane3 from "../assets/brisbane_3.png";
