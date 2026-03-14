@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
 import { Sparkles, ChevronRight, ChevronDown } from "lucide-react";
 import {
@@ -126,22 +127,32 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
         </div>
       ) : (
         <div className="card space-y-6">
-          <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center justify-between flex-wrap gap-3">
             <h3 className="text-xl font-bold text-slate-900">Recommended for you</h3>
-            <button
-              type="button"
-              onClick={refreshFromProfile}
-              disabled={isLoading}
-              className="text-sm font-medium text-primary hover:underline"
-            >
-              Refresh
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={refreshFromProfile}
+                disabled={isLoading}
+                className="text-sm font-medium text-slate-500 hover:text-primary disabled:opacity-50"
+              >
+                Refresh from your activity
+              </button>
+              <button
+                type="button"
+                onClick={() => setRefineOpen(true)}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50"
+              >
+                <Sparkles size={16} className="text-primary" />
+                Take quiz
+              </button>
+            </div>
           </div>
 
           {error && <p className="text-sm text-red-600 font-medium">{error}</p>}
 
           {recommendations !== null && recommendations.length === 0 ? (
-            <p className="text-slate-500">No recommendations right now. Try refining with the quiz below.</p>
+            <p className="text-slate-500">No recommendations right now. Try refining with the quiz.</p>
           ) : recommendations !== null ? (
             <ul className="space-y-4">
               {recommendations.map((rec) => (
@@ -183,104 +194,95 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
               ))}
             </ul>
           ) : null}
-
-          <div className="pt-4 border-t border-slate-100">
-            <button
-              type="button"
-              onClick={() => setRefineOpen(true)}
-              className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900"
-            >
-              <ChevronDown size={16} className="transition-transform" />
-              Take quiz
-            </button>
-          </div>
         </div>
       )}
 
-      {/* Quiz dialog */}
-      {refineOpen && (
-        <div
-          className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/40 px-4"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) setRefineOpen(false);
-          }}
-        >
+      {/* Quiz dialog (full-page overlay via portal) */}
+      {refineOpen &&
+        createPortal(
           <div
-            className="bg-white rounded-2xl max-w-xl w-full p-6 space-y-5 shadow-xl"
-            onMouseDown={(event) => event.stopPropagation()}
+            className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/40 px-4"
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) setRefineOpen(false);
+            }}
           >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h3 className="text-xl font-bold">Personalise your AI</h3>
-                <p className="text-sm text-slate-500">
-                  Answer a few quick questions and we’ll fine-tune your recommendations.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setRefineOpen(false)}
-                className="p-1 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-700"
-                aria-label="Close quiz"
-              >
-                <ChevronDown size={16} className="rotate-180" />
-              </button>
-            </div>
-
-            <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
-              {questions.map((q) => (
-                <div key={q.key} className="space-y-2">
-                  <label className="text-sm text-slate-600 block">{q.label}</label>
-                  <div className="flex gap-2">
-                    {[1, 2, 3, 4, 5].map((n) => (
-                      <button
-                        key={n}
-                        type="button"
-                        onClick={() => setAnswers({ ...answers, [q.key]: n })}
-                        className={cn(
-                          "flex-1 min-w-0 py-2 rounded-xl text-sm font-bold transition-colors",
-                          answers[q.key] === n
-                            ? "bg-primary text-white shadow-sm"
-                            : "bg-slate-100 text-slate-600 hover:bg-slate-200",
-                        )}
-                      >
-                        {n}
-                      </button>
-                    ))}
-                  </div>
+            <div
+              className="bg-white rounded-2xl max-w-xl w-full p-6 space-y-5 shadow-xl"
+              onMouseDown={(event) => event.stopPropagation()}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h3 className="text-xl font-bold">Personalise your AI</h3>
+                  <p className="text-sm text-slate-500">
+                    Answer a few quick questions and we’ll fine-tune your recommendations.
+                  </p>
                 </div>
-              ))}
-              <div className="space-y-2">
-                <label className="text-sm text-slate-600">How do you feel? (optional)</label>
-                <textarea
-                  value={feelingText}
-                  onChange={(e) => setFeelingText(e.target.value)}
-                  placeholder="e.g. I want to focus on waste this week..."
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 min-h-[72px]"
-                  rows={2}
-                />
+                <button
+                  type="button"
+                  onClick={() => setRefineOpen(false)}
+                  className="p-1 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-700"
+                  aria-label="Close quiz"
+                >
+                  <ChevronDown size={16} className="rotate-180" />
+                </button>
+              </div>
+
+              <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
+                {questions.map((q) => (
+                  <div key={q.key} className="space-y-2">
+                    <label className="text-sm text-slate-600 block">{q.label}</label>
+                    <div className="flex gap-2">
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <button
+                          key={n}
+                          type="button"
+                          onClick={() => setAnswers({ ...answers, [q.key]: n })}
+                          className={cn(
+                            "flex-1 min-w-0 py-2 rounded-xl text-sm font-bold transition-colors",
+                            answers[q.key] === n
+                              ? "bg-primary text-white shadow-sm"
+                              : "bg-slate-100 text-slate-600 hover:bg-slate-200",
+                          )}
+                        >
+                          {n}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+                <div className="space-y-2">
+                  <label className="text-sm text-slate-600">How do you feel? (optional)</label>
+                  <textarea
+                    value={feelingText}
+                    onChange={(e) => setFeelingText(e.target.value)}
+                    placeholder="e.g. I want to focus on waste this week..."
+                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 min-h-[72px]"
+                    rows={2}
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setRefineOpen(false)}
+                  className="px-4 py-2 rounded-xl border border-slate-200 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={fetchFromQuiz}
+                  disabled={refineLoading}
+                  className="btn-primary py-2.5 px-5 flex items-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Sparkles size={16} />
+                  {refineLoading ? "Updating..." : "Get recommendations from quiz"}
+                </button>
               </div>
             </div>
-
-            <div className="flex items-center justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setRefineOpen(false)}
-                className="px-4 py-2 rounded-xl border border-slate-200 text-sm font-medium text-slate-700 hover:bg-slate-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={fetchFromQuiz}
-                disabled={refineLoading}
-                className="btn-primary py-2.5 px-5 flex items-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Sparkles size={16} />
-                {refineLoading ? "Updating..." : "Get recommendations from quiz"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body,
+        )}
     </div>
   );
 };
