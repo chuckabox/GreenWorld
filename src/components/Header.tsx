@@ -36,20 +36,14 @@ export const Header = ({
       <header className="h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 px-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button 
-            onClick={() => {
-              if (window.innerWidth < 768) {
-                setIsMobileMenuOpen(!isMobileMenuOpen);
-              } else {
-                onMenuClick();
-              }
-            }}
-            className="p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-xl transition-colors"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-xl transition-colors md:hidden"
           >
             {window.innerWidth < 768 && isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
-          <Link to="/" className="hover:opacity-70 transition-opacity">
-            <h1 className="text-xl font-display font-bold text-slate-900">{title}</h1>
-          </Link>
+          <h1 className="text-xl font-display font-bold text-slate-900 select-none cursor-default">
+            {title}
+          </h1>
         </div>
         <div className="flex items-center gap-4">
           <button className="p-2 text-slate-500 hover:bg-slate-100 rounded-xl relative">

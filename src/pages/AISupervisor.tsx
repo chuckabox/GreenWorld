@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
 import { Sparkles, ChevronRight, ChevronDown, RotateCw } from "lucide-react";
@@ -14,6 +14,7 @@ import tasksAndEventsData from "../data/tasksAndEvents.json";
 import { cn } from "../lib/utils";
 import type { Activity } from "../types";
 import { LogActivityDialog } from "../components/LogActivityDialog";
+import { acquireBodyLock, releaseBodyLock } from "../lib/modalBodyLock";
 
 type TaskItem = { id: string; type: string; title: string; description?: string; pointsReward?: number };
 
@@ -61,6 +62,17 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
   const [refineLoading, setRefineLoading] = useState(false);
   const [isLogDialogOpen, setIsLogDialogOpen] = useState(false);
   const [selectedTaskForLog, setSelectedTaskForLog] = useState<{ taskId: string; taskTitle: string } | null>(null);
+  const refineScrollRef = useRef<HTMLDivElement | null>(null);
+  const [refineDragStartY, setRefineDragStartY] = useState<number | null>(null);
+  const [refineDragTranslateY, setRefineDragTranslateY] = useState(0);
+
+  useEffect(() => {
+    if (!refineOpen) return;
+    acquireBodyLock();
+    return () => {
+      releaseBodyLock();
+    };
+  }, [refineOpen]);
 
   useEffect(() => {
     let cancelled = false;
@@ -224,87 +236,125 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
       {refineOpen &&
         createPortal(
           <div
-            className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/40 px-4"
+            className="fixed inset-0 z-40 flex items-end md:items-center justify-center bg-slate-950/40 px-2 pb-4 sm:px-4 sm:pb-8 md:pb-0 overflow-hidden"
             onMouseDown={(event) => {
               if (event.target === event.currentTarget) setRefineOpen(false);
             }}
           >
             <div
-              className="bg-white rounded-2xl w-[560px] max-w-full p-5 space-y-4 shadow-xl"
+              className="relative w-full max-w-lg sm:max-w-xl md:max-w-xl shrink-0"
               onMouseDown={(event) => event.stopPropagation()}
+              onTouchStart={(event) => {
+                const scrollTop = refineScrollRef.current?.scrollTop ?? 0;
+                if (scrollTop > 0) {
+                  setRefineDragStartY(null);
+                  setRefineDragTranslateY(0);
+                  return;
+                }
+                setRefineDragStartY(event.touches[0].clientY);
+              }}
+              onTouchMove={(event) => {
+                if (refineDragStartY == null) return;
+                const scrollTop = refineScrollRef.current?.scrollTop ?? 0;
+                if (scrollTop > 0) {
+                  return;
+                }
+                const delta = event.touches[0].clientY - refineDragStartY;
+                if (delta > 0) {
+                  setRefineDragTranslateY(delta);
+                }
+              }}
+              onTouchEnd={() => {
+                if (refineDragTranslateY > 80) {
+                  setRefineOpen(false);
+                } else {
+                  setRefineDragTranslateY(0);
+                }
+                setRefineDragStartY(null);
+              }}
+              style={{
+                transform: refineDragTranslateY ? `translateY(${refineDragTranslateY}px)` : undefined,
+                transition: refineDragTranslateY ? "none" : "transform 0.2s ease-out",
+              }}
             >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <h3 className="text-lg font-bold">Personalise your AI</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    Answer a few quick questions and we’ll fine-tune your recommendations.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setRefineOpen(false)}
-                  className="p-1 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-700"
-                  aria-label="Close quiz"
-                >
-                  <ChevronDown size={16} className="rotate-180" />
-                </button>
-              </div>
-
-              <div className="space-y-3 overflow-hidden">
-                {questions.map((q) => (
-                  <div key={q.key} className="space-y-1">
-                    <label className="text-xs text-slate-600 block">{q.label}</label>
-                    <div className="flex gap-1.5">
-                      {[1, 2, 3, 4, 5].map((n) => (
-                        <button
-                          key={n}
-                          type="button"
-                          onClick={() => setAnswers({ ...answers, [q.key]: n })}
-                          className={cn(
-                            "flex-1 min-w-0 py-1.5 rounded-lg text-sm font-bold transition-colors",
-                            answers[q.key] === n
-                              ? "bg-primary text-white shadow-sm"
-                              : "bg-slate-100 text-slate-600 hover:bg-slate-200",
-                          )}
-                        >
-                          {n}
-                        </button>
-                      ))}
-                    </div>
+              <div
+                ref={refineScrollRef}
+                className="bg-white rounded-t-3xl sm:rounded-2xl w-full max-h-[90vh] overflow-y-auto modal-scroll p-5 space-y-4 shadow-xl"
+              >
+                <div className="mx-auto mb-3 h-1 w-12 rounded-full bg-slate-200 sm:hidden" />
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-lg font-bold">Personalise your AI</h3>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Answer a few quick questions and we’ll fine-tune your recommendations.
+                    </p>
                   </div>
-                ))}
-                <div className="space-y-1">
-                  <label className="text-xs text-slate-600">How do you feel? (optional)</label>
-                  <input
-                    type="text"
-                    value={feelingText}
-                    onChange={(e) => setFeelingText(e.target.value)}
-                    placeholder="e.g. I want to focus on waste this week..."
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20"
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-3 pt-1">
-                <p className="text-[10px] text-slate-400 text-center">
-                  By submitting, you consent to generating a response using the data you input.
-                </p>
-                <div className="flex items-center justify-end gap-2">
                   <button
                     type="button"
                     onClick={() => setRefineOpen(false)}
-                    className="px-4 py-2 rounded-xl border border-slate-200 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                    className="p-1 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-700"
+                    aria-label="Close quiz"
                   >
-                    Cancel
+                    <ChevronDown size={16} className="rotate-180" />
                   </button>
-                  <button
-                    onClick={fetchFromQuiz}
-                    disabled={refineLoading}
-                    className="btn-primary py-2.5 px-5 flex items-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Sparkles size={16} />
-                    {refineLoading ? "Updating..." : "Get recommendations from quiz"}
-                  </button>
+                </div>
+
+                <div className="space-y-3 overflow-hidden">
+                  {questions.map((q) => (
+                    <div key={q.key} className="space-y-1">
+                      <label className="text-xs text-slate-600 block">{q.label}</label>
+                      <div className="flex gap-1.5">
+                        {[1, 2, 3, 4, 5].map((n) => (
+                          <button
+                            key={n}
+                            type="button"
+                            onClick={() => setAnswers({ ...answers, [q.key]: n })}
+                            className={cn(
+                              "flex-1 min-w-0 py-1.5 rounded-lg text-sm font-bold transition-colors",
+                              answers[q.key] === n
+                                ? "bg-primary text-white shadow-sm"
+                                : "bg-slate-100 text-slate-600 hover:bg-slate-200",
+                            )}
+                          >
+                            {n}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                  <div className="space-y-1">
+                    <label className="text-xs text-slate-600">How do you feel? (optional)</label>
+                    <input
+                      type="text"
+                      value={feelingText}
+                      onChange={(e) => setFeelingText(e.target.value)}
+                      placeholder="e.g. I want to focus on waste this week..."
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-3 pt-1">
+                  <p className="text-[10px] text-slate-400 text-center">
+                    By submitting, you consent to generating a response using the data you input.
+                  </p>
+                  <div className="flex items-center justify-end gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setRefineOpen(false)}
+                      className="px-4 py-2 rounded-xl border border-slate-200 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={fetchFromQuiz}
+                      disabled={refineLoading}
+                      className="btn-primary py-2.5 px-5 flex items-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Sparkles size={16} />
+                      {refineLoading ? "Updating..." : "Get recommendations from quiz"}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

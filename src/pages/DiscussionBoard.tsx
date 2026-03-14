@@ -147,6 +147,7 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
   const [repliesByPostId, setRepliesByPostId] = useState<Record<string, Reply[]>>({});
   const [replyContext, setReplyContext] = useState<string | null>(null);
   const [dmMessages, setDmMessages] = useState<Record<number, DirectMessage[]>>({});
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   useEffect(() => {
     saveFriends(user.id, friends);
@@ -299,9 +300,9 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
   }
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] min-h-0">
-      {/* Sidebar: Friends + Channels */}
-      <aside className="w-60 shrink-0 border-r border-slate-200 bg-white flex flex-col overflow-hidden">
+    <div className="relative flex h-[calc(100vh-4rem)] min-h-0 bg-slate-50/40">
+      {/* Sidebar: Friends + Channels (desktop) */}
+      <aside className="hidden md:flex w-60 shrink-0 border-r border-slate-200 bg-white flex-col overflow-hidden">
         <div className="p-3 border-b border-slate-100">
           <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Friends</h3>
           <button
@@ -400,15 +401,15 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
 
       {/* Main: Channel or DM content (Slack-style) */}
       <main className="flex-1 min-w-0 flex flex-col">
-        <div className="px-6 pt-4 pb-3 border-b border-slate-100 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
+        <div className="px-4 sm:px-6 pt-3 pb-3 border-b border-slate-100 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
             <div className="w-9 h-9 bg-primary-light text-primary rounded-xl flex items-center justify-center">
               <MessageCircle size={20} />
             </div>
             <div>
               {viewMode === "dm" && activeFriend ? (
                 <>
-                  <h2 className="text-base font-bold flex items-center gap-2">
+                  <h2 className="text-sm sm:text-base font-bold flex items-center gap-2">
                     <span>{activeFriend.name}</span>
                     <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
                       Direct message
@@ -418,7 +419,7 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
                 </>
               ) : (
                 <>
-                  <h2 className="text-base font-bold flex items-center gap-2">
+                  <h2 className="text-sm sm:text-base font-bold flex items-center gap-2">
                     <span>{selectedChannel === "events" ? "#events" : "#general"}</span>
                     <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
                       Community
@@ -433,24 +434,34 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
               )}
             </div>
           </div>
-          {viewMode === "channel" && (
-            <div className="flex items-center gap-2 text-slate-400">
-              <button
-                type="button"
-                className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-slate-50 text-xs font-medium"
-              >
-                <Users size={14} />
-                Members
-              </button>
-              <button
-                type="button"
-                className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-slate-50 text-xs font-medium"
-              >
-                <Hash size={14} />
-                Channel settings
-              </button>
-            </div>
-          )}
+          <div className="flex items-center gap-2">
+            {viewMode === "channel" && (
+              <div className="hidden sm:flex items-center gap-2 text-slate-400">
+                <button
+                  type="button"
+                  className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-slate-50 text-xs font-medium"
+                >
+                  <Users size={14} />
+                  Members
+                </button>
+                <button
+                  type="button"
+                  className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-slate-50 text-xs font-medium"
+                >
+                  <Hash size={14} />
+                  Channel settings
+                </button>
+              </div>
+            )}
+            <button
+              type="button"
+              className="inline-flex md:hidden items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50"
+              onClick={() => setIsMobileSidebarOpen(true)}
+            >
+              <MessageSquare size={14} />
+              Channels
+            </button>
+          </div>
         </div>
 
         {/* Messages area */}
@@ -595,6 +606,128 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
           </div>
         </form>
       </main>
+
+      {/* Mobile sidebar overlay for friends + channels */}
+      {isMobileSidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 md:hidden bg-slate-950/40"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) setIsMobileSidebarOpen(false);
+          }}
+        >
+          <aside className="absolute inset-y-0 left-0 w-72 max-w-[80%] bg-white shadow-2xl border-r border-slate-200 flex flex-col overflow-hidden">
+            <div className="p-3 border-b border-slate-100 flex items-center justify-between">
+              <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Community</h3>
+              <button
+                type="button"
+                onClick={() => setIsMobileSidebarOpen(false)}
+                className="p-1 rounded-full hover:bg-slate-100 text-slate-500"
+                aria-label="Close community sidebar"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <div className="flex-1 flex flex-col">
+              <div className="p-3 border-b border-slate-100">
+                <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Friends</h4>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileSidebarOpen(false);
+                    setAddFriendOpen(true);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-primary hover:bg-primary-light transition-colors"
+                >
+                  <UserPlus size={18} />
+                  Add friend
+                </button>
+                <ul className="mt-2 space-y-0.5 max-h-36 overflow-y-auto">
+                  {friends.length === 0 ? (
+                    <li className="px-3 py-2 text-slate-400 text-sm">No friends yet</li>
+                  ) : (
+                    friends.map((f) => (
+                      <li
+                        key={f.id}
+                        className={cn(
+                          "flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-50 group cursor-pointer",
+                          viewMode === "dm" && activeFriendId === f.id && "bg-slate-100",
+                        )}
+                        onClick={() => {
+                          setViewMode("dm");
+                          setActiveFriendId(f.id);
+                          setIsMobileSidebarOpen(false);
+                        }}
+                      >
+                        <img
+                          src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${f.id}`}
+                          alt=""
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
+                        <span className="flex-1 truncate text-sm font-medium text-slate-800">{f.name}</span>
+                      </li>
+                    ))
+                  )}
+                </ul>
+              </div>
+              <div className="p-3 border-b border-slate-100">
+                <div className="flex items-center justify-between mb-2 gap-2">
+                  <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Communities</h4>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileSidebarOpen(false);
+                      setCreateChannelOpen(true);
+                    }}
+                    className="text-[10px] font-medium px-2 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50"
+                  >
+                    + New
+                  </button>
+                </div>
+                <ul className="space-y-0.5 max-h-40 overflow-y-auto">
+                  {channels.map((ch) => {
+                    const Icon = ch.icon;
+                    return (
+                      <li key={ch.id}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setViewMode("channel");
+                            setSelectedChannel(ch.id);
+                            setActiveFriendId(null);
+                            setIsMobileSidebarOpen(false);
+                          }}
+                          className={cn(
+                            "w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-colors",
+                            selectedChannel === ch.id
+                              ? "bg-primary-light text-primary"
+                              : "text-slate-700 hover:bg-slate-50",
+                          )}
+                        >
+                          <Icon size={18} />
+                          {ch.name}
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+              <div className="p-3 mt-auto">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileSidebarOpen(false);
+                    setInviteOpen(true);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 border border-slate-200 hover:border-primary/30 transition-colors"
+                >
+                  <Users size={18} />
+                  Invite to activity
+                </button>
+              </div>
+            </div>
+          </aside>
+        </div>
+      )}
 
       {/* Add friend modal */}
       {addFriendOpen && (
