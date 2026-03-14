@@ -133,6 +133,13 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
     ...activityCategories.map((category) => ({ value: category, label: category })),
   ];
 
+  const [acceptedTasks, setAcceptedTasks] = useState<any[]>([]);
+
+  useEffect(() => {
+    const loaded = JSON.parse(localStorage.getItem("acceptedTasks") || "[]");
+    setAcceptedTasks(loaded);
+  }, [activities]); // Refresh when activities change (tasks might be completed)
+
   const location = useLocation();
 
   // Inject demo activities for a more populated look if none exist
@@ -389,29 +396,47 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
 
         {/* Current tasks & Upcoming events */}
         <div className="card space-y-6">
-          <div>
-            <h3 className="text-xl mb-4 flex items-center gap-2">
-              <Target size={22} className="text-primary" />
-              Current tasks
+            <h3 className="text-xl mb-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Target size={22} className="text-primary" />
+                Current tasks
+              </div>
+              {acceptedTasks.length > 0 && (
+                <span className="text-[10px] font-bold bg-primary text-white px-2 py-0.5 rounded-full uppercase">
+                  {acceptedTasks.length} Active
+                </span>
+              )}
             </h3>
             <ul className="space-y-3">
-              {tasks.slice(0, 4).map((t) => (
-                <li key={t.id} className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                  <p className="font-medium text-slate-900">{t.title}</p>
-                  {t.pointsReward != null && (
-                    <span className="text-sm font-semibold text-primary">{t.pointsReward} pts</span>
-                  )}
-                </li>
-              ))}
+              {acceptedTasks.length > 0 ? (
+                acceptedTasks.map((t) => (
+                  <li key={t.taskId} className="p-3 rounded-xl bg-slate-50 border border-slate-100 shadow-sm group">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="font-bold text-slate-900 text-sm truncate">{t.taskTitle}</p>
+                        <p className="text-[10px] text-slate-500 line-clamp-2 mt-0.5 leading-relaxed">{t.reason || t.description}</p>
+                      </div>
+                    </div>
+                  </li>
+                ))
+              ) : (
+                <>
+                  {tasks.slice(0, 3).map((t) => (
+                    <li key={t.id} className="p-3 rounded-xl bg-slate-50 border border-slate-100 opacity-60">
+                      <p className="font-medium text-slate-900 text-sm">{t.title}</p>
+                    </li>
+                  ))}
+                  <p className="text-[11px] text-slate-400 italic mt-2 text-center">No and accepted tasks. Go to Advisor to find one!</p>
+                </>
+              )}
             </ul>
             <Link
               to="/ai-supervisor"
-              className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+              className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline group"
             >
-              Check fit in AI Advisor
-              <ChevronRight size={16} />
+              Find more in AI Advisor
+              <ChevronRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
             </Link>
-          </div>
           <div>
             <h3 className="text-xl mb-4 flex items-center gap-2">
               <Calendar size={22} className="text-primary" />

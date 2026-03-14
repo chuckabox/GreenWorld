@@ -67,6 +67,8 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
     setError(null);
     setRecommendations(null);
     setIsLoading(true);
+
+    // Initial load doesn't need fake delay, but let's add it for consistency if requested
     getTaskRecommendationsFromProfile(tasks, profile)
       .then((list) => {
         if (!cancelled) setRecommendations(list);
@@ -85,16 +87,36 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
     };
   }, [tasks, profile.totalCount, profile.categories.join(","), profile.taskIdsDone.join(",")]);
 
-  const refreshFromProfile = () => {
-    setError(null);
+  const refreshWithAnimation = (action: () => Promise<any>) => {
     setIsLoading(true);
-    getTaskRecommendationsFromProfile(tasks, profile)
-      .then(setRecommendations)
-      .catch((e) => {
+    setRecommendations(null);
+    setTimeout(async () => {
+      try {
+        await action();
+      } finally {
+        setIsLoading(false);
+      }
+    }, 1500); // Pretend refresh animation delay
+  };
+
+  const refreshFromProfile = () => {
+    refreshWithAnimation(async () => {
+      try {
+        const list = await getTaskRecommendationsFromProfile(tasks, profile);
+        setRecommendations(list);
+      } catch (e) {
         setError(e instanceof Error ? e.message : "Recommendations failed.");
         setRecommendations([]);
-      })
-      .finally(() => setIsLoading(false));
+      }
+    });
+  };
+
+  const acceptTask = (rec: TaskRecommendation) => {
+    const existing = JSON.parse(localStorage.getItem("acceptedTasks") || "[]");
+    if (!existing.find((t: any) => t.taskId === rec.taskId)) {
+      localStorage.setItem("acceptedTasks", JSON.stringify([...existing, rec]));
+    }
+    navigate("/dashboard");
   };
 
   const fetchFromQuiz = async () => {
@@ -138,7 +160,7 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
                 onClick={refreshFromProfile}
                 disabled={isLoading}
                 className="p-2 text-slate-400 hover:text-primary hover:bg-slate-50 rounded-xl transition-all disabled:opacity-50"
-                title="Refresh from your activity"
+                title="Refresh recommendations"
               >
                 <RotateCw size={18} className={cn(isLoading && "animate-spin")} />
               </button>
@@ -181,17 +203,15 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
                         {rec.fit === "high" ? "High fit" : rec.fit === "medium" ? "Medium fit" : "Low fit"}
                       </span>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedTaskForLog({ taskId: rec.taskId, taskTitle: rec.taskTitle });
-                        setIsLogDialogOpen(true);
-                      }}
-                      className="btn-primary shrink-0 flex items-center justify-center gap-2 py-2.5 px-4"
-                    >
-                      I'll do this task
-                      <ChevronRight size={16} />
-                    </button>
+                    <div className="flex shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => acceptTask(rec)}
+                        className="btn-primary py-2.5 px-6"
+                      >
+                        I'll do it
+                      </button>
+                    </div>
                   </div>
                 </li>
               ))}
@@ -265,22 +285,27 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-1">
-                <button
-                  type="button"
-                  onClick={() => setRefineOpen(false)}
-                  className="px-4 py-2 rounded-xl border border-slate-200 text-sm font-medium text-slate-700 hover:bg-slate-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={fetchFromQuiz}
-                  disabled={refineLoading}
-                  className="btn-primary py-2.5 px-5 flex items-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <Sparkles size={16} />
-                  {refineLoading ? "Updating..." : "Get recommendations from quiz"}
-                </button>
+              <div className="flex flex-col gap-3 pt-1">
+                <p className="text-[10px] text-slate-400 text-center">
+                  By submitting, you consent to generating a response using the data you input.
+                </p>
+                <div className="flex items-center justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setRefineOpen(false)}
+                    className="px-4 py-2 rounded-xl border border-slate-200 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={fetchFromQuiz}
+                    disabled={refineLoading}
+                    className="btn-primary py-2.5 px-5 flex items-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Sparkles size={16} />
+                    {refineLoading ? "Updating..." : "Get recommendations from quiz"}
+                  </button>
+                </div>
               </div>
             </div>
           </div>,

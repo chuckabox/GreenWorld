@@ -152,6 +152,13 @@ export const LogActivityDialog = ({
       const currentActivities = JSON.parse(localStorage.getItem("activities") || "[]");
       localStorage.setItem("activities", JSON.stringify([...currentActivities, localActivity]));
 
+      // Remove from acceptedTasks if it matches
+      if (selectedTaskId) {
+        const accepted = JSON.parse(localStorage.getItem("acceptedTasks") || "[]");
+        const remaining = accepted.filter((t: any) => t.taskId !== selectedTaskId);
+        localStorage.setItem("acceptedTasks", JSON.stringify(remaining));
+      }
+
       onActivityLogged();
       clearInterval(submitTimer);
       setSubmitSuccess({
@@ -185,6 +192,13 @@ export const LogActivityDialog = ({
 
       const currentActivities = JSON.parse(localStorage.getItem("activities") || "[]");
       localStorage.setItem("activities", JSON.stringify([...currentActivities, fallbackActivity]));
+
+      // Remove from acceptedTasks if it matches (even on fallback)
+      if (selectedTaskId) {
+        const accepted = JSON.parse(localStorage.getItem("acceptedTasks") || "[]");
+        const remaining = accepted.filter((t: any) => t.taskId !== selectedTaskId);
+        localStorage.setItem("acceptedTasks", JSON.stringify(remaining));
+      }
 
       onActivityLogged();
       setSubmitSuccess({
