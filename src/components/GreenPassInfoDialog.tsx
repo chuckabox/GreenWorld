@@ -1,8 +1,20 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { X, Gift, Store, Sparkles, TrendingUp, ShieldCheck } from "lucide-react";
 
 export const GreenPassInfoDialog = ({ onClose }: { onClose: () => void }) => {
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [dragStartY, setDragStartY] = useState<number | null>(null);
+  const [dragTranslateY, setDragTranslateY] = useState(0);
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
+
   const perks = [
     {
       icon: Store,
@@ -36,32 +48,71 @@ export const GreenPassInfoDialog = ({ onClose }: { onClose: () => void }) => {
 
   const overlay = (
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/40 px-4"
+      className="fixed inset-0 z-[60] flex items-end justify-center bg-slate-950/40 px-2 pb-4 sm:px-4 sm:pb-8 overflow-hidden"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
       <div 
-        className="relative max-w-2xl w-full bg-white rounded-3xl p-8 shadow-2xl space-y-8"
+        className="relative w-full max-w-lg sm:max-w-xl md:max-w-2xl shrink-0"
         onMouseDown={(e) => e.stopPropagation()}
+        onTouchStart={(event) => {
+          const scrollTop = scrollRef.current?.scrollTop ?? 0;
+          if (scrollTop > 0) {
+            setDragStartY(null);
+            setDragTranslateY(0);
+            return;
+          }
+          setDragStartY(event.touches[0].clientY);
+        }}
+        onTouchMove={(event) => {
+          if (dragStartY == null) return;
+          const scrollTop = scrollRef.current?.scrollTop ?? 0;
+          if (scrollTop > 0) {
+            return;
+          }
+          const delta = event.touches[0].clientY - dragStartY;
+          if (delta > 0) {
+            setDragTranslateY(delta);
+          }
+        }}
+        onTouchEnd={() => {
+          if (dragTranslateY > 80) {
+            onClose();
+          } else {
+            setDragTranslateY(0);
+          }
+          setDragStartY(null);
+        }}
+        style={{
+          transform: dragTranslateY ? `translateY(${dragTranslateY}px)` : undefined,
+          transition: dragTranslateY ? "none" : "transform 0.2s ease-out",
+        }}
       >
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-primary-light text-primary rounded-2xl flex items-center justify-center">
-              <ShieldCheck size={28} />
+        <div
+          ref={scrollRef}
+          className="bg-white rounded-t-3xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl space-y-8 max-h-[90vh] overflow-y-auto modal-scroll"
+        >
+          <div className="mx-auto mb-3 h-1 w-12 rounded-full bg-slate-200 sm:hidden" />
+          <div className="flex items-start justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-primary-light text-primary rounded-2xl flex items-center justify-center">
+                <ShieldCheck size={28} />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold">Green Pass Perks</h2>
+                <p className="text-sm text-slate-500 font-medium tracking-tight">
+                  Your verified status unlocks these benefits.
+                </p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-2xl font-bold">Green Pass Perks</h2>
-              <p className="text-sm text-slate-500 font-medium tracking-tight">Your verified status unlocks these benefits.</p>
-            </div>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-slate-100 rounded-full text-slate-400 transition-colors"
+            >
+              <X size={24} />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-slate-100 rounded-full text-slate-400 transition-colors"
-          >
-            <X size={24} />
-          </button>
-        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {perks.map((perk, i) => {
@@ -88,6 +139,7 @@ export const GreenPassInfoDialog = ({ onClose }: { onClose: () => void }) => {
         </button>
       </div>
     </div>
+  </div>
   );
 
   return createPortal(overlay, document.body);
