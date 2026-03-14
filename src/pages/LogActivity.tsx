@@ -1,15 +1,22 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { CheckCircle2, LoaderCircle, Upload, X } from "lucide-react";
+import { CheckCircle2, LoaderCircle, Upload, X, Target } from "lucide-react";
 import { verifyEcoImageWithGemini } from "../lib/geminiVerifier";
+import tasksAndEventsData from "../data/tasksAndEvents.json";
 
 type TaskLogState = { taskId?: string; taskTitle?: string };
+type TaskItem = { id: string; type: string; title: string; description?: string; pointsReward?: number };
 
 export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onActivityLogged: () => void }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const defaultDate = new Date().toISOString().split('T')[0];
   const state = location.state as TaskLogState | null;
+  const tasks = useMemo(
+    () => (tasksAndEventsData as (TaskItem & { type: string })[]).filter((t) => t.type === "task") as TaskItem[],
+    [],
+  );
+
   const [formData, setFormData] = useState({
     category: "Waste Management",
     hours: 1,
@@ -17,11 +24,13 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
     description: "",
     evidenceUrl: ""
   });
+  const [selectedTaskId, setSelectedTaskId] = useState<string>("");
   const [taskFromSupervisor, setTaskFromSupervisor] = useState<{ taskId: string; taskTitle: string } | null>(null);
 
   useEffect(() => {
     if (state?.taskId && state?.taskTitle) {
       setTaskFromSupervisor({ taskId: state.taskId, taskTitle: state.taskTitle });
+      setSelectedTaskId(state.taskId);
       setFormData((prev) => ({
         ...prev,
         category: "Sustainability task",
@@ -29,6 +38,24 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
       }));
     }
   }, [state?.taskId, state?.taskTitle]);
+
+  const handleTaskSelect = (taskId: string) => {
+    setSelectedTaskId(taskId);
+    if (!taskId) {
+      setTaskFromSupervisor(null);
+      setFormData((prev) => ({ ...prev, category: "Waste Management", description: "" }));
+      return;
+    }
+    const task = tasks.find((t) => t.id === taskId);
+    if (task) {
+      setTaskFromSupervisor({ taskId: task.id, taskTitle: task.title });
+      setFormData((prev) => ({
+        ...prev,
+        category: "Sustainability task",
+        description: task.description?.trim() ? `${task.title}. ${task.description}` : task.title,
+      }));
+    }
+  };
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [proofImage, setProofImage] = useState<File | null>(null);
   const [submitStage, setSubmitStage] = useState("Saving your activity...");
@@ -133,6 +160,7 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
 
   const resetForAnotherLog = () => {
     setTaskFromSupervisor(null);
+    setSelectedTaskId("");
     setFormData({
       category: "Waste Management",
       hours: 1,
@@ -189,6 +217,26 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
         </div>
       ) : (
       <form onSubmit={handleSubmit} className="card space-y-5">
+        <div className="space-y-2">
+          <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+            <Target size={16} className="text-primary" />
+            Choose a task (optional)
+          </label>
+          <select
+            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
+            value={selectedTaskId}
+            onChange={(e) => handleTaskSelect(e.target.value)}
+          >
+            <option value="">None / General activity</option>
+            {tasks.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.title}{t.pointsReward != null ? ` (${t.pointsReward} pts)` : ""}
+              </option>
+            ))}
+          </select>
+          <p className="text-xs text-slate-500">Selecting a task pre-fills category and description. You can edit them.</p>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <label className="text-sm font-bold text-slate-700">Category</label>
@@ -202,6 +250,7 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
               <option>Community Outreach</option>
               <option>Environmental Advocacy</option>
               <option>Biodiversity</option>
+              <option>Sustainability task</option>
             </select>
           </div>
           <div className="space-y-2">

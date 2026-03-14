@@ -119,7 +119,7 @@ const AppContent = () => {
         {!hideLayout && <Header title={
           location.pathname === "/dashboard" ? "Dashboard" :
           location.pathname === "/log" ? "Log Activity" :
-          location.pathname === "/ai-supervisor" ? "AI Supervisor" :
+          location.pathname === "/ai-supervisor" ? "AI Advisor" :
           location.pathname === "/learning" ? "Green Hub" :
           location.pathname === "/leaderboard" ? "Leaderboard" :
           location.pathname === "/portfolio" ? "Impact Portfolio" :

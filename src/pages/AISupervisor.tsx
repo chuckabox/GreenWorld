@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Sparkles, Target, CheckCircle2, ChevronRight } from "lucide-react";
 import { runTaskFitAnalysis, TaskForFit, TaskFitResult, QuestionnaireInput } from "../lib/aiSupervisor";
 import tasksAndEventsData from "../data/tasksAndEvents.json";
+import { cn } from "../lib/utils";
 
 type TaskItem = { id: string; type: string; title: string; description?: string; pointsReward?: number };
 
@@ -64,20 +65,17 @@ export const AISupervisor = ({ userEmail, onPointsAdded }: { userEmail: string; 
     : undefined;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 max-w-3xl mx-auto space-y-6">
       <div>
-        <h2 className="text-3xl">AI Supervisor</h2>
-        <p className="text-slate-500">
-          Pick a sustainability task, answer a short questionnaire, and see how well it fits you. No points for
-          checking—earn points when you log the activity.
-        </p>
+        <h2 className="text-3xl">AI Advisor</h2>
+        <p className="text-slate-500">Pick a task, answer a few questions, and see if it’s a good fit for you.</p>
       </div>
 
       {!selectedTask ? (
         <div className="card">
           <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
             <Target size={22} className="text-primary" />
-            Choose a task to check fit
+            Choose a task
           </h3>
           <ul className="space-y-3">
             {tasks.map((t) => (
@@ -117,28 +115,34 @@ export const AISupervisor = ({ userEmail, onPointsAdded }: { userEmail: string; 
             </button>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-5">
             <p className="text-sm font-semibold text-slate-700">Quick questionnaire (1–5)</p>
             {questions.map((q) => (
               <div key={q.key} className="space-y-2">
-                <label className="text-sm text-slate-600">{q.label}</label>
-                <input
-                  type="range"
-                  min={1}
-                  max={5}
-                  value={answers[q.key]}
-                  onChange={(e) => setAnswers({ ...answers, [q.key]: Number(e.target.value) })}
-                  className="w-full"
-                />
-                <p className="text-xs text-slate-500">Score: {answers[q.key]} / 5</p>
+                <label className="text-sm text-slate-600 block">{q.label}</label>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setAnswers({ ...answers, [q.key]: n })}
+                      className={cn(
+                        "flex-1 min-w-0 py-2.5 rounded-xl text-sm font-bold transition-colors",
+                        answers[q.key] === n
+                          ? "bg-primary text-white shadow-sm"
+                          : "bg-slate-100 text-slate-600 hover:bg-slate-200 border border-transparent"
+                      )}
+                    >
+                      {n}
+                    </button>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-slate-700">
-              How do you feel about this task? (optional)
-            </label>
+            <label className="text-sm font-semibold text-slate-700">How do you feel? (optional)</label>
             <textarea
               value={feelingText}
               onChange={(e) => setFeelingText(e.target.value)}
@@ -150,7 +154,7 @@ export const AISupervisor = ({ userEmail, onPointsAdded }: { userEmail: string; 
 
           <button onClick={runFit} disabled={isLoading} className="btn-primary w-full py-3 flex items-center justify-center gap-2">
             <Sparkles size={18} />
-            {isLoading ? "Analyzing fit..." : "Check fit with AI"}
+            {isLoading ? "Checking..." : "Check fit"}
           </button>
 
           {error && <p className="text-sm text-red-600 font-medium">{error}</p>}
