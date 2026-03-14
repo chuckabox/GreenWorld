@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Leaf, Users, Award, CheckCircle2, Trophy, Globe } from "lucide-react";
+import { Leaf, Users, Award, CheckCircle2, Trophy, Globe, ChevronDown } from "lucide-react";
 import { motion } from "motion/react";
 import { cn } from "../lib/utils";
 
@@ -38,7 +38,7 @@ export const LandingPage = () => {
             <a href="#how-it-works" className="hover:text-primary transition-colors">How it Works</a>
             <a href="#faq" className="hover:text-primary transition-colors">FAQ</a>
           </div>
-          <Link to={authPath} className="btn-primary text-sm shadow-md shadow-primary/20">{authText}</Link>
+          <Link to={authPath} className="btn-primary text-sm shadow-md">{authText}</Link>
         </div>
       </nav>
 
@@ -56,16 +56,21 @@ export const LandingPage = () => {
               AI-Powered Eco Verification
             </span>
             <h1 className="text-5xl md:text-7xl font-display font-bold leading-tight mb-4 drop-shadow-lg">
-              Lead the Change.<br />
-              <span className="text-primary drop-shadow-md">Earn the Award.</span>
+              Make an impact.<br />
+              <span className="text-primary drop-shadow-md">Earn the Badge.</span>
             </h1>
             <p className="text-lg md:text-xl text-slate-200 mb-10 max-w-2xl mx-auto font-medium drop-shadow">
               Log your eco actions, get them AI-verified, and earn impact points. Track your CO₂ savings, climb the leaderboard, and unlock badges that prove your commitment.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link to={authPath} className="bg-primary hover:bg-primary-dark text-white px-8 py-4 rounded-xl font-bold shadow-lg shadow-primary/30 transition-all hover:-translate-y-1">
-                {heroBtnText}
-              </Link>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
+              <motion.a
+                href="#levels"
+                animate={{ y: [0, 10, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                className="text-primary hover:text-primary-dark transition-colors"
+              >
+                <ChevronDown size={48} strokeWidth={3} />
+              </motion.a>
             </div>
           </motion.div>
         </div>
@@ -80,38 +85,13 @@ export const LandingPage = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {/* Bronze */}
+            {/* Sustainability Badge II (2nd place, Left) */}
             <motion.div whileHover={{ y: -5 }} className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 relative overflow-hidden group">
-              <div className="absolute top-0 left-0 w-full h-1 bg-orange-400"></div>
-              <div className="w-14 h-14 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center mb-6 shadow-orange-500/10 shadow-lg">
-                <Award size={28} />
-              </div>
-              <h3 className="text-xl font-bold mb-3">Eco Beginner 🌱</h3>
-              <p className="text-slate-500 text-sm mb-8 leading-relaxed">
-                Start your green journey. Log your first eco actions — any recycling, energy saving or clean-up counts.
-              </p>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 text-sm font-medium">
-                  <CheckCircle2 size={16} className="text-primary" />
-                  <span>0 Points to unlock</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm font-medium">
-                  <CheckCircle2 size={16} className="text-primary" />
-                  <span>AI-verified activity log</span>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Silver */}
-            <motion.div whileHover={{ y: -5 }} className="bg-white p-8 rounded-3xl shadow-md border-2 border-primary/20 relative overflow-hidden group transform md:-translate-y-4">
               <div className="absolute top-0 left-0 w-full h-1 bg-slate-400"></div>
-              <div className="absolute top-0 right-0 p-4">
-                <span className="bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full">Popular</span>
-              </div>
-              <div className="w-14 h-14 bg-slate-100 text-slate-600 rounded-2xl flex items-center justify-center mb-6 shadow-slate-500/10 shadow-lg">
+              <div className="w-14 h-14 bg-slate-100 text-slate-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
                 <Award size={28} />
               </div>
-              <h3 className="text-xl font-bold mb-3">Tree Guardian 🌳</h3>
+              <h3 className="text-xl font-bold mb-3">Sustainability Badge II 🌳</h3>
               <p className="text-slate-500 text-sm mb-8 leading-relaxed">
                 You're making a real difference. Lead biodiversity actions, organize clean-up drives and inspire your community.
               </p>
@@ -127,13 +107,16 @@ export const LandingPage = () => {
               </div>
             </motion.div>
 
-            {/* Gold */}
-            <motion.div whileHover={{ y: -5 }} className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 relative overflow-hidden group">
+            {/* Sustainability Badge III (Best, Middle) */}
+            <motion.div whileHover={{ y: -5 }} className="bg-white p-8 rounded-3xl shadow-md border-2 border-primary/20 relative overflow-hidden group transform md:-translate-y-4">
               <div className="absolute top-0 left-0 w-full h-1 bg-yellow-400"></div>
-              <div className="w-14 h-14 bg-yellow-50 text-yellow-600 rounded-2xl flex items-center justify-center mb-6 shadow-yellow-500/10 shadow-lg">
+              <div className="absolute top-0 right-0 p-4">
+                <span className="bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full">Popular</span>
+              </div>
+              <div className="w-14 h-14 bg-yellow-50 text-yellow-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
                 <Trophy size={28} />
               </div>
-              <h3 className="text-xl font-bold mb-3">Climate Action Hero 🌍</h3>
+              <h3 className="text-xl font-bold mb-3 whitespace-nowrap">Sustainability Badge III 🌍</h3>
               <p className="text-slate-500 text-sm mb-8 leading-relaxed">
                 Our highest tier. You've built habits, led your community, and your CO₂ savings are measurable and verified.
               </p>
@@ -145,6 +128,28 @@ export const LandingPage = () => {
                 <div className="flex items-center gap-3 text-sm font-medium">
                   <CheckCircle2 size={16} className="text-primary" />
                   <span>Portfolio showcase + AI insights</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Sustainability Badge I (3rd place, Right) */}
+            <motion.div whileHover={{ y: -5 }} className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 relative overflow-hidden group">
+              <div className="absolute top-0 left-0 w-full h-1 bg-orange-400"></div>
+              <div className="w-14 h-14 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                <Award size={28} />
+              </div>
+              <h3 className="text-xl font-bold mb-3">Sustainability Badge I 🌱</h3>
+              <p className="text-slate-500 text-sm mb-8 leading-relaxed">
+                Start your green journey. Log your first eco actions — any recycling, energy saving or clean-up counts.
+              </p>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 text-sm font-medium">
+                  <CheckCircle2 size={16} className="text-primary" />
+                  <span>0 Points to unlock</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm font-medium">
+                  <CheckCircle2 size={16} className="text-primary" />
+                  <span>AI-verified activity log</span>
                 </div>
               </div>
             </motion.div>
@@ -170,7 +175,7 @@ export const LandingPage = () => {
               { num: "3", title: "Lead Your Community", desc: "Unlock project funding and mentorship as you transition from local action to leadership." }
             ].map((step, i) => (
               <div key={i} className="flex gap-6">
-                <div className="shrink-0 w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-display font-bold text-xl shadow-lg shadow-primary/20">
+                <div className="shrink-0 w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-display font-bold text-xl shadow-lg">
                   {step.num}
                 </div>
                 <div>
@@ -213,7 +218,7 @@ export const LandingPage = () => {
             <p className="text-slate-300 text-lg mb-10 max-w-xl mx-auto">
               Log real actions, earn AI-verified points, and track your community's CO₂ impact — one eco choice at a time.
             </p>
-            <Link to={authPath} className="inline-block bg-primary hover:bg-primary-dark text-white text-lg px-10 py-4 rounded-xl font-bold transition-all hover:scale-105 shadow-xl shadow-primary/20">
+            <Link to={authPath} className="inline-block bg-primary hover:bg-primary-dark text-white text-lg px-10 py-4 rounded-xl font-bold transition-all hover:scale-105 shadow-xl">
               {ctaBtnText}
             </Link>
           </div>
