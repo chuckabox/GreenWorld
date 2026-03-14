@@ -39,7 +39,18 @@ export const LogActivityDialog = ({
   const [submitSuccess, setSubmitSuccess] = useState<null | { status: "approved" | "pending"; points: number; note: string }>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [dragStartY, setDragStartY] = useState<number | null>(null);
+  const [dragTranslateY, setDragTranslateY] = useState(0);
   const minDescriptionLength = 15;
+
+  React.useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
   const hasEnoughDescription = formData.description.trim().length >= minDescriptionLength;
   const isDirty =
     formData.category !== "Waste Management" ||
@@ -235,15 +246,56 @@ export const LogActivityDialog = ({
 
   const overlay = (
     <div
-      className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/40 px-4"
+      className="fixed inset-0 z-40 flex items-end justify-center bg-slate-950/40 px-2 pb-4 sm:px-4 sm:pb-8 overflow-hidden"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) {
           handleClose();
         }
       }}
     >
-      <div className="relative w-[880px] max-w-full shrink-0" onMouseDown={(event) => event.stopPropagation()}>
-        <div className="card p-5 space-y-5">
+      <div
+        className="relative w-full max-w-lg sm:max-w-xl md:max-w-2xl shrink-0"
+        onMouseDown={(event) => event.stopPropagation()}
+        onTouchStart={(event) => {
+          const scrollTop = scrollRef.current?.scrollTop ?? 0;
+          if (scrollTop > 0) {
+            // If user has scrolled down inside the dialog, treat pull as scroll, not a close gesture.
+            setDragStartY(null);
+            setDragTranslateY(0);
+            return;
+          }
+          setDragStartY(event.touches[0].clientY);
+        }}
+        onTouchMove={(event) => {
+          if (dragStartY == null) return;
+          const scrollTop = scrollRef.current?.scrollTop ?? 0;
+          if (scrollTop > 0) {
+            // Let the inner content handle scrolling.
+            return;
+          }
+          const delta = event.touches[0].clientY - dragStartY;
+          if (delta > 0) {
+            setDragTranslateY(delta);
+          }
+        }}
+        onTouchEnd={() => {
+          if (dragTranslateY > 80) {
+            handleClose();
+          } else {
+            setDragTranslateY(0);
+          }
+          setDragStartY(null);
+        }}
+        style={{
+          transform: dragTranslateY ? `translateY(${dragTranslateY}px)` : undefined,
+          transition: dragTranslateY ? "none" : "transform 0.2s ease-out",
+        }}
+      >
+        <div
+          ref={scrollRef}
+          className="card p-5 space-y-5 max-h-[90vh] overflow-y-auto modal-scroll rounded-t-3xl sm:rounded-2xl"
+        >
+          <div className="mx-auto mb-3 h-1 w-12 rounded-full bg-slate-200 sm:hidden" />
           <div className="flex items-start justify-between gap-4">
             <div>
               <h2 className="text-xl font-bold">Log Your Impact</h2>
