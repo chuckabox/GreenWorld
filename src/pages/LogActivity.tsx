@@ -3,31 +3,43 @@ import { useNavigate } from "react-router-dom";
 import { CheckCircle2, LoaderCircle, Upload, X } from "lucide-react";
 import { verifyEcoImageWithGemini } from "../lib/geminiVerifier";
 
-export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onActivityLogged: () => void }) => {
+interface LogActivityProps {
+  userId: number;
+  onActivityLogged: () => void;
+}
+
+export const LogActivity: React.FC<LogActivityProps> = ({
+  userId,
+  onActivityLogged,
+}) => {
   const navigate = useNavigate();
-  const defaultDate = new Date().toISOString().split('T')[0];
+  const defaultDate = new Date().toISOString().split("T")[0];
+
   const [formData, setFormData] = useState({
     category: "Waste Management",
     hours: 1,
     date: defaultDate,
     description: "",
-    evidenceUrl: ""
+    evidenceUrl: "",
   });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [proofImage, setProofImage] = useState<File | null>(null);
   const [submitStage, setSubmitStage] = useState("Saving your activity...");
-  const [submitSuccess, setSubmitSuccess] = useState<null | { status: "approved" | "pending"; points: number; note: string }>(null);
+  const [submitSuccess, setSubmitSuccess] = useState<null | {
+    status: "approved" | "pending";
+    points: number;
+    note: string;
+  }>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const minDescriptionLength = 15;
-  const hasEnoughDescription = formData.description.trim().length >= minDescriptionLength;
-  const isDirty =
-    formData.category !== "Waste Management" ||
-    formData.hours !== 1 ||
-    formData.date !== defaultDate ||
-    formData.description.trim().length > 0 ||
-    formData.evidenceUrl.trim().length > 0 ||
-    proofImage !== null;
+
+  const hasEnoughDescription =
+    formData.description.trim().length >= minDescriptionLength;
+
   const canSubmit = hasEnoughDescription && !isSubmitting;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,7 +47,9 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
     setSubmitError(null);
 
     if (proofImage && !hasEnoughDescription) {
-      setSubmitError(`Please describe your action in at least ${minDescriptionLength} characters when uploading a photo.`);
+      setSubmitError(
+        `Please describe your action in at least ${minDescriptionLength} characters when uploading a photo.`,
+      );
       return;
     }
 
@@ -47,30 +61,50 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
       "Verifying evidence with AI...",
       "Finalizing your result...",
     ];
+
     let submitIndex = 0;
+
     const submitTimer = setInterval(() => {
       submitIndex = (submitIndex + 1) % submitSteps.length;
       setSubmitStage(submitSteps[submitIndex]);
     }, 850);
 
     try {
-      let aiResult: Awaited<ReturnType<typeof verifyEcoImageWithGemini>> | null = null;
+      let aiResult: Awaited<
+        ReturnType<typeof verifyEcoImageWithGemini>
+      > | null = null;
+
       if (proofImage) {
         setSubmitStage("Verifying evidence with AI...");
-        aiResult = await verifyEcoImageWithGemini(proofImage, formData.category, formData.description);
+        aiResult = await verifyEcoImageWithGemini(
+          proofImage,
+          formData.category,
+          formData.description,
+        );
       }
 
       const enrichedDescription = aiResult
-        ? `${formData.description}\n\n[AI Verification]\nRelevant: ${aiResult.isRelevant ? "yes" : "no"}\nConfidence: ${(aiResult.confidence * 100).toFixed(0)}%\nEstimated CO2: ${aiResult.estimatedCo2Kg} kg\nEstimated Plastic Reduced: ${aiResult.estimatedPlasticItemsReduced} items\nEstimated Water Saved: ${aiResult.estimatedWaterLitersSaved} L\nRecommendation: ${aiResult.reviewRecommendation}\nSummary: ${aiResult.summary}`
+        ? `${formData.description}
+
+[AI Verification]
+Relevant: ${aiResult.isRelevant ? "yes" : "no"}
+Confidence: ${(aiResult.confidence * 100).toFixed(0)}%
+Estimated CO2: ${aiResult.estimatedCo2Kg} kg
+Estimated Plastic Reduced: ${aiResult.estimatedPlasticItemsReduced} items
+Estimated Water Saved: ${aiResult.estimatedWaterLitersSaved} L
+Recommendation: ${aiResult.reviewRecommendation}
+Summary: ${aiResult.summary}`
         : formData.description;
 
-      const status = aiResult
-        ? (aiResult.reviewRecommendation === "approve" ? "approved" : "pending")
-        : "pending";
+      const status =
+        aiResult && aiResult.reviewRecommendation === "approve"
+          ? "approved"
+          : "pending";
 
-      const earnedPoints = aiResult && aiResult.reviewRecommendation === "approve"
-        ? Math.max(25, Math.round(aiResult.estimatedCo2Kg * 40))
-        : 0;
+      const earnedPoints =
+        aiResult && status === "approved"
+          ? Math.max(25, Math.round(aiResult.estimatedCo2Kg * 40))
+          : 0;
 
       const localActivity = {
         id: Date.now(),
@@ -88,11 +122,19 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
         status,
       };
 
-      const currentActivities = JSON.parse(localStorage.getItem("activities") || "[]");
-      localStorage.setItem("activities", JSON.stringify([...currentActivities, localActivity]));
+      const currentActivities = JSON.parse(
+        localStorage.getItem("activities") || "[]",
+      );
+
+      localStorage.setItem(
+        "activities",
+        JSON.stringify([...currentActivities, localActivity]),
+      );
 
       onActivityLogged();
+
       clearInterval(submitTimer);
+
       setSubmitSuccess({
         status,
         points: earnedPoints,
@@ -102,8 +144,8 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
             ? "AI verification completed successfully."
             : "Evidence submitted. This log is queued for manual review.",
       });
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
       setSubmitError("Unable to submit at the moment. Please try again.");
       clearInterval(submitTimer);
     } finally {
@@ -119,195 +161,179 @@ export const LogActivity = ({ userId, onActivityLogged }: { userId: number, onAc
       description: "",
       evidenceUrl: "",
     });
+
     setProofImage(null);
     setSubmitError(null);
     setSubmitSuccess(null);
+
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <div className="mb-8">
-        <h2 className="text-3xl">Log Your Impact</h2>
-        <p className="text-slate-500">Snap, verify, and submit your sustainability action for points.</p>
-      </div>
+    <div className="w-full min-h-screen px-4 sm:px-6 lg:px-8 py-8 flex justify-center">
+      <div className="w-full max-w-3xl bg-white shadow-lg rounded-2xl p-6 sm:p-8">
+        <h1 className="text-xl sm:text-2xl font-semibold mb-6">
+          Log Sustainability Activity
+        </h1>
 
-      {submitSuccess ? (
-        <div className="card space-y-6">
-          <div className={`rounded-xl p-4 border ${submitSuccess.status === "approved" ? "border-emerald-200 bg-emerald-50 text-emerald-900" : "border-amber-200 bg-amber-50 text-amber-900"}`}>
-            <div className="flex items-center gap-2 font-bold text-lg">
-              <CheckCircle2 size={20} />
-              {submitSuccess.status === "approved" ? "Activity approved" : "Activity submitted for review"}
-            </div>
-            <p className="mt-2 text-sm">
+        {submitSuccess ? (
+          <div className="text-center space-y-4">
+            <CheckCircle2 className="mx-auto text-green-500" size={48} />
+            <h2 className="text-xl font-semibold">
               {submitSuccess.status === "approved"
-                ? `Great work. Your activity has been logged successfully and ${submitSuccess.points} Green Points were added.`
-                : "Your activity is now in review. You can keep logging more actions while this one is pending."}
-            </p>
-            <p className="mt-1 text-xs opacity-80">{submitSuccess.note}</p>
-          </div>
+                ? "Activity Approved!"
+                : "Activity Submitted"}
+            </h2>
 
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={resetForAnotherLog}
-              className="btn-primary flex-1 h-14 flex items-center justify-center"
-            >
-              Add Another Log
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate("/dashboard")}
-              className="flex-1 h-14 flex items-center justify-center border-2 border-slate-100 rounded-xl font-bold hover:bg-slate-50 transition-colors"
-            >
-              Go to Dashboard
-            </button>
-          </div>
-        </div>
-      ) : (
-      <form onSubmit={handleSubmit} className="card space-y-5">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-slate-700">Category</label>
-            <select
-              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
-              value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-            >
-              <option>Waste Management</option>
-              <option>Energy Conservation</option>
-              <option>Community Outreach</option>
-              <option>Environmental Advocacy</option>
-              <option>Biodiversity</option>
-            </select>
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-slate-700">Hours Involved</label>
-            <input
-              type="number"
-              min="0.5"
-              step="0.5"
-              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
-              value={formData.hours}
-              onChange={(e) => setFormData({ ...formData, hours: parseFloat(e.target.value) })}
-            />
-          </div>
-        </div>
+            <p className="text-gray-600">{submitSuccess.note}</p>
 
-        <div className="space-y-2">
-          <label className="text-sm font-bold text-slate-700">Date of Activity</label>
-          <input
-            type="date"
-            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
-            value={formData.date}
-            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-          />
-        </div>
+            {submitSuccess.points > 0 && (
+              <p className="text-lg font-medium text-green-600">
+                +{submitSuccess.points} points earned
+              </p>
+            )}
 
-        <div className="space-y-2">
-          <label className="text-sm font-bold text-slate-700">Description</label>
-          <textarea
-            rows={4}
-            placeholder="What did you do? What was the impact?"
-            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none resize-none"
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          />
-          <p className={`text-xs ${hasEnoughDescription ? "text-emerald-600" : "text-slate-500"}`}>
-            {formData.description.trim().length}/{minDescriptionLength} minimum characters
-          </p>
-        </div>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
+              <button
+                onClick={resetForAnotherLog}
+                className="px-5 py-2 rounded-lg bg-green-600 text-white"
+              >
+                Log Another
+              </button>
 
-        <div className="space-y-2">
-          <label className="text-sm font-bold text-slate-700">Evidence (Optional)</label>
-          <input
-            type="url"
-            placeholder="Link to photos, reports, or social posts"
-            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
-            value={formData.evidenceUrl}
-            onChange={(e) => setFormData({ ...formData, evidenceUrl: e.target.value })}
-          />
-          <p className="text-xs text-slate-500">Or upload a photo by browsing. AI verification will run automatically after you submit.</p>
-
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => {
-              const file = e.target.files?.[0] ?? null;
-              setProofImage(file);
-            }}
-          />
-
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className={`w-full text-left p-3 rounded-xl border transition-all ${proofImage ? "bg-emerald-50 border-emerald-200 text-emerald-900" : "bg-white border-slate-200 hover:border-primary/30 hover:bg-primary-light/40"}`}
-          >
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2 min-w-0">
-                <Upload size={16} />
-                <div className="truncate">
-                  <p className="text-sm font-semibold truncate">{proofImage ? proofImage.name : "Choose evidence image"}</p>
-                  <p className="text-xs opacity-80">{proofImage ? `${(proofImage.size / 1024).toFixed(0)} KB selected` : "PNG, JPG or HEIC supported"}</p>
-                </div>
-              </div>
-              {proofImage ? (
-                <span className="text-xs font-semibold px-2 py-1 rounded bg-emerald-100 text-emerald-800">Selected</span>
-              ) : (
-                <span className="text-xs font-semibold px-2 py-1 rounded bg-slate-100 text-slate-600">Browse</span>
-              )}
+              <button
+                onClick={() => navigate("/dashboard")}
+                className="px-5 py-2 rounded-lg border"
+              >
+                Back to Dashboard
+              </button>
             </div>
-          </button>
-
-          {proofImage && (
-            <button
-              type="button"
-              onClick={() => {
-                setProofImage(null);
-                if (fileInputRef.current) fileInputRef.current.value = "";
-              }}
-              className="inline-flex items-center gap-1 text-xs text-red-600 hover:text-red-700"
-            >
-              <X size={14} />
-              Remove selected image
-            </button>
-          )}
-
-        </div>
-
-        {submitError && <p className="text-sm text-red-600 font-semibold">{submitError}</p>}
-
-        {isSubmitting && (
-          <div className="flex items-center gap-2 text-sm text-slate-600">
-            <LoaderCircle size={16} className="animate-spin" />
-            {submitStage}
           </div>
-        )}
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Category */}
+            <div>
+              <label className="text-sm font-medium">Category</label>
+              <select
+                className="w-full border rounded-lg px-3 py-2 mt-1"
+                value={formData.category}
+                onChange={(e) =>
+                  setFormData({ ...formData, category: e.target.value })
+                }
+              >
+                <option>Waste Management</option>
+                <option>Tree Planting</option>
+                <option>Energy Saving</option>
+                <option>Water Conservation</option>
+              </select>
+            </div>
 
-        <div className="pt-0 flex items-center gap-3">
-          <button
-            type="submit"
-            disabled={!canSubmit}
-            className={`${isDirty ? "flex-[2]" : "flex-1"} btn-primary h-14 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed`}
-          >
-            {isSubmitting ? "Submitting..." : "Submit Activity"}
-          </button>
-          {isDirty ? (
+            {/* Hours + Date */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium">Hours</label>
+                <input
+                  type="number"
+                  className="w-full border rounded-lg px-3 py-2 mt-1"
+                  value={formData.hours}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      hours: Number(e.target.value),
+                    })
+                  }
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium">Date</label>
+                <input
+                  type="date"
+                  className="w-full border rounded-lg px-3 py-2 mt-1"
+                  value={formData.date}
+                  onChange={(e) =>
+                    setFormData({ ...formData, date: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="text-sm font-medium">Description</label>
+              <textarea
+                className="w-full border rounded-lg px-3 py-2 mt-1"
+                rows={4}
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+              />
+            </div>
+
+            {/* Upload */}
+            <div>
+              <label className="text-sm font-medium">Upload Proof</label>
+
+              <div
+                className="border-dashed border-2 rounded-lg p-6 text-center cursor-pointer"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {proofImage ? (
+                  <div className="flex justify-between items-center">
+                    <span>{proofImage.name}</span>
+                    <X
+                      className="cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setProofImage(null);
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center gap-2">
+                    <Upload />
+                    <p className="text-sm text-gray-500">
+                      Click to upload image
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                hidden
+                accept="image/*"
+                onChange={(e) => setProofImage(e.target.files?.[0] || null)}
+              />
+            </div>
+
+            {/* Error */}
+            {submitError && (
+              <p className="text-red-500 text-sm">{submitError}</p>
+            )}
+
+            {/* Submit */}
             <button
-              type="button"
-              onClick={resetForAnotherLog}
-              className="flex-1 h-14 flex items-center justify-center border-2 border-red-100 text-red-600 rounded-xl font-bold text-center hover:bg-red-50 hover:text-red-700 transition-colors"
+              type="submit"
+              disabled={!canSubmit}
+              className="w-full py-3 rounded-lg bg-green-600 text-white flex items-center justify-center gap-2 disabled:opacity-50"
             >
-              Reset
+              {isSubmitting ? (
+                <>
+                  <LoaderCircle className="animate-spin" size={18} />
+                  {submitStage}
+                </>
+              ) : (
+                "Submit Activity"
+              )}
             </button>
-          ) : null}
-        </div>
-      </form>
-      )}
+          </form>
+        )}
+      </div>
     </div>
   );
 };
