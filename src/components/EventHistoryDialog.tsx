@@ -25,13 +25,13 @@ export const EventHistoryDialog = ({
 
   const overlay = (
     <div
-      className="fixed inset-0 z-[60] flex items-end justify-center bg-slate-950/40 px-2 pb-4 sm:px-4 sm:pb-8 overflow-hidden"
+      className="fixed inset-0 z-[60] flex items-end md:items-center justify-center bg-slate-950/40 px-2 pb-4 sm:px-4 sm:pb-8 md:pb-0 overflow-hidden"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
       <div
-        className="relative w-full max-w-lg sm:max-w-xl md:max-w-2xl shrink-0"
+        className="relative w-full max-w-lg sm:max-w-xl md:max-w-xl shrink-0"
         onMouseDown={(e) => e.stopPropagation()}
         onTouchStart={(event) => {
           const scrollTop = scrollRef.current?.scrollTop ?? 0;
