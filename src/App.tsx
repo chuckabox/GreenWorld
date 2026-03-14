@@ -4,6 +4,7 @@ import { Leaf } from "lucide-react";
 import { motion } from "motion/react";
 
 import { UserData, Activity, StoredUser } from "./types";
+import { cn } from "./lib/utils";
 import { Sidebar } from "./components/Sidebar";
 import { Header } from "./components/Header";
 
@@ -24,6 +25,7 @@ const AppContent = () => {
   const [user, setUser] = useState<UserData | null>(null);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const location = useLocation();
 
   const loadUserData = () => {
@@ -113,18 +115,33 @@ const AppContent = () => {
   }
 
   return (
-    <div className="flex min-h-screen">
-      {!hideLayout && user && <Sidebar user={user} />}
-      <main className="flex-1 flex flex-col min-w-0">
-        {!hideLayout && <Header title={
-          location.pathname === "/dashboard" ? "Dashboard" :
-          location.pathname === "/ai-supervisor" ? "AI Advisor" :
-          location.pathname === "/learning" ? "Green Hub" :
-          location.pathname === "/green-hub/waste-circular" ? "Waste & Circular Economy" :
-          location.pathname === "/community" ? "Community" :
-          location.pathname === "/leaderboard" ? "Leaderboard" :
-          location.pathname === "/admin" ? "Admin Portal" : ""
-        } />}
+    <div className="flex min-h-screen bg-slate-50">
+      {!hideLayout && user && (
+        <Sidebar 
+          user={user} 
+          isOpen={isSidebarOpen} 
+          onToggle={() => setIsSidebarOpen(!isSidebarOpen)} 
+        />
+      )}
+      <main className={cn(
+        "flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out",
+        !hideLayout && user && isSidebarOpen ? "md:ml-0" : ""
+      )}>
+        {!hideLayout && (
+          <Header 
+            title={
+              location.pathname === "/dashboard" ? "Dashboard" :
+              location.pathname === "/ai-supervisor" ? "AI Advisor" :
+              location.pathname === "/learning" ? "Green Hub" :
+              location.pathname === "/green-hub/waste-circular" ? "Waste & Circular Economy" :
+              location.pathname === "/community" ? "Community" :
+              location.pathname === "/leaderboard" ? "Leaderboard" :
+              location.pathname === "/admin" ? "Admin Portal" : ""
+            } 
+            isSidebarOpen={isSidebarOpen}
+            onMenuClick={() => setIsSidebarOpen(true)}
+          />
+        )}
         <div className="flex-1 overflow-y-auto">
           <motion.div
             key={location.pathname}

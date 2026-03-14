@@ -61,7 +61,7 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) =
               <Leaf size={20} className="fill-current" />
             </div>
             <span className="font-display font-bold text-lg text-slate-900 leading-tight">
-              Sustainability<br />Impact Award
+              Sustainable<br />Impact Award
             </span>
           </Link>
 
@@ -132,7 +132,7 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) =
                 type="text"
                 value={team}
                 onChange={(e) => setTeam(e.target.value)}
-                placeholder="UQ Sustainability Club"
+                placeholder="UQ Sustainable Innovators Club"
                 className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900 placeholder:text-slate-400"
               />
             </div>
@@ -206,7 +206,7 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) =
           </div>
 
           <div className="mt-16 text-center text-xs font-bold text-slate-400 tracking-wider uppercase">
-            © 2024 Sustainability Impact Award
+            © 2024 Sustainable Impact Award
           </div>
         </div>
       </div>

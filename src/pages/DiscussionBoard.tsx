@@ -465,9 +465,9 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
                 <article
                   key={msg.id}
                   className={cn(
-                    "flex gap-3",
+                    "flex gap-2.5",
                     isMe ? "flex-row-reverse text-right" : "flex-row text-left",
-                    isGrouped ? "-mt-2" : "mt-2"
+                    isGrouped ? "-mt-2" : "mt-3"
                   )}
                 >
                   <div className="w-8 shrink-0">
@@ -475,21 +475,22 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
                       <img
                         src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${isMe ? user.id : activeFriendId}`}
                         alt=""
-                        className="w-8 h-8 rounded-full object-cover mt-1"
+                        className="w-8 h-8 rounded-full object-cover"
                       />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div
                       className={cn(
-                        "inline-block rounded-2xl px-3 py-2 max-w-[85%]",
-                        isMe ? "bg-primary text-white" : "bg-slate-50 text-slate-800",
-                        isGrouped && (isMe ? "rounded-tr-md" : "rounded-tl-md")
+                        "inline-block rounded-2xl px-3.5 py-2.5 max-w-[85%] shadow-sm transition-all animate-in fade-in slide-in-from-bottom-1 duration-200",
+                        isMe 
+                          ? cn("bg-primary text-white", isGrouped ? "rounded-tr-md" : "rounded-tr-2xl") 
+                          : cn("bg-slate-100 text-slate-800", isGrouped ? "rounded-tl-md" : "rounded-tl-2xl")
                       )}
                     >
                       <p className="text-sm leading-relaxed whitespace-pre-line">{msg.body}</p>
                     </div>
-                    {!isGrouped && <p className="mt-1 text-[10px] text-slate-400">{msg.time}</p>}
+                    {!isGrouped && <p className="mt-1 text-[10px] text-slate-400 px-1">{msg.time}</p>}
                   </div>
                 </article>
               );
@@ -500,33 +501,33 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
               const isGrouped = prevPost && prevPost.author === post.author;
 
               return (
-                <article key={post.id} className={cn("flex gap-3", isGrouped ? "-mt-1" : "mt-2")}>
+                <article key={post.id} className={cn("flex gap-3", isGrouped ? "-mt-3" : "mt-4")}>
                   <div className="w-9 shrink-0">
                     {!isGrouped && (
                       <img
                         src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${post.avatarSeed}`}
                         alt=""
-                        className="w-9 h-9 rounded-full object-cover mt-1"
+                        className="w-9 h-9 rounded-full object-cover"
                       />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
                     {!isGrouped && (
-                      <div className="flex flex-wrap items-baseline gap-2">
-                        <span className="font-semibold text-slate-900 text-sm">{post.author}</span>
-                        <span className="text-xs text-slate-400">{post.time}</span>
-                        <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-primary-light text-primary">
+                      <div className="flex flex-wrap items-baseline gap-2 mb-1 px-1">
+                        <span className="font-bold text-slate-900 text-sm tracking-tight">{post.author}</span>
+                        <span className="text-[10px] font-medium text-slate-400 uppercase">{post.time}</span>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary-light text-primary">
                           {post.topic}
                         </span>
                       </div>
                     )}
                     <div
                       className={cn(
-                        "mt-1 inline-block rounded-2xl bg-slate-50 px-3 py-2 max-w-full",
-                        isGrouped && "rounded-tl-md"
+                        "inline-block rounded-2xl bg-slate-50 px-4 py-2.5 max-w-full border border-slate-100 shadow-sm transition-all animate-in fade-in slide-in-from-bottom-1 duration-200",
+                        isGrouped && "rounded-tl-md mt-0.5"
                       )}
                     >
-                      <p className="text-slate-700 text-sm leading-relaxed whitespace-pre-line">{post.body}</p>
+                      <p className="text-slate-800 text-sm leading-relaxed whitespace-pre-line font-medium">{post.body}</p>
                     </div>
                   </div>
                 </article>

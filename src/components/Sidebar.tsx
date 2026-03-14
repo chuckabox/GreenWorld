@@ -10,6 +10,8 @@ import {
   Sparkles,
   BookOpen,
   MessageCircle,
+  Menu,
+  ChevronLeft,
 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { UserData } from "../types";
@@ -17,7 +19,15 @@ import { UserData } from "../types";
 type NavItem = { name: string; path: string; icon: React.ComponentType<{ size?: number; className?: string }> };
 type NavGroup = { label: string; items: NavItem[] };
 
-export const Sidebar = ({ user }: { user: UserData }) => {
+export const Sidebar = ({ 
+  user, 
+  isOpen, 
+  onToggle 
+}: { 
+  user: UserData; 
+  isOpen: boolean;
+  onToggle: () => void;
+}) => {
   const location = useLocation();
   const navigate = useNavigate();
   const navItems = [
@@ -43,13 +53,24 @@ export const Sidebar = ({ user }: { user: UserData }) => {
   }
 
   return (
-    <div className="w-64 bg-white border-r border-slate-200 h-screen sticky top-0 hidden md:flex flex-col">
-      <Link to="/" className="p-6 flex items-center gap-2 hover:opacity-80 transition-opacity">
-        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white">
-          <Leaf size={24} />
-        </div>
-        <span className="font-display font-bold text-xl tracking-tight">GreenWorld</span>
-      </Link>
+    <div className={cn(
+      "bg-white border-r border-slate-200 h-screen sticky top-0 flex flex-col transition-all duration-300 ease-in-out z-20 overflow-hidden",
+      isOpen ? "w-64" : "w-0 border-r-0"
+    )}>
+      <div className="p-6 flex items-center justify-between gap-2 overflow-hidden whitespace-nowrap">
+        <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity min-w-0">
+          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shrink-0">
+            <Leaf size={24} />
+          </div>
+          <span className="font-display font-bold text-xl tracking-tight text-slate-900">GreenWorld</span>
+        </Link>
+        <button 
+          onClick={onToggle}
+          className="p-2 text-slate-400 hover:bg-slate-100 rounded-xl transition-colors shrink-0"
+        >
+          <ChevronLeft size={20} />
+        </button>
+      </div>
 
       <nav className="flex-1 px-4 py-4 space-y-6 overflow-y-auto">
         {navGroups.map((group) => (

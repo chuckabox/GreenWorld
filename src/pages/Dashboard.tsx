@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { PlusCircle, Zap, Globe, Clock, AlertCircle, ChevronDown, ChevronLeft, ChevronRight, Target, Calendar, ShieldCheck, Info, History, X as CloseIcon } from "lucide-react";
+import { PlusCircle, Zap, Globe, Clock, AlertCircle, ChevronDown, ChevronLeft, ChevronRight, Target, Calendar, ShieldCheck, Info, History, FileDown, X as CloseIcon } from "lucide-react";
 import { cn } from "../lib/utils";
 import { UserData, Activity } from "../types";
 import { getLevelLabel, toRoman } from "../lib/badges";
@@ -233,11 +233,27 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
             <h3 className="text-xl font-bold">Badge Progression</h3>
             <p className="text-sm text-slate-500">Badge {toRoman(currentLevel)} unlocked</p>
           </div>
-          <div className="text-right">
-            <span className="text-2xl font-display font-black text-primary">
-              {toRoman(currentLevel + 1)}
-            </span>
-            <p className="text-[10px] uppercase font-bold text-slate-400 text-nowrap">Next Milestone</p>
+          <div className="flex flex-col items-end gap-2">
+            <div className="text-right">
+              <span className="text-2xl font-display font-black text-primary">
+                {toRoman(currentLevel + 1)}
+              </span>
+              <p className="text-[10px] uppercase font-bold text-slate-400 text-nowrap">Next Milestone</p>
+            </div>
+            <button
+              type="button"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 text-[11px] font-bold text-slate-600 hover:bg-slate-50 hover:text-primary hover:border-primary/30 transition-all shadow-sm group"
+              onClick={() => {
+                // Mock download
+                const link = document.createElement('a');
+                link.href = '#';
+                link.download = `GreenWorld_Certificate_${user.name.replace(/\s+/g, '_')}.pdf`;
+                alert(`Generating your Level ${toRoman(currentLevel)} CV Certificate...`);
+              }}
+            >
+              <FileDown size={14} className="group-hover:scale-110 transition-transform" />
+              Download CV Certificate
+            </button>
           </div>
         </div>
 
