@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect, useRef } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import {
   MessageCircle,
   Send,
@@ -6,8 +6,6 @@ import {
   MessageSquare,
   ChevronDown,
   ChevronUp,
-  ChevronLeft,
-  ChevronRight,
   UserPlus,
   Users,
   Hash,
@@ -149,9 +147,6 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
   const [repliesByPostId, setRepliesByPostId] = useState<Record<string, Reply[]>>({});
   const [replyContext, setReplyContext] = useState<string | null>(null);
   const [dmMessages, setDmMessages] = useState<Record<number, DirectMessage[]>>({});
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const messageInputRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
     saveFriends(user.id, friends);
@@ -303,207 +298,133 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
     });
   }
 
-  const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setNewPostBody(e.target.value);
-    if (messageInputRef.current) {
-      messageInputRef.current.style.height = "0px";
-      const nextHeight = Math.min(messageInputRef.current.scrollHeight, 140);
-      messageInputRef.current.style.height = `${nextHeight}px`;
-    }
-  };
-
   return (
-    <div className="relative flex h-[calc(100vh-4rem)] min-h-0 bg-slate-50/40">
-      {/* Sidebar: Friends + Channels (desktop) */}
-      <aside
-        className={cn(
-          "hidden lg:flex shrink-0 border-r border-slate-200 bg-white flex-col overflow-hidden transition-all duration-200",
-          isSidebarCollapsed ? "lg:w-16" : "lg:w-64",
-        )}
-      >
-        {isSidebarCollapsed ? (
-          <div className="flex flex-col items-center justify-between h-full py-3">
+    <div className="flex h-[calc(100vh-4rem)] min-h-0">
+      {/* Sidebar: Friends + Channels */}
+      <aside className="w-60 shrink-0 border-r border-slate-200 bg-white flex flex-col overflow-hidden">
+        <div className="p-3 border-b border-slate-100">
+          <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Friends</h3>
+          <button
+            type="button"
+            onClick={() => setAddFriendOpen(true)}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-primary hover:bg-primary-light transition-colors"
+          >
+            <UserPlus size={18} />
+            Add friend
+          </button>
+          <ul className="mt-2 space-y-0.5 max-h-40 overflow-y-auto">
+            {friends.length === 0 ? (
+              <li className="px-3 py-2 text-slate-400 text-sm">No friends yet</li>
+            ) : (
+              friends.map((f) => (
+                <li
+                  key={f.id}
+                  className={cn(
+                    "flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-50 group cursor-pointer",
+                    viewMode === "dm" && activeFriendId === f.id && "bg-slate-100",
+                  )}
+                  onClick={() => {
+                    setViewMode("dm");
+                    setActiveFriendId(f.id);
+                  }}
+                >
+                  <img
+                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${f.id}`}
+                    alt=""
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                  <span className="flex-1 truncate text-sm font-medium text-slate-800">{f.name}</span>
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      removeFriend(f.id);
+                    }}
+                    className="opacity-0 group-hover:opacity-100 p-1 rounded text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"
+                    aria-label="Remove friend"
+                  >
+                    <X size={14} />
+                  </button>
+                </li>
+              ))
+            )}
+          </ul>
+        </div>
+        <div className="p-3 border-b border-slate-100">
+          <div className="flex items-center justify-between mb-2 gap-2">
+            <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Communities</h3>
             <button
               type="button"
-              onClick={() => setIsSidebarCollapsed(false)}
-              className="p-1.5 rounded-full hover:bg-slate-100 text-slate-500"
-              aria-label="Expand community sidebar"
+              onClick={() => setCreateChannelOpen(true)}
+              className="text-[10px] font-medium px-2 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50"
             >
-              <ChevronRight size={18} />
+              + New
             </button>
-            <div className="flex flex-col items-center gap-4 text-slate-400">
-              <button
-                type="button"
-                onClick={() => setAddFriendOpen(true)}
-                className="p-2 rounded-xl hover:bg-slate-50 hover:text-primary"
-                aria-label="Friends"
-              >
-                <UserPlus size={18} />
-              </button>
-              <button
-                type="button"
-                onClick={() => setCreateChannelOpen(true)}
-                className="p-2 rounded-xl hover:bg-slate-50 hover:text-primary"
-                aria-label="Communities"
-              >
-                <Hash size={18} />
-              </button>
-              <button
-                type="button"
-                onClick={() => setInviteOpen(true)}
-                className="p-2 rounded-xl hover:bg-slate-50 hover:text-primary"
-                aria-label="Invite to activity"
-              >
-                <Users size={18} />
-              </button>
-            </div>
-            <div className="pb-1">
-              <span className="text-[9px] font-semibold text-slate-400 tracking-wide rotate-[-90deg] inline-block">
-                COMMUNITY
-              </span>
-            </div>
           </div>
-        ) : (
-          <>
-            <div className="p-3 border-b border-slate-100 flex items-center justify-between gap-2">
-              <div>
-                <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Friends</h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsSidebarCollapsed(true)}
-                className="p-1 rounded-full hover:bg-slate-100 text-slate-500"
-                aria-label="Collapse community sidebar"
-              >
-                <ChevronLeft size={16} />
-              </button>
-            </div>
-            <div className="px-3 pt-2 pb-3 border-b border-slate-100">
-              <button
-                type="button"
-                onClick={() => setAddFriendOpen(true)}
-                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-primary hover:bg-primary-light transition-colors"
-              >
-                <UserPlus size={18} />
-                Add friend
-              </button>
-              <ul className="mt-2 space-y-0.5 max-h-40 overflow-y-auto">
-                {friends.length === 0 ? (
-                  <li className="px-3 py-2 text-slate-400 text-sm">No friends yet</li>
-                ) : (
-                  friends.map((f) => (
-                    <li
-                      key={f.id}
-                      className={cn(
-                        "flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-50 group cursor-pointer",
-                        viewMode === "dm" && activeFriendId === f.id && "bg-slate-100",
-                      )}
-                      onClick={() => {
-                        setViewMode("dm");
-                        setActiveFriendId(f.id);
-                      }}
-                    >
-                      <img
-                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${f.id}`}
-                        alt=""
-                        className="w-8 h-8 rounded-full object-cover"
-                      />
-                      <span className="flex-1 truncate text-sm font-medium text-slate-800">{f.name}</span>
-                      <button
-                        type="button"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          removeFriend(f.id);
-                        }}
-                        className="opacity-0 group-hover:opacity-100 p-1 rounded text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"
-                        aria-label="Remove friend"
-                      >
-                        <X size={14} />
-                      </button>
-                    </li>
-                  ))
-                )}
-              </ul>
-            </div>
-            <div className="p-3 border-b border-slate-100">
-              <div className="flex items-center justify-between mb-2 gap-2">
-                <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Communities</h3>
-                <button
-                  type="button"
-                  onClick={() => setCreateChannelOpen(true)}
-                  className="text-[10px] font-medium px-2 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50"
-                >
-                  + New
-                </button>
-              </div>
-              <ul className="space-y-0.5">
-                {channels.map((ch) => {
-                  const Icon = ch.icon;
-                  return (
-                    <li key={ch.id}>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setViewMode("channel");
-                          setSelectedChannel(ch.id);
-                          setActiveFriendId(null);
-                        }}
-                        className={cn(
-                          "w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-colors",
-                          selectedChannel === ch.id
-                            ? "bg-primary-light text-primary"
-                            : "text-slate-700 hover:bg-slate-50",
-                        )}
-                      >
-                        <Icon size={18} />
-                        {ch.name}
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-            <div className="p-3 flex-1">
-              <button
-                type="button"
-                onClick={() => setInviteOpen(true)}
-                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 border border-slate-200 hover:border-primary/30 transition-colors"
-              >
-                <Users size={18} />
-                Invite to activity
-              </button>
-            </div>
-          </>
-        )}
+          <ul className="space-y-0.5">
+            {channels.map((ch) => {
+              const Icon = ch.icon;
+              return (
+                <li key={ch.id}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setViewMode("channel");
+                      setSelectedChannel(ch.id);
+                      setActiveFriendId(null);
+                    }}
+                    className={cn(
+                      "w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-colors",
+                      selectedChannel === ch.id ? "bg-primary-light text-primary" : "text-slate-700 hover:bg-slate-50"
+                    )}
+                  >
+                    <Icon size={18} />
+                    {ch.name}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+        <div className="p-3 flex-1">
+          <button
+            type="button"
+            onClick={() => setInviteOpen(true)}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 border border-slate-200 hover:border-primary/30 transition-colors"
+          >
+            <Users size={18} />
+            Invite to activity
+          </button>
+        </div>
       </aside>
 
       {/* Main: Channel or DM content (Slack-style) */}
       <main className="flex-1 min-w-0 flex flex-col">
-        <div className="px-3 sm:px-4 md:px-6 pt-2.5 sm:pt-3 pb-2.5 sm:pb-3 border-b border-slate-100 flex flex-wrap items-center justify-between gap-2 sm:gap-3">
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 bg-primary-light text-primary rounded-xl flex items-center justify-center">
-              <MessageCircle size={18} className="sm:size-20" />
+        <div className="px-6 pt-4 pb-3 border-b border-slate-100 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-primary-light text-primary rounded-xl flex items-center justify-center">
+              <MessageCircle size={20} />
             </div>
             <div>
               {viewMode === "dm" && activeFriend ? (
                 <>
-                  <h2 className="text-sm sm:text-base font-bold flex items-center gap-1.5 sm:gap-2">
+                  <h2 className="text-base font-bold flex items-center gap-2">
                     <span>{activeFriend.name}</span>
                     <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
                       Direct message
                     </span>
                   </h2>
-                  <p className="text-slate-500 text-[11px] sm:text-xs">Private chat between you and this friend.</p>
+                  <p className="text-slate-500 text-xs">Private chat between you and this friend.</p>
                 </>
               ) : (
                 <>
-                  <h2 className="text-sm sm:text-base font-bold flex items-center gap-1.5 sm:gap-2">
+                  <h2 className="text-base font-bold flex items-center gap-2">
                     <span>{selectedChannel === "events" ? "#events" : "#general"}</span>
                     <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
                       Community
                     </span>
                   </h2>
-                  <p className="text-slate-500 text-[11px] sm:text-xs">
+                  <p className="text-slate-500 text-xs">
                     {selectedChannel === "events"
                       ? "Event updates and meet-ups."
                       : "Share wins, questions, and ideas."}
@@ -512,38 +433,28 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
               )}
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            {viewMode === "channel" && (
-              <div className="hidden sm:flex items-center gap-2 text-slate-400">
-                <button
-                  type="button"
-                  className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-slate-50 text-xs font-medium"
-                >
-                  <Users size={14} />
-                  Members
-                </button>
-                <button
-                  type="button"
-                  className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-slate-50 text-xs font-medium"
-                >
-                  <Hash size={14} />
-                  Channel settings
-                </button>
-              </div>
-            )}
-            <button
-              type="button"
-              className="inline-flex lg:hidden items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50"
-              onClick={() => setIsSidebarOpen(true)}
-            >
-              <MessageSquare size={14} />
-              Community
-            </button>
-          </div>
+          {viewMode === "channel" && (
+            <div className="flex items-center gap-2 text-slate-400">
+              <button
+                type="button"
+                className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-slate-50 text-xs font-medium"
+              >
+                <Users size={14} />
+                Members
+              </button>
+              <button
+                type="button"
+                className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-slate-50 text-xs font-medium"
+              >
+                <Hash size={14} />
+                Channel settings
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Messages area */}
-        <div className="flex-1 min-h-0 overflow-y-auto px-3 sm:px-4 py-3 sm:py-4 space-y-3">
+        <div className="flex-1 min-h-0 overflow-y-auto px-4 py-4 space-y-3">
           {viewMode === "dm" && activeFriendId != null ? (
             (dmMessages[activeFriendId] ?? []).map((msg, i, arr) => {
               const prevMsg = arr[i - 1];
@@ -626,7 +537,7 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
         </div>
 
         {/* Chat input bar at bottom */}
-        <form onSubmit={handleSubmit} className="border-t border-slate-200 px-3 sm:px-4 py-2.5 sm:py-3 bg-white pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))]">
+        <form onSubmit={handleSubmit} className="border-t border-slate-200 px-4 py-3 bg-white">
           <div className="w-full space-y-1.5">
             {replyContext && (
               <div className="text-[11px] text-slate-500 flex items-center justify-between">
@@ -644,11 +555,10 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
             )}
             <div className="flex items-center gap-2">
               <textarea
-                ref={messageInputRef}
                 value={newPostBody}
-                onChange={handleMessageChange}
+                onChange={(e) => setNewPostBody(e.target.value)}
                 placeholder={`Message ${selectedChannel === "events" ? "#events" : "#general"}...`}
-                className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm resize-none min-h-[44px] focus:ring-2 focus:ring-primary/20 outline-none overflow-y-hidden"
+                className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm resize-none min-h-[44px] max-h-24 focus:ring-2 focus:ring-primary/20 outline-none"
                 rows={1}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
@@ -685,128 +595,6 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
           </div>
         </form>
       </main>
-
-      {/* Mobile sidebar overlay */}
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 lg:hidden bg-slate-950/40"
-          onMouseDown={(e) => {
-            if (e.target === e.currentTarget) setIsSidebarOpen(false);
-          }}
-        >
-          <aside className="absolute inset-y-0 left-0 w-72 max-w-[80%] bg-white shadow-2xl border-r border-slate-200 flex flex-col overflow-hidden">
-            <div className="p-3 border-b border-slate-100 flex items-center justify-between">
-              <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Community</h3>
-              <button
-                type="button"
-                onClick={() => setIsSidebarOpen(false)}
-                className="p-1 rounded-full hover:bg-slate-100 text-slate-500"
-                aria-label="Close community sidebar"
-              >
-                <X size={16} />
-              </button>
-            </div>
-            <div className="flex-1 flex flex-col">
-              <div className="p-3 border-b border-slate-100">
-                <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Friends</h4>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsSidebarOpen(false);
-                    setAddFriendOpen(true);
-                  }}
-                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-primary hover:bg-primary-light transition-colors"
-                >
-                  <UserPlus size={18} />
-                  Add friend
-                </button>
-                <ul className="mt-2 space-y-0.5 max-h-36 overflow-y-auto">
-                  {friends.length === 0 ? (
-                    <li className="px-3 py-2 text-slate-400 text-sm">No friends yet</li>
-                  ) : (
-                    friends.map((f) => (
-                      <li
-                        key={f.id}
-                        className={cn(
-                          "flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-50 group cursor-pointer",
-                          viewMode === "dm" && activeFriendId === f.id && "bg-slate-100",
-                        )}
-                        onClick={() => {
-                          setViewMode("dm");
-                          setActiveFriendId(f.id);
-                          setIsSidebarOpen(false);
-                        }}
-                      >
-                        <img
-                          src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${f.id}`}
-                          alt=""
-                          className="w-8 h-8 rounded-full object-cover"
-                        />
-                        <span className="flex-1 truncate text-sm font-medium text-slate-800">{f.name}</span>
-                      </li>
-                    ))
-                  )}
-                </ul>
-              </div>
-              <div className="p-3 border-b border-slate-100">
-                <div className="flex items-center justify-between mb-2 gap-2">
-                  <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Communities</h4>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsSidebarOpen(false);
-                      setCreateChannelOpen(true);
-                    }}
-                    className="text-[10px] font-medium px-2 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50"
-                  >
-                    + New
-                  </button>
-                </div>
-                <ul className="space-y-0.5 max-h-40 overflow-y-auto">
-                  {channels.map((ch) => {
-                    const Icon = ch.icon;
-                    return (
-                      <li key={ch.id}>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setViewMode("channel");
-                            setSelectedChannel(ch.id);
-                            setActiveFriendId(null);
-                            setIsSidebarOpen(false);
-                          }}
-                          className={cn(
-                            "w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-colors",
-                            selectedChannel === ch.id
-                              ? "bg-primary-light text-primary"
-                              : "text-slate-700 hover:bg-slate-50",
-                          )}
-                        >
-                          <Icon size={18} />
-                          {ch.name}
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-              <div className="p-3 mt-auto">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsSidebarOpen(false);
-                    setInviteOpen(true);
-                  }}
-                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 border border-slate-200 hover:border-primary/30 transition-colors"
-                >
-                  <Users size={18} />
-                  Invite to activity
-                </button>
-              </div>
-            </div>
-          </aside>
-        </div>
-      )}
 
       {/* Add friend modal */}
       {addFriendOpen && (
