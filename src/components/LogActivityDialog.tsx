@@ -291,22 +291,14 @@ export const LogActivityDialog = ({
       >
         <div
           ref={scrollRef}
-          className="card p-5 space-y-5 max-h-[90vh] overflow-y-auto modal-scroll rounded-t-3xl sm:rounded-2xl"
+          className="bg-white rounded-t-3xl sm:rounded-2xl w-full max-h-[90vh] overflow-y-auto modal-scroll p-6 sm:p-8 space-y-6 shadow-xl"
         >
           <div className="mx-auto mb-3 h-1 w-12 rounded-full bg-slate-200 sm:hidden" />
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 className="text-xl font-bold">Log Your Impact</h2>
-              <p className="text-slate-500 text-xs mt-0.5">Snap, verify, and submit your sustainability action for points.</p>
+              <h2 className="text-2xl font-bold">Log Your Impact</h2>
+              <p className="text-sm text-slate-500 mt-1">Snap, verify, and submit your sustainability action for points.</p>
             </div>
-            <button
-              type="button"
-              onClick={handleClose}
-              className="p-2 -mr-2 mt-[-4px] rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors"
-              aria-label="Close"
-            >
-              <X size={20} />
-            </button>
           </div>
 
           {submitSuccess ? (
@@ -342,15 +334,15 @@ export const LogActivityDialog = ({
               </div>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-3">
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700 flex items-center gap-2">
-                  <Target size={16} className="text-primary" />
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700 flex items-center gap-2">
+                  <Target size={18} className="text-primary" />
                   Choose a task (optional)
                 </label>
                 <div className="relative">
                   <select
-                    className="w-full p-3 pr-10 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none appearance-none"
+                    className="w-full p-4 pr-10 text-base bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none appearance-none transition-colors"
                     value={selectedTaskId}
                     onChange={(e) => handleTaskSelect(e.target.value)}
                   >
@@ -361,16 +353,16 @@ export const LogActivityDialog = ({
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={20} />
                 </div>
-                <p className="text-[11px] text-slate-500">Selecting a task pre-fills category and description. You can edit them.</p>
+                <p className="text-xs text-slate-500">Selecting a task pre-fills category and description. You can edit them.</p>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Category</label>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700">Category</label>
                 <div className="relative">
                   <select
-                    className="w-full p-3 pr-10 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none appearance-none"
+                    className="w-full p-4 pr-10 text-base bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none appearance-none transition-colors"
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   >
@@ -381,57 +373,57 @@ export const LogActivityDialog = ({
                     <option>Biodiversity</option>
                     <option>Sustainability task</option>
                   </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={20} />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700">Hours Involved</label>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Hours Involved</label>
                   <input
                     type="number"
                     min="0.5"
                     step="0.5"
-                    className="w-full p-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
+                    className="w-full p-4 text-base bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-colors"
                     value={formData.hours}
                     onChange={(e) => setFormData({ ...formData, hours: parseFloat(e.target.value) })}
                   />
                 </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700">Date of Activity</label>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Date of Activity</label>
                   <input
                     type="date"
-                    className="w-full p-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
+                    className="w-full p-4 text-base bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-colors"
                     value={formData.date}
                     onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                   />
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Description</label>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700">Description</label>
                 <textarea
                   rows={3}
                   placeholder="What did you do? What was the impact?"
-                  className="w-full p-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none resize-none"
+                  className="w-full p-4 text-base bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none resize-none transition-colors"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 />
-                <p className={`text-[11px] ${hasEnoughDescription ? "text-emerald-600" : "text-slate-500"}`}>
+                <p className={`text-xs ${hasEnoughDescription ? "text-emerald-600" : "text-slate-500"}`}>
                   {formData.description.trim().length}/{minDescriptionLength} minimum characters
                 </p>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Evidence (Optional)</label>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700">Evidence (Optional)</label>
                 <input
                   type="url"
                   placeholder="Link to photos, reports, or social posts"
-                  className="w-full p-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
+                  className="w-full p-4 text-base bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-colors"
                   value={formData.evidenceUrl}
                   onChange={(e) => setFormData({ ...formData, evidenceUrl: e.target.value })}
                 />
-                <p className="text-[11px] text-slate-500">Or upload a photo by browsing. AI verification will run automatically after you submit.</p>
+                <p className="text-xs text-slate-500">Or upload a photo by browsing. AI verification will run automatically after you submit.</p>
 
                 <input
                   ref={fileInputRef}
@@ -447,14 +439,14 @@ export const LogActivityDialog = ({
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className={`w-full text-left p-3 px-4 text-sm rounded-xl border transition-all ${proofImage ? "bg-emerald-50 border-emerald-200 text-emerald-900" : "bg-white border-slate-200 hover:border-primary/30 hover:bg-primary-light/40"}`}
+                  className={`w-full text-left p-4 px-5 text-base rounded-xl border transition-all ${proofImage ? "bg-emerald-50 border-emerald-200 text-emerald-900" : "bg-white border-slate-200 hover:border-primary/30 hover:bg-primary-light/40"}`}
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <Upload size={18} className="text-slate-400" />
+                      <Upload size={20} className="text-slate-400" />
                       <div className="truncate">
-                        <p className="text-xs font-semibold truncate">{proofImage ? proofImage.name : "Choose evidence image"}</p>
-                        <p className="text-[11px] opacity-80">{proofImage ? `${(proofImage.size / 1024).toFixed(0)} KB selected` : "PNG, JPG or HEIC supported"}</p>
+                        <p className="text-sm font-semibold truncate">{proofImage ? proofImage.name : "Choose evidence image"}</p>
+                        <p className="text-xs opacity-80">{proofImage ? `${(proofImage.size / 1024).toFixed(0)} KB selected` : "PNG, JPG or HEIC supported"}</p>
                       </div>
                     </div>
                     {proofImage ? (
@@ -489,11 +481,18 @@ export const LogActivityDialog = ({
                 </div>
               )}
 
-              <div className="pt-0 flex flex-col sm:flex-row items-center gap-2">
+              <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-base font-medium text-slate-700 hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
                 <button
                   type="submit"
                   disabled={!canSubmit}
-                  className="w-full btn-primary h-10 text-sm flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full btn-primary h-12 text-base flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? "Submitting..." : "Submit Activity"}
                 </button>
