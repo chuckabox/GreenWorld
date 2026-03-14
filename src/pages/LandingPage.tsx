@@ -139,11 +139,11 @@ export const LandingPage = () => {
               viewport={{ once: true }}
               className="bg-white p-10 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col h-full"
             >
-              <div className="mb-8">
-                <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center shadow-inner mb-6">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center shadow-inner">
                   <Target size={28} />
                 </div>
-                <h3 className="text-3xl font-display font-bold mb-1">Your Points</h3>
+                <h3 className="text-3xl font-display font-bold">Your Points</h3>
               </div>
 
               <div className="space-y-6 flex-grow">
@@ -152,7 +152,7 @@ export const LandingPage = () => {
                     <span className="font-bold text-slate-700">Earnings Rate</span>
                     <span className="text-primary font-display font-bold text-xl">5 pts / hr</span>
                   </div>
-                  <p className="text-sm text-slate-500">Log your eco-friendly actions to earn points for every hour volunteered.</p>
+                  <p className="text-sm text-slate-500">Log your actions to earn points for every hour volunteered.</p>
                 </div>
 
                 <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 group hover:border-primary/30 transition-colors">
@@ -160,7 +160,7 @@ export const LandingPage = () => {
                     <span className="font-bold text-slate-700">Rank Milestone</span>
                     <span className="text-primary font-display font-bold text-xl">20 Hours</span>
                   </div>
-                  <p className="text-sm text-slate-600 font-medium">Reach this goal to level up your badge rank and unlock new rewards.</p>
+                  <p className="text-sm text-slate-500">Reach this goal to level up your badge rank and unlock new rewards.</p>
                 </div>
               </div>
             </motion.div>
@@ -175,11 +175,12 @@ export const LandingPage = () => {
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
 
               <div className="relative z-10">
-                <div className="w-14 h-14 bg-white/20 backdrop-blur-md text-white rounded-2xl flex items-center justify-center mb-8 border border-white/20 shadow-inner">
-                  <Globe size={28} />
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="w-14 h-14 bg-white/20 backdrop-blur-md text-white rounded-2xl flex items-center justify-center shadow-inner">
+                    <Globe size={28} />
+                  </div>
+                  <h3 className="text-3xl font-display font-bold">Your Benefits</h3>
                 </div>
-
-                <h3 className="text-3xl font-display font-bold mb-8">Your Benefits</h3>
 
                 <div className="space-y-4">
                   {[
