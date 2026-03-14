@@ -9,30 +9,35 @@ const learningThemes = [
     paths: [
       {
         title: "🌊 Ocean & Marine Life",
+        slug: "ocean-marine",
         duration: "70 mins",
         modules: 4,
         accent: "bg-blue-50 text-blue-700",
       },
       {
         title: "🌳 Forests & Biodiversity",
+        slug: "forests-biodiversity",
         duration: "85 mins",
         modules: 5,
         accent: "bg-emerald-50 text-emerald-700",
       },
       {
         title: "🐝 Wildlife & Ecosystems",
+        slug: "wildlife-ecosystems",
         duration: "60 mins",
         modules: 4,
         accent: "bg-amber-50 text-amber-700",
       },
       {
         title: "🌱 Soil & Agriculture",
+        slug: "soil-agriculture",
         duration: "75 mins",
         modules: 4,
         accent: "bg-lime-50 text-lime-700",
       },
       {
         title: "💧 Water Resources",
+        slug: "water-resources",
         duration: "65 mins",
         modules: 3,
         accent: "bg-sky-50 text-sky-700",
@@ -45,24 +50,28 @@ const learningThemes = [
     paths: [
       {
         title: "⚡ Energy & Climate",
+        slug: "energy-climate",
         duration: "80 mins",
         modules: 5,
         accent: "bg-amber-50 text-amber-700",
       },
       {
         title: "♻️ Waste & Circular Economy",
+        slug: "waste-circular",
         duration: "70 mins",
         modules: 4,
         accent: "bg-emerald-50 text-emerald-700",
       },
       {
         title: "🚲 Sustainable Cities & Transport",
+        slug: "sustainable-cities",
         duration: "90 mins",
         modules: 5,
         accent: "bg-blue-50 text-blue-700",
       },
       {
         title: "🍎 Food & Sustainable Consumption",
+        slug: "food-consumption",
         duration: "60 mins",
         modules: 3,
         accent: "bg-rose-50 text-rose-700",
@@ -75,18 +84,21 @@ const learningThemes = [
     paths: [
       {
         title: "🧠 Green Innovation & Technology",
+        slug: "green-innovation",
         duration: "75 mins",
         modules: 4,
         accent: "bg-violet-50 text-violet-700",
       },
       {
         title: "🌍 Climate Action & Policy",
+        slug: "climate-policy",
         duration: "85 mins",
         modules: 5,
         accent: "bg-slate-50 text-slate-700",
       },
       {
         title: "🤝 Community Sustainability",
+        slug: "community-sustainability",
         duration: "65 mins",
         modules: 3,
         accent: "bg-teal-50 text-teal-700",
@@ -144,30 +156,26 @@ export const LearningHub = () => {
               <p className="text-sm text-slate-500">{theme.description}</p>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {theme.paths.slice(0, 3).map((path) => {
-                const isWaste = path.title === "♻️ Waste & Circular Economy";
-                const CardWrapper = isWaste ? Link : "div";
-                return (
-                  <CardWrapper
-                    key={path.title}
-                    to={isWaste ? "/green-hub/waste-circular" : undefined}
-                    className="card flex flex-col gap-4 hover:border-primary/30 transition-all group cursor-pointer"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${path.accent}`}>
-                          <BookOpen size={22} />
-                        </div>
-                        <div>
-                          <h4 className="text-lg font-bold group-hover:text-primary transition-colors">{path.title}</h4>
-                          <p className="text-xs text-slate-500">{path.modules} modules • {path.duration}</p>
-                        </div>
+              {theme.paths.slice(0, 3).map((path) => (
+                <Link
+                  key={path.title}
+                  to={`/learning/${path.slug}`}
+                  className="card flex flex-col gap-4 hover:border-primary/30 transition-all group cursor-pointer"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${path.accent}`}>
+                        <BookOpen size={22} />
                       </div>
-                      <ArrowUpRight size={20} className="text-slate-300 group-hover:text-primary transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      <div>
+                        <h4 className="text-lg font-bold group-hover:text-primary transition-colors">{path.title}</h4>
+                        <p className="text-xs text-slate-500">{path.modules} modules • {path.duration}</p>
+                      </div>
                     </div>
-                  </CardWrapper>
-                );
-              })}
+                    <ArrowUpRight size={20} className="text-slate-300 group-hover:text-primary transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </div>
+                </Link>
+              ))}
             </div>
           </div>
         ))}

@@ -133,7 +133,7 @@ const AppContent = () => {
               location.pathname === "/dashboard" ? "Dashboard" :
               location.pathname === "/ai-supervisor" ? "AI Advisor" :
               location.pathname === "/learning" ? "Green Hub" :
-              location.pathname === "/green-hub/waste-circular" ? "Waste & Circular Economy" :
+              location.pathname.startsWith("/learning/") ? "Topic Explorer" :
               location.pathname === "/community" ? "Community" :
               location.pathname === "/leaderboard" ? "Leaderboard" :
               location.pathname === "/admin" ? "Admin Portal" : ""
@@ -180,7 +180,8 @@ const AppContent = () => {
               <Route path="/dashboard" element={user ? <Dashboard user={user} activities={activities} onActivityLogged={loadUserData} /> : <Navigate to="/login" replace />} />
               <Route path="/ai-supervisor" element={user ? <AISupervisor user={user} activities={activities} onPointsAdded={loadUserData} /> : <Navigate to="/login" replace />} />
               <Route path="/learning" element={user ? <LearningHub /> : <Navigate to="/login" replace />} />
-              <Route path="/green-hub/waste-circular" element={user ? <GreenHubCategory /> : <Navigate to="/login" replace />} />
+              <Route path="/learning/:slug" element={user ? <GreenHubCategory /> : <Navigate to="/login" replace />} />
+              <Route path="/green-hub/waste-circular" element={<Navigate to="/learning/waste-circular" replace />} />
               <Route path="/community" element={user ? <DiscussionBoard user={user} /> : <Navigate to="/login" replace />} />
               <Route path="/leaderboard" element={user ? <Leaderboard user={user} /> : <Navigate to="/login" replace />} />
               <Route path="/admin" element={user ? <AdminPortal /> : <Navigate to="/login" replace />} />

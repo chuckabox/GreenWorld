@@ -1,5 +1,7 @@
-import { Bell, Menu } from "lucide-react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Bell, Menu, X, LayoutDashboard, Sparkles, BookOpen, MessageCircle, Trophy, LogOut } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { cn } from "../lib/utils";
 
 export const Header = ({ 
   title, 
@@ -10,27 +12,88 @@ export const Header = ({
   isSidebarOpen: boolean;
   onMenuClick: () => void;
 }) => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const navItems = [
+    { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
+    { name: "AI Advisor", path: "/ai-supervisor", icon: Sparkles },
+    { name: "Green Hub", path: "/learning", icon: BookOpen },
+    { name: "Community", path: "/community", icon: MessageCircle },
+    { name: "Leaderboard", path: "/leaderboard", icon: Trophy },
+  ];
+
+  const handleSignOut = () => {
+    localStorage.removeItem("userEmail");
+    navigate("/");
+    setIsMobileMenuOpen(false);
+  };
+
   return (
-    <header className="h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-10 px-6 flex items-center justify-between">
-      <div className="flex items-center gap-4">
-        {!isSidebarOpen && (
+    <>
+      <header className="h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 px-6 flex items-center justify-between">
+        <div className="flex items-center gap-4">
           <button 
-            onClick={onMenuClick}
+            onClick={() => {
+              if (window.innerWidth < 768) {
+                setIsMobileMenuOpen(!isMobileMenuOpen);
+              } else {
+                onMenuClick();
+              }
+            }}
             className="p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-xl transition-colors"
           >
-            <Menu size={20} />
+            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
-        )}
-        <Link to="/" className="hover:opacity-70 transition-opacity">
-          <h1 className="text-xl font-display font-bold text-slate-900">{title}</h1>
-        </Link>
-      </div>
-      <div className="flex items-center gap-4">
-        <button className="p-2 text-slate-500 hover:bg-slate-100 rounded-xl relative">
-          <Bell size={20} />
-          <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-        </button>
-      </div>
-    </header>
+          <Link to="/" className="hover:opacity-70 transition-opacity">
+            <h1 className="text-xl font-display font-bold text-slate-900">{title}</h1>
+          </Link>
+        </div>
+        <div className="flex items-center gap-4">
+          <button className="p-2 text-slate-500 hover:bg-slate-100 rounded-xl relative">
+            <Bell size={20} />
+            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile Dropdown */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden fixed inset-0 z-30 bg-slate-950/20 backdrop-blur-sm pt-16 h-screen" onClick={() => setIsMobileMenuOpen(false)}>
+          <div className="bg-white border-b border-slate-200 p-4 space-y-1 shadow-2xl animate-in slide-in-from-top-4 duration-200" onClick={(e) => e.stopPropagation()}>
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location.pathname === item.path;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={cn(
+                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
+                    isActive
+                      ? "bg-primary-light text-primary font-semibold"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  )}
+                >
+                  <Icon size={20} className={cn(isActive ? "text-primary" : "text-slate-400")} />
+                  {item.name}
+                </Link>
+              );
+            })}
+            <div className="pt-2 mt-2 border-t border-slate-100">
+              <button
+                onClick={handleSignOut}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-all font-medium"
+              >
+                <LogOut size={20} />
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };

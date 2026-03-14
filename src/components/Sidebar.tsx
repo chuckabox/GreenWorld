@@ -117,7 +117,7 @@ export const Sidebar = ({
             className="text-slate-400 hover:text-red-500 transition-colors"
             onClick={() => {
               localStorage.removeItem("userEmail");
-              navigate("/login");
+              navigate("/");
             }}
           >
             <LogOut size={18} />

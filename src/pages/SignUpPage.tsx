@@ -8,7 +8,6 @@ interface SignUpPayload {
   password: string;
   role: string;
   suburb: string;
-  team: string;
 }
 
 export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) => void }) => {
@@ -18,7 +17,6 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) =
   const [confirmPassword, setConfirmPassword] = useState('');
   const [role, setRole] = useState('student');
   const [suburb, setSuburb] = useState('');
-  const [team, setTeam] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -44,7 +42,6 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) =
         password,
         role,
         suburb,
-        team,
       });
     }
     navigate('/dashboard');
@@ -53,10 +50,10 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) =
   return (
     <div className="flex min-h-screen bg-white font-sans overflow-hidden">
       {/* Left Column - Form */}
-      <div className="w-full lg:w-[45%] flex flex-col pt-12 p-8 lg:p-16 xl:p-24 overflow-y-auto relative z-10">
-        <div className="w-full max-w-[400px] mx-auto flex flex-col h-full">
-          
-          <Link to="/" className="flex items-center gap-3 mb-16 hover:opacity-80 transition-opacity">
+      <div className="w-full lg:w-[45%] flex flex-col pt-8 p-6 lg:p-12 xl:p-20 overflow-y-auto relative z-10">
+        <div className="w-full max-w-[420px] mx-auto flex flex-col">
+
+          <Link to="/" className="flex items-center gap-3 mb-8 hover:opacity-80 transition-opacity">
             <div className="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center text-primary border border-primary/20">
               <Leaf size={20} className="fill-current" />
             </div>
@@ -65,117 +62,107 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) =
             </span>
           </Link>
 
-          <div className="mb-10">
-            <h1 className="text-4xl font-display font-bold mb-4 text-slate-900 tracking-tight">
-              Join the<br />Movement
+          <div className="mb-8">
+            <h1 className="text-3xl font-display font-bold mb-3 text-slate-900 tracking-tight">
+              Join the Movement
             </h1>
-            <p className="text-slate-600 leading-relaxed text-[15px]">
-              Create your account to start your journey towards environmental excellence and campus leadership.
+            <p className="text-slate-500 leading-relaxed text-sm">
+              Create your account to start your journey towards environmental excellence.
             </p>
           </div>
 
-          <form onSubmit={handleSignUp} className="space-y-6 flex-1">
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-800 block">Full Name</label>
-              <input
-                type="text"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Alex Johnson"
-                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900 placeholder:text-slate-400"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-800 block">University Email</label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="alex@university.edu"
-                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900 placeholder:text-slate-400"
-              />
-            </div>
-
+          <form onSubmit={handleSignUp} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-800 block">Role</label>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider ml-1">Full Name</label>
+                <input
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Alex Johnson"
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider ml-1">Email</label>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="alex@uni.edu"
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider ml-1">Role</label>
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
-                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900"
+                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900 appearance-none"
                 >
                   <option value="student">Student</option>
                   <option value="teacher">Teacher</option>
-                  <option value="community">Community Member</option>
+                  <option value="community">Community</option>
                 </select>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-800 block">Suburb</label>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider ml-1">Suburb</label>
                 <input
                   type="text"
                   required
                   value={suburb}
                   onChange={(e) => setSuburb(e.target.value)}
-                  placeholder="South Brisbane"
-                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900 placeholder:text-slate-400"
+                  placeholder="Brisbane"
+                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-800 block">Team or Organization</label>
-              <input
-                type="text"
-                value={team}
-                onChange={(e) => setTeam(e.target.value)}
-                placeholder="UQ Sustainable Innovators Club"
-                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900 placeholder:text-slate-400"
-              />
-            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider ml-1">Password</label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full pl-4 pr-11 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
 
-            <div className="space-y-2 relative">
-              <label className="text-sm font-bold text-slate-800 block">Password</label>
-              <div className="relative">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider ml-1">Confirm</label>
                 <input
                   type={showPassword ? "text" : "password"}
                   required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-4 pr-11 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900 font-medium tracking-widest placeholder:tracking-normal placeholder:text-slate-400"
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
               </div>
-              <p className="text-[13px] text-slate-500 mt-2">
-                Must be at least 8 characters with one number.
-              </p>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-800 block">Confirm Password</label>
-              <input
-                type={showPassword ? "text" : "password"}
-                required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900 font-medium tracking-widest placeholder:tracking-normal placeholder:text-slate-400"
-              />
-            </div>
+            {error && <p className="text-xs text-red-600 font-medium ml-1">{error}</p>}
 
-            {error && <p className="text-sm text-red-600 font-medium">{error}</p>}
-
-            <div className="flex items-start gap-3 pt-2 pb-4">
+            <div className="flex items-start gap-3 pt-1">
               <div className="pt-0.5">
                 <input
                   type="checkbox"
@@ -184,29 +171,29 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) =
                   className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary/20"
                 />
               </div>
-              <label htmlFor="terms" className="text-sm text-slate-600 leading-snug">
-                I agree to the <a href="#" className="font-bold text-primary hover:underline">Terms of Service</a> and <a href="#" className="font-bold text-primary hover:underline">Privacy Policy</a>.
+              <label htmlFor="terms" className="text-xs text-slate-500 leading-snug">
+                I agree to the <a href="#" className="font-bold text-primary hover:underline">Terms</a> and <a href="#" className="font-bold text-primary hover:underline">Privacy Policy</a>.
               </label>
             </div>
 
             <button
               type="submit"
-              className="w-full bg-primary hover:bg-primary-dark text-white py-3.5 rounded-xl font-bold flex items-center justify-between px-6 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+              className="w-full bg-primary hover:bg-primary-dark text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 mt-2"
             >
-              <span>Join the Movement</span>
-              <ArrowRight size={20} />
+              <span>Create Account</span>
+              <ArrowRight size={18} />
             </button>
           </form>
 
-          <div className="mt-8 text-center text-sm font-medium text-slate-600">
+          <div className="mt-6 text-center text-sm font-medium text-slate-600">
             Already have an account?{' '}
             <Link to="/login" className="text-primary font-bold hover:underline">
               Log in
             </Link>
           </div>
 
-          <div className="mt-16 text-center text-xs font-bold text-slate-400 tracking-wider uppercase">
-            © 2024 Sustainable Impact Award
+          <div className="mt-8 text-center text-[10px] font-bold text-slate-400 tracking-widest uppercase mb-4">
+            © 2026 GreenWorld
           </div>
         </div>
       </div>
@@ -214,28 +201,30 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) =
       {/* Right Column - Image & Quote */}
       <div className="hidden lg:block lg:w-[55%] relative">
         <div className="absolute inset-0 bg-slate-900 z-0">
-          <img 
-            src="https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?q=80&w=2674&auto=format&fit=crop" 
-            alt="Forest from above" 
+          <img
+            src="https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?q=80&w=2674&auto=format&fit=crop"
+            alt="Forest from above"
             className="w-full h-full object-cover object-center opacity-90 mix-blend-luminosity brightness-75 contrast-125"
           />
           <div className="absolute inset-0 bg-primary/20 mix-blend-multiply"></div>
         </div>
 
         <div className="absolute inset-0 flex items-center justify-center p-12 z-10">
-          <div className="w-full max-w-lg glass bg-white/10 backdrop-blur-xl border border-white/20 p-10 rounded-[2rem] shadow-2xl">
-            <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white mb-8 shadow-lg shadow-primary/30">
+          <div className="w-full max-w-[440px] glass bg-primary/20 backdrop-blur-xl border border-white/30 p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
+            <div className="absolute -top-24 -right-24 w-48 h-48 bg-white/10 rounded-full blur-3xl group-hover:bg-white/20 transition-all duration-700"></div>
+            
+            <div className="w-12 h-12 bg-white text-primary rounded-2xl flex items-center justify-center mb-8 shadow-lg shadow-black/10">
               <Leaf size={24} className="fill-current" />
             </div>
-            
+
             <h2 className="text-4xl font-display font-bold text-white mb-6 leading-tight drop-shadow-sm">
               Every Action<br />Counts.
             </h2>
-            
+
             <p className="text-xl text-white/90 leading-relaxed font-medium mb-8 drop-shadow-sm">
               "The greatest threat to our planet is the belief that someone else will save it."
             </p>
-            
+
             <div className="flex items-center gap-4 text-white/80 font-medium">
               <div className="h-0.5 w-6 bg-white/40"></div>
               <span>Robert Swan</span>
