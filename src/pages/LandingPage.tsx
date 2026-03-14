@@ -257,7 +257,7 @@ export const LandingPage = () => {
             </p>
             <div className="w-16 h-1 bg-primary mx-auto rounded-full mt-4" />
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-8">
             {[
               { img: eventBeach, title: "Beach Cleanup Drive", date: "Mar 20, 2026", desc: "Help us keep our coastlines clean and protect marine life." },
@@ -288,7 +288,7 @@ export const LandingPage = () => {
           <div className="bg-gradient-to-br from-emerald-900 via-green-900 to-emerald-950 text-white rounded-[2rem] p-12 md:p-16 text-center shadow-2xl border border-emerald-800/50">
             <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">Ready to make your mark?</h2>
             <p className="text-emerald-100/80 text-lg mb-10 max-w-xl mx-auto">
-              Log real actions, earn AI-verified points, and track your community's CO₂ impact — one eco choice at a time.
+              Log real actions, earn AI-verified points, and track your CO₂ impact, one eco choice at a time.
             </p>
             <Link to={authPath} className="inline-block bg-primary hover:bg-primary-light hover:text-primary text-white text-lg px-10 py-4 rounded-xl font-bold transition-all hover:scale-105 shadow-xl shadow-emerald-900/40">
               {ctaBtnText}
