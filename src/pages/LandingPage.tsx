@@ -45,9 +45,9 @@ export const LandingPage = () => {
             <span className="font-display font-bold text-xl tracking-tight">GreenWorld</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600">
-            <a href="#levels" className="hover:text-primary transition-colors">Badges</a>
-            <a href="#how-it-works" className="hover:text-primary transition-colors">How it Works</a>
-            <a href="#what-we-have" className="hover:text-primary transition-colors">What we have</a>
+            <a href="#levels" className="hover:text-primary transition-colors">Your Journey</a>
+            <a href="#how-it-works" className="hover:text-primary transition-colors">How It Works</a>
+            <a href="#what-we-have" className="hover:text-primary transition-colors">What We Have</a>
             <a href="#events-tasks" className="hover:text-primary transition-colors">Current Events</a>
           </div>
           <Link to={authPath} className="btn-primary text-sm shadow-md">{authText}</Link>
@@ -95,9 +95,9 @@ export const LandingPage = () => {
             </p>
           </div>
           <div className="w-full max-w-[320px] md:max-w-none md:flex-1 flex justify-center">
-            <a 
-              href="https://www.brisbane.qld.gov.au" 
-              target="_blank" 
+            <a
+              href="https://www.brisbane.qld.gov.au"
+              target="_blank"
               rel="noopener noreferrer"
               className="block"
             >
@@ -116,77 +116,83 @@ export const LandingPage = () => {
         </div>
       </section>
 
-      {/* Award Levels */}
-      <section id="levels" className="py-24 bg-slate-50 relative">
-        <div className="max-w-7xl mx-auto px-6">
+      {/* Infinite Progression & Rewards */}
+      <section id="levels" className="py-24 bg-slate-50 relative overflow-hidden">
+        {/* Background Decorative Elements */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -mr-48 -mt-48"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -ml-48 -mb-48"></div>
+
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-display font-bold mb-4">Badge Levels</h2>
-            <div className="w-16 h-1 bg-primary mx-auto rounded-full"></div>
+            <h2 className="text-4xl font-display font-bold mb-4">Your Journey</h2>
+            <p className="text-slate-500 max-w-xl mx-auto text-lg leading-relaxed">
+              Turn your virtual points into real-world benefits.
+            </p>
+            <div className="w-16 h-1 bg-primary mx-auto rounded-full mt-6"></div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {/* Sustainability Badge II (2nd place, Left) */}
-            <motion.div whileHover={{ y: -5 }} className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 relative overflow-hidden group">
-              <div className="absolute top-0 left-0 w-full h-1 bg-slate-400"></div>
-              <div className="w-14 h-14 bg-slate-100 text-slate-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                <Award size={28} />
-              </div>
-              <h3 className="text-xl font-bold mb-3">Sustainability Badge II 🌳</h3>
-              <p className="text-slate-500 text-sm mb-8 leading-relaxed">
-                You're making a real difference. Lead biodiversity actions, organize clean-up drives and inspire your community.
-              </p>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 text-sm font-medium">
-                  <CheckCircle2 size={16} className="text-primary" />
-                  <span>300 Points to unlock</span>
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Progression Logic Card */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="bg-white p-10 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col h-full"
+            >
+              <div className="mb-8">
+                <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center shadow-inner mb-6">
+                  <Target size={28} />
                 </div>
-                <div className="flex items-center gap-3 text-sm font-medium">
-                  <CheckCircle2 size={16} className="text-primary" />
-                  <span>Community leaderboard ranking</span>
+                <h3 className="text-3xl font-display font-bold mb-1">Your Points</h3>
+              </div>
+
+              <div className="space-y-6 flex-grow">
+                <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 group hover:border-primary/30 transition-colors">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-bold text-slate-700">Earnings Rate</span>
+                    <span className="text-primary font-display font-bold text-xl">5 Points</span>
+                  </div>
+                  <p className="text-sm text-slate-500">Every hour of sustainability action adds to your total.</p>
+                </div>
+
+                <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 group hover:border-primary/30 transition-colors">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-bold text-slate-700">Rank Milestone</span>
+                    <span className="text-primary font-display font-bold text-xl">100 Points</span>
+                  </div>
+                  <p className="text-sm text-slate-600 font-medium">Reach 20 hours of action to level up your badge rank.</p>
                 </div>
               </div>
             </motion.div>
 
-            {/* Sustainability Badge III (Best, Middle) */}
-            <motion.div whileHover={{ y: -5 }} className="bg-white p-8 rounded-3xl shadow-md border-2 border-primary/20 relative overflow-hidden group transform md:-translate-y-4">
-              <div className="absolute top-0 left-0 w-full h-1 bg-yellow-400"></div>
-              <div className="w-14 h-14 bg-yellow-50 text-yellow-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                <Trophy size={28} />
-              </div>
-              <h3 className="text-xl font-bold mb-3 whitespace-nowrap">Sustainability Badge III 🌍</h3>
-              <p className="text-slate-500 text-sm mb-8 leading-relaxed">
-                Our highest tier. You've built habits, led your community, and your CO₂ savings are measurable and verified.
-              </p>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 text-sm font-medium">
-                  <CheckCircle2 size={16} className="text-primary" />
-                  <span>800 Points to unlock</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm font-medium">
-                  <CheckCircle2 size={16} className="text-primary" />
-                  <span>Portfolio showcase + AI insights</span>
-                </div>
-              </div>
-            </motion.div>
+            {/* Benefits Card */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="bg-primary p-10 rounded-[2.5rem] shadow-2xl shadow-primary/20 relative overflow-hidden h-full group text-white"
+            >
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
 
-            {/* Sustainability Badge I (3rd place, Right) */}
-            <motion.div whileHover={{ y: -5 }} className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 relative overflow-hidden group">
-              <div className="absolute top-0 left-0 w-full h-1 bg-orange-400"></div>
-              <div className="w-14 h-14 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                <Award size={28} />
-              </div>
-              <h3 className="text-xl font-bold mb-3">Sustainability Badge I 🌱</h3>
-              <p className="text-slate-500 text-sm mb-8 leading-relaxed">
-                Start your green journey. Log your first eco actions — any recycling, energy saving or clean-up counts.
-              </p>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 text-sm font-medium">
-                  <CheckCircle2 size={16} className="text-primary" />
-                  <span>0 Points to unlock</span>
+              <div className="relative z-10">
+                <div className="w-14 h-14 bg-white/20 backdrop-blur-md text-white rounded-2xl flex items-center justify-center mb-8 border border-white/20 shadow-inner">
+                  <Globe size={28} />
                 </div>
-                <div className="flex items-center gap-3 text-sm font-medium">
-                  <CheckCircle2 size={16} className="text-primary" />
-                  <span>AI-verified activity log</span>
+
+                <h3 className="text-3xl font-display font-bold mb-8">Your Benefits</h3>
+
+                <div className="space-y-4">
+                  {[
+                    "Discounts at partnered businesses",
+                    "Exclusive free products and merchandise",
+                    "Early access to community workshops",
+                    "Get a CV-ready certificate with your badge"
+                  ].map((benefit, i) => (
+                    <div key={i} className="flex items-center gap-4 bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10 group-hover:bg-white/15 transition-all">
+                      <CheckCircle2 size={20} className="shrink-0" />
+                      <span className="font-medium text-sm md:text-base">{benefit}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </motion.div>
@@ -198,7 +204,7 @@ export const LandingPage = () => {
       <section id="how-it-works" className="py-24 bg-white border-y border-slate-100">
         <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
           <div>
-            <h2 className="text-4xl font-display font-bold mb-6">How Your Journey<br />to Impact Works</h2>
+            <h2 className="text-4xl font-display font-bold mb-6">How It Works</h2>
             <p className="text-slate-500 text-lg mb-8 max-w-md leading-relaxed">
               Make a difference step by step. Use our framework to build green habits and grow your impact.
             </p>
@@ -236,7 +242,7 @@ export const LandingPage = () => {
               { icon: <CheckCircle2 className="text-primary" size={24} />, title: "AI Verification", desc: "Instant verification for your eco actions." },
               { icon: <Trophy className="text-primary" size={24} />, title: "Leaderboard", desc: "Climb rankings in your local community." },
               { icon: <Globe className="text-primary" size={24} />, title: "Green Hub", desc: "Access local sustainability initiatives." },
-              { icon: <Users className="text-primary" size={24} />, title: "Personal Profile", desc: "Track your impact stats and CO₂ savings." }
+              { icon: <Target className="text-primary" size={24} />, title: "AI Advisor", desc: "Personalized guidance to help you choose the most impactful tasks." }
             ].map((feature, i) => (
               <motion.div whileHover={{ y: -5 }} key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                 <div className="mb-4">{feature.icon}</div>
