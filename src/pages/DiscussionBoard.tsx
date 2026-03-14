@@ -6,6 +6,8 @@ import {
   MessageSquare,
   ChevronDown,
   ChevronUp,
+  ChevronLeft,
+  ChevronRight,
   UserPlus,
   Users,
   Hash,
@@ -148,6 +150,7 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
   const [replyContext, setReplyContext] = useState<string | null>(null);
   const [dmMessages, setDmMessages] = useState<Record<number, DirectMessage[]>>({});
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const messageInputRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
@@ -312,101 +315,166 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
   return (
     <div className="relative flex h-[calc(100vh-4rem)] min-h-0 bg-slate-50/40">
       {/* Sidebar: Friends + Channels (desktop) */}
-      <aside className="hidden lg:flex lg:w-64 shrink-0 border-r border-slate-200 bg-white flex-col overflow-hidden">
-        <div className="p-3 border-b border-slate-100">
-          <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Friends</h3>
-          <button
-            type="button"
-            onClick={() => setAddFriendOpen(true)}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-primary hover:bg-primary-light transition-colors"
-          >
-            <UserPlus size={18} />
-            Add friend
-          </button>
-          <ul className="mt-2 space-y-0.5 max-h-40 overflow-y-auto">
-            {friends.length === 0 ? (
-              <li className="px-3 py-2 text-slate-400 text-sm">No friends yet</li>
-            ) : (
-              friends.map((f) => (
-                <li
-                  key={f.id}
-                  className={cn(
-                    "flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-50 group cursor-pointer",
-                    viewMode === "dm" && activeFriendId === f.id && "bg-slate-100",
-                  )}
-                  onClick={() => {
-                    setViewMode("dm");
-                    setActiveFriendId(f.id);
-                  }}
-                >
-                  <img
-                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${f.id}`}
-                    alt=""
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
-                  <span className="flex-1 truncate text-sm font-medium text-slate-800">{f.name}</span>
-                  <button
-                    type="button"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      removeFriend(f.id);
-                    }}
-                    className="opacity-0 group-hover:opacity-100 p-1 rounded text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"
-                    aria-label="Remove friend"
-                  >
-                    <X size={14} />
-                  </button>
-                </li>
-              ))
-            )}
-          </ul>
-        </div>
-        <div className="p-3 border-b border-slate-100">
-          <div className="flex items-center justify-between mb-2 gap-2">
-            <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Communities</h3>
+      <aside
+        className={cn(
+          "hidden lg:flex shrink-0 border-r border-slate-200 bg-white flex-col overflow-hidden transition-all duration-200",
+          isSidebarCollapsed ? "lg:w-16" : "lg:w-64",
+        )}
+      >
+        {isSidebarCollapsed ? (
+          <div className="flex flex-col items-center justify-between h-full py-3">
             <button
               type="button"
-              onClick={() => setCreateChannelOpen(true)}
-              className="text-[10px] font-medium px-2 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50"
+              onClick={() => setIsSidebarCollapsed(false)}
+              className="p-1.5 rounded-full hover:bg-slate-100 text-slate-500"
+              aria-label="Expand community sidebar"
             >
-              + New
+              <ChevronRight size={18} />
             </button>
+            <div className="flex flex-col items-center gap-4 text-slate-400">
+              <button
+                type="button"
+                onClick={() => setAddFriendOpen(true)}
+                className="p-2 rounded-xl hover:bg-slate-50 hover:text-primary"
+                aria-label="Friends"
+              >
+                <UserPlus size={18} />
+              </button>
+              <button
+                type="button"
+                onClick={() => setCreateChannelOpen(true)}
+                className="p-2 rounded-xl hover:bg-slate-50 hover:text-primary"
+                aria-label="Communities"
+              >
+                <Hash size={18} />
+              </button>
+              <button
+                type="button"
+                onClick={() => setInviteOpen(true)}
+                className="p-2 rounded-xl hover:bg-slate-50 hover:text-primary"
+                aria-label="Invite to activity"
+              >
+                <Users size={18} />
+              </button>
+            </div>
+            <div className="pb-1">
+              <span className="text-[9px] font-semibold text-slate-400 tracking-wide rotate-[-90deg] inline-block">
+                COMMUNITY
+              </span>
+            </div>
           </div>
-          <ul className="space-y-0.5">
-            {channels.map((ch) => {
-              const Icon = ch.icon;
-              return (
-                <li key={ch.id}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setViewMode("channel");
-                      setSelectedChannel(ch.id);
-                      setActiveFriendId(null);
-                    }}
-                    className={cn(
-                      "w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-colors",
-                      selectedChannel === ch.id ? "bg-primary-light text-primary" : "text-slate-700 hover:bg-slate-50"
-                    )}
-                  >
-                    <Icon size={18} />
-                    {ch.name}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-        <div className="p-3 flex-1">
-          <button
-            type="button"
-            onClick={() => setInviteOpen(true)}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 border border-slate-200 hover:border-primary/30 transition-colors"
-          >
-            <Users size={18} />
-            Invite to activity
-          </button>
-        </div>
+        ) : (
+          <>
+            <div className="p-3 border-b border-slate-100 flex items-center justify-between gap-2">
+              <div>
+                <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Friends</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsSidebarCollapsed(true)}
+                className="p-1 rounded-full hover:bg-slate-100 text-slate-500"
+                aria-label="Collapse community sidebar"
+              >
+                <ChevronLeft size={16} />
+              </button>
+            </div>
+            <div className="px-3 pt-2 pb-3 border-b border-slate-100">
+              <button
+                type="button"
+                onClick={() => setAddFriendOpen(true)}
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-primary hover:bg-primary-light transition-colors"
+              >
+                <UserPlus size={18} />
+                Add friend
+              </button>
+              <ul className="mt-2 space-y-0.5 max-h-40 overflow-y-auto">
+                {friends.length === 0 ? (
+                  <li className="px-3 py-2 text-slate-400 text-sm">No friends yet</li>
+                ) : (
+                  friends.map((f) => (
+                    <li
+                      key={f.id}
+                      className={cn(
+                        "flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-50 group cursor-pointer",
+                        viewMode === "dm" && activeFriendId === f.id && "bg-slate-100",
+                      )}
+                      onClick={() => {
+                        setViewMode("dm");
+                        setActiveFriendId(f.id);
+                      }}
+                    >
+                      <img
+                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${f.id}`}
+                        alt=""
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                      <span className="flex-1 truncate text-sm font-medium text-slate-800">{f.name}</span>
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          removeFriend(f.id);
+                        }}
+                        className="opacity-0 group-hover:opacity-100 p-1 rounded text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"
+                        aria-label="Remove friend"
+                      >
+                        <X size={14} />
+                      </button>
+                    </li>
+                  ))
+                )}
+              </ul>
+            </div>
+            <div className="p-3 border-b border-slate-100">
+              <div className="flex items-center justify-between mb-2 gap-2">
+                <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Communities</h3>
+                <button
+                  type="button"
+                  onClick={() => setCreateChannelOpen(true)}
+                  className="text-[10px] font-medium px-2 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50"
+                >
+                  + New
+                </button>
+              </div>
+              <ul className="space-y-0.5">
+                {channels.map((ch) => {
+                  const Icon = ch.icon;
+                  return (
+                    <li key={ch.id}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setViewMode("channel");
+                          setSelectedChannel(ch.id);
+                          setActiveFriendId(null);
+                        }}
+                        className={cn(
+                          "w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-colors",
+                          selectedChannel === ch.id
+                            ? "bg-primary-light text-primary"
+                            : "text-slate-700 hover:bg-slate-50",
+                        )}
+                      >
+                        <Icon size={18} />
+                        {ch.name}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+            <div className="p-3 flex-1">
+              <button
+                type="button"
+                onClick={() => setInviteOpen(true)}
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 border border-slate-200 hover:border-primary/30 transition-colors"
+              >
+                <Users size={18} />
+                Invite to activity
+              </button>
+            </div>
+          </>
+        )}
       </aside>
 
       {/* Main: Channel or DM content (Slack-style) */}
