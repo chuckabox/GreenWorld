@@ -80,9 +80,11 @@ export const Sidebar = ({
           <nav className="flex-1 px-4 py-4 space-y-6 overflow-y-auto">
             {navGroups.map((group) => (
               <div key={group.label}>
-                <p className="px-4 mb-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                  {group.label}
-                </p>
+                {group.label !== "Main" && (
+                  <p className="px-4 mb-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                    {group.label}
+                  </p>
+                )}
                 <div className="space-y-1">
                   {group.items.map((item) => {
                     const Icon = item.icon;
