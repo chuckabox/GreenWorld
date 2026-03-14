@@ -28,7 +28,7 @@ export const LandingPage = () => {
   const authPath = isLoggedIn ? "/dashboard" : "/login";
   const authText = isLoggedIn ? "Go to Dashboard" : "Join Now";
   const heroBtnText = isLoggedIn ? "Back to Dashboard" : "Get Started Today";
-  const ctaBtnText = isLoggedIn ? "Return to Dashboard" : "Join the Movement Now";
+  const ctaBtnText = isLoggedIn ? "Return to Dashboard" : "Join GreenWorld Now";
 
   type TaskItem = { id: string; type: string; title: string; description?: string; pointsReward?: number };
   type EventItem = { id: string; type: string; title: string; date?: string; location?: string };
@@ -45,10 +45,10 @@ export const LandingPage = () => {
             <span className="font-display font-bold text-xl tracking-tight">GreenWorld</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600">
-            <a href="#what-we-have" className="hover:text-primary transition-colors">What we have</a>
             <a href="#levels" className="hover:text-primary transition-colors">Badges</a>
             <a href="#how-it-works" className="hover:text-primary transition-colors">How it Works</a>
-            <a href="#events-tasks" className="hover:text-primary transition-colors">Events</a>
+            <a href="#what-we-have" className="hover:text-primary transition-colors">What we have</a>
+            <a href="#events-tasks" className="hover:text-primary transition-colors">Current Events</a>
           </div>
           <Link to={authPath} className="btn-primary text-sm shadow-md">{authText}</Link>
         </div>
@@ -95,16 +95,23 @@ export const LandingPage = () => {
             </p>
           </div>
           <div className="w-full max-w-[320px] md:max-w-none md:flex-1 flex justify-center">
-            <motion.div whileHover={{ y: -5 }} className="group">
-              <div className="w-full max-w-[400px] aspect-square rounded-3xl overflow-hidden shadow-md relative">
-                <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-transparent transition-colors z-10"></div>
-                <img
-                  src={councilImg}
-                  alt="Brisbane City Council Support"
-                  className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
-                />
-              </div>
-            </motion.div>
+            <a 
+              href="https://www.brisbane.qld.gov.au" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="block"
+            >
+              <motion.div whileHover={{ y: -5 }} className="group">
+                <div className="w-full max-w-[400px] aspect-square rounded-3xl overflow-hidden shadow-md relative">
+                  <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-transparent transition-colors z-10"></div>
+                  <img
+                    src={councilImg}
+                    alt="Brisbane City Council Support"
+                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
+                  />
+                </div>
+              </motion.div>
+            </a>
           </div>
         </div>
       </section>
@@ -258,19 +265,21 @@ export const LandingPage = () => {
               { img: eventTrees, title: "Community Tree Planting", date: "Mar 25, 2026", desc: "Join us in planting 500 new saplings in the local park." },
               { img: eventWorkshop, title: "Zero Waste Workshop", date: "Apr 02, 2026", desc: "Learn practical tips for reducing your daily plastic footprint." }
             ].map((event, i) => (
-              <motion.div whileHover={{ y: -5 }} key={i} className="group cursor-pointer">
-                <div className="w-full aspect-[4/3] rounded-3xl overflow-hidden mb-6 shadow-md relative">
-                  <div className="absolute inset-0 bg-slate-900/20 group-hover:bg-transparent transition-colors z-10"></div>
-                  <img src={event.img} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                  <div className="absolute top-4 left-4 z-20">
-                    <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-primary text-xs font-bold rounded-full shadow-sm">
-                      {event.date}
-                    </span>
+              <Link to={authPath} key={i} className="block group">
+                <motion.div whileHover={{ y: -5 }} className="cursor-pointer">
+                  <div className="w-full aspect-[4/3] rounded-3xl overflow-hidden mb-6 shadow-md relative">
+                    <div className="absolute inset-0 bg-slate-900/20 group-hover:bg-transparent transition-colors z-10"></div>
+                    <img src={event.img} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                    <div className="absolute top-4 left-4 z-20">
+                      <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-primary text-xs font-bold rounded-full shadow-sm">
+                        {event.date}
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <h4 className="text-xl font-bold mb-2">{event.title}</h4>
-                <p className="text-slate-500 text-sm leading-relaxed">{event.desc}</p>
-              </motion.div>
+                  <h4 className="text-xl font-bold mb-2 text-slate-900 group-hover:text-primary transition-colors">{event.title}</h4>
+                  <p className="text-slate-500 text-sm leading-relaxed">{event.desc}</p>
+                </motion.div>
+              </Link>
             ))}
           </div>
         </div>
