@@ -1,9 +1,17 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Sparkles, Target, CheckCircle2, ChevronRight } from "lucide-react";
-import { runTaskFitAnalysis, TaskForFit, TaskFitResult, QuestionnaireInput } from "../lib/aiSupervisor";
+import { Sparkles, ChevronRight, ChevronDown } from "lucide-react";
+import {
+  getTaskRecommendations,
+  getTaskRecommendationsFromProfile,
+  TaskForFit,
+  TaskRecommendation,
+  QuestionnaireInput,
+  UserActivityProfile,
+} from "../lib/aiSupervisor";
 import tasksAndEventsData from "../data/tasksAndEvents.json";
 import { cn } from "../lib/utils";
+import type { Activity } from "../types";
 
 type TaskItem = { id: string; type: string; title: string; description?: string; pointsReward?: number };
 
@@ -23,186 +31,207 @@ const defaultAnswers: QuestionnaireInput = {
   community: 3,
 };
 
-export const AISupervisor = ({ userEmail, onPointsAdded }: { userEmail: string; onPointsAdded: () => void }) => {
+function buildProfile(activities: Activity[]): UserActivityProfile {
+  const categories = Array.from(new Set(activities.map((a) => a.category).filter(Boolean)));
+  const taskIdsDone = Array.from(
+    new Set(activities.map((a) => a.taskId).filter((id): id is string => Boolean(id))),
+  );
+  return { totalCount: activities.length, categories, taskIdsDone };
+}
+
+type Props = { user: { id: number }; activities: Activity[]; onPointsAdded: () => void };
+
+export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
   const tasks = useMemo(
     () => (tasksAndEventsData as (TaskItem & { type: string })[]).filter((t) => t.type === "task") as TaskForFit[],
     [],
   );
+  const profile = useMemo(() => buildProfile(activities), [activities]);
 
-  const [selectedTask, setSelectedTask] = useState<TaskForFit | null>(null);
-  const [answers, setAnswers] = useState<QuestionnaireInput>(defaultAnswers);
-  const [feelingText, setFeelingText] = useState("");
-  const [fitResult, setFitResult] = useState<TaskFitResult | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [recommendations, setRecommendations] = useState<TaskRecommendation[] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const runFit = async () => {
-    if (!selectedTask) return;
-    setIsLoading(true);
+  const [refineOpen, setRefineOpen] = useState(false);
+  const [answers, setAnswers] = useState<QuestionnaireInput>(defaultAnswers);
+  const [feelingText, setFeelingText] = useState("");
+  const [refineLoading, setRefineLoading] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
     setError(null);
-    setFitResult(null);
+    setRecommendations(null);
+    setIsLoading(true);
+    getTaskRecommendationsFromProfile(tasks, profile)
+      .then((list) => {
+        if (!cancelled) setRecommendations(list);
+      })
+      .catch((e) => {
+        if (!cancelled) {
+          setError(e instanceof Error ? e.message : "Recommendations failed.");
+          setRecommendations([]);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [tasks, profile.totalCount, profile.categories.join(","), profile.taskIdsDone.join(",")]);
+
+  const refreshFromProfile = () => {
+    setError(null);
+    setIsLoading(true);
+    getTaskRecommendationsFromProfile(tasks, profile)
+      .then(setRecommendations)
+      .catch((e) => {
+        setError(e instanceof Error ? e.message : "Recommendations failed.");
+        setRecommendations([]);
+      })
+      .finally(() => setIsLoading(false));
+  };
+
+  const fetchFromQuiz = async () => {
+    setRefineLoading(true);
+    setError(null);
     try {
-      const result = await runTaskFitAnalysis(selectedTask, answers, feelingText.trim() || undefined);
-      setFitResult(result);
+      const list = await getTaskRecommendations(tasks, answers, feelingText.trim() || undefined);
+      setRecommendations(list);
+      setRefineOpen(false);
     } catch (e) {
-      const message = e instanceof Error ? e.message : "Fit analysis failed.";
-      setError(`${message} Check VITE_GEMINI_API_KEY and AI env flags.`);
+      setError(e instanceof Error ? e.message : "Recommendations failed.");
     } finally {
-      setIsLoading(false);
+      setRefineLoading(false);
     }
   };
-
-  const pickAnotherTask = () => {
-    setSelectedTask(null);
-    setFitResult(null);
-    setError(null);
-    setAnswers(defaultAnswers);
-    setFeelingText("");
-  };
-
-  const taskToLogState = selectedTask
-    ? { taskId: selectedTask.id, taskTitle: selectedTask.title }
-    : undefined;
 
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-6">
       <div>
         <h2 className="text-3xl">AI Advisor</h2>
-        <p className="text-slate-500">Pick a task, answer a few questions, and see if it’s a good fit for you.</p>
+        <p className="text-slate-500">
+          {profile.totalCount > 0
+            ? "Recommendations based on your impact history. Refine with a short quiz if you like."
+            : "Here are some good first tasks. You can refine with a short quiz for a more personal list."}
+        </p>
       </div>
 
-      {!selectedTask ? (
-        <div className="card">
-          <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-            <Target size={22} className="text-primary" />
-            Choose a task
-          </h3>
-          <ul className="space-y-3">
-            {tasks.map((t) => (
-              <li key={t.id}>
-                <button
-                  type="button"
-                  onClick={() => setSelectedTask(t)}
-                  className="w-full text-left p-4 rounded-xl border border-slate-200 hover:border-primary/40 hover:bg-slate-50 transition-colors flex items-center justify-between gap-4"
-                >
-                  <div>
-                    <p className="font-medium text-slate-900">{t.title}</p>
-                    {t.pointsReward != null && (
-                      <span className="text-sm font-semibold text-primary">{t.pointsReward} pts</span>
-                    )}
-                  </div>
-                  <ChevronRight size={20} className="text-slate-400 shrink-0" />
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : !fitResult ? (
-        <div className="card space-y-6">
-          <div className="flex items-center justify-between flex-wrap gap-2">
-            <div>
-              <h3 className="text-xl font-bold text-slate-900">{selectedTask.title}</h3>
-              {selectedTask.pointsReward != null && (
-                <span className="text-sm font-semibold text-primary">{selectedTask.pointsReward} pts</span>
-              )}
-            </div>
-            <button
-              type="button"
-              onClick={pickAnotherTask}
-              className="text-sm font-medium text-slate-500 hover:text-slate-700"
-            >
-              Change task
-            </button>
-          </div>
-
-          <div className="space-y-5">
-            <p className="text-sm font-semibold text-slate-700">Quick questionnaire (1–5)</p>
-            {questions.map((q) => (
-              <div key={q.key} className="space-y-2">
-                <label className="text-sm text-slate-600 block">{q.label}</label>
-                <div className="flex gap-2">
-                  {[1, 2, 3, 4, 5].map((n) => (
-                    <button
-                      key={n}
-                      type="button"
-                      onClick={() => setAnswers({ ...answers, [q.key]: n })}
-                      className={cn(
-                        "flex-1 min-w-0 py-2.5 rounded-xl text-sm font-bold transition-colors",
-                        answers[q.key] === n
-                          ? "bg-primary text-white shadow-sm"
-                          : "bg-slate-100 text-slate-600 hover:bg-slate-200 border border-transparent"
-                      )}
-                    >
-                      {n}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-slate-700">How do you feel? (optional)</label>
-            <textarea
-              value={feelingText}
-              onChange={(e) => setFeelingText(e.target.value)}
-              placeholder="e.g. I’m keen but worried I won’t have time..."
-              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 min-h-[80px]"
-              rows={3}
-            />
-          </div>
-
-          <button onClick={runFit} disabled={isLoading} className="btn-primary w-full py-3 flex items-center justify-center gap-2">
-            <Sparkles size={18} />
-            {isLoading ? "Checking..." : "Check fit"}
-          </button>
-
-          {error && <p className="text-sm text-red-600 font-medium">{error}</p>}
+      {isLoading ? (
+        <div className="card py-12 flex items-center justify-center gap-3 text-slate-500">
+          <Sparkles size={24} className="animate-pulse text-primary" />
+          <span>Finding recommendations...</span>
         </div>
       ) : (
         <div className="card space-y-6">
-          <div className="flex items-center gap-2 text-slate-600">
-            <CheckCircle2 size={20} className="text-primary" />
-            <span className="font-semibold">Fit result</span>
-            <span
-              className={`ml-2 px-3 py-1 rounded-full text-sm font-bold ${
-                fitResult.fit === "high"
-                  ? "bg-emerald-100 text-emerald-800"
-                  : fitResult.fit === "medium"
-                    ? "bg-amber-100 text-amber-800"
-                    : "bg-slate-200 text-slate-700"
-              }`}
-            >
-              {fitResult.fit === "high" ? "High fit" : fitResult.fit === "medium" ? "Medium fit" : "Low fit"}
-            </span>
-          </div>
-
-          <p className="text-slate-700 leading-relaxed">{fitResult.summary}</p>
-
-          {fitResult.suggestions && fitResult.suggestions.length > 0 && (
-            <ul className="list-disc pl-5 space-y-1 text-sm text-slate-600">
-              {fitResult.suggestions.map((s, i) => (
-                <li key={i}>{s}</li>
-              ))}
-            </ul>
-          )}
-
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
-            <Link
-              to="/log"
-              state={taskToLogState}
-              className="btn-primary flex items-center justify-center gap-2 py-3"
-            >
-              I'll do this task
-              <ChevronRight size={18} />
-            </Link>
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <h3 className="text-xl font-bold text-slate-900">Recommended for you</h3>
             <button
               type="button"
-              onClick={pickAnotherTask}
-              className="py-3 px-6 rounded-xl border-2 border-slate-200 font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+              onClick={refreshFromProfile}
+              disabled={isLoading}
+              className="text-sm font-medium text-primary hover:underline"
             >
-              Check another task
+              Refresh
             </button>
+          </div>
+
+          {error && <p className="text-sm text-red-600 font-medium">{error}</p>}
+
+          {recommendations !== null && recommendations.length === 0 ? (
+            <p className="text-slate-500">No recommendations right now. Try refining with the quiz below.</p>
+          ) : recommendations !== null ? (
+            <ul className="space-y-4">
+              {recommendations.map((rec) => (
+                <li
+                  key={rec.taskId}
+                  className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 hover:border-primary/30 transition-colors"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="font-medium text-slate-900">{rec.taskTitle}</p>
+                      <p className="text-sm text-slate-600 mt-1">{rec.reason}</p>
+                      <span
+                        className={cn(
+                          "inline-block mt-2 px-2.5 py-0.5 rounded-full text-xs font-bold",
+                          rec.fit === "high"
+                            ? "bg-emerald-100 text-emerald-800"
+                            : rec.fit === "medium"
+                              ? "bg-amber-100 text-amber-800"
+                              : "bg-slate-200 text-slate-700"
+                        )}
+                      >
+                        {rec.fit === "high" ? "High fit" : rec.fit === "medium" ? "Medium fit" : "Low fit"}
+                      </span>
+                    </div>
+                    <Link
+                      to="/log"
+                      state={{ taskId: rec.taskId, taskTitle: rec.taskTitle }}
+                      className="btn-primary shrink-0 flex items-center justify-center gap-2 py-2.5 px-4"
+                    >
+                      I'll do this task
+                      <ChevronRight size={16} />
+                    </Link>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+
+          <div className="pt-4 border-t border-slate-100">
+            <button
+              type="button"
+              onClick={() => setRefineOpen((o) => !o)}
+              className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900"
+            >
+              <ChevronDown size={16} className={cn("transition-transform", refineOpen && "rotate-180")} />
+              {refineOpen ? "Hide quiz" : "Refine with a short quiz"}
+            </button>
+            {refineOpen && (
+              <div className="mt-4 space-y-5 pl-6 border-l-2 border-slate-100">
+                <p className="text-sm text-slate-500">Optional: answer a few questions for more personal recommendations.</p>
+                {questions.map((q) => (
+                  <div key={q.key} className="space-y-2">
+                    <label className="text-sm text-slate-600 block">{q.label}</label>
+                    <div className="flex gap-2">
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <button
+                          key={n}
+                          type="button"
+                          onClick={() => setAnswers({ ...answers, [q.key]: n })}
+                          className={cn(
+                            "flex-1 min-w-0 py-2 rounded-xl text-sm font-bold transition-colors",
+                            answers[q.key] === n
+                              ? "bg-primary text-white shadow-sm"
+                              : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                          )}
+                        >
+                          {n}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+                <div className="space-y-2">
+                  <label className="text-sm text-slate-600">How do you feel? (optional)</label>
+                  <textarea
+                    value={feelingText}
+                    onChange={(e) => setFeelingText(e.target.value)}
+                    placeholder="e.g. I want to focus on waste this week..."
+                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 min-h-[72px]"
+                    rows={2}
+                  />
+                </div>
+                <button
+                  onClick={fetchFromQuiz}
+                  disabled={refineLoading}
+                  className="btn-primary py-2.5 px-5 flex items-center gap-2 text-sm"
+                >
+                  <Sparkles size={16} />
+                  {refineLoading ? "Updating..." : "Get recommendations from quiz"}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
