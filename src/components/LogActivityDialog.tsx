@@ -232,12 +232,12 @@ export const LogActivityDialog = ({
         }
       }}
     >
-      <div className="relative max-w-3xl w-full" onMouseDown={(event) => event.stopPropagation()}>
-        <div className="card p-6 space-y-6">
+      <div className="relative w-[880px] max-w-full shrink-0" onMouseDown={(event) => event.stopPropagation()}>
+        <div className="card p-5 space-y-5">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 className="text-2xl">Log Your Impact</h2>
-              <p className="text-slate-500 text-sm">Snap, verify, and submit your sustainability action for points.</p>
+              <h2 className="text-xl font-bold">Log Your Impact</h2>
+              <p className="text-slate-500 text-xs mt-0.5">Snap, verify, and submit your sustainability action for points.</p>
             </div>
             <button
               type="button"
@@ -250,13 +250,13 @@ export const LogActivityDialog = ({
           </div>
 
           {submitSuccess ? (
-            <div className="space-y-6">
-              <div className={`rounded-xl p-4 border ${submitSuccess.status === "approved" ? "border-emerald-200 bg-emerald-50 text-emerald-900" : "border-amber-200 bg-amber-50 text-amber-900"}`}>
-                <div className="flex items-center gap-2 font-bold text-lg">
-                  <CheckCircle2 size={20} />
+            <div className="space-y-4">
+              <div className={`rounded-xl p-3 border ${submitSuccess.status === "approved" ? "border-emerald-200 bg-emerald-50 text-emerald-900" : "border-amber-200 bg-amber-50 text-amber-900"}`}>
+                <div className="flex items-center gap-2 font-bold text-base">
+                  <CheckCircle2 size={18} />
                   {submitSuccess.status === "approved" ? "Activity approved" : "Activity submitted for review"}
                 </div>
-                <p className="mt-2 text-sm">
+                <p className="mt-1.5 text-xs">
                   {submitSuccess.status === "approved"
                     ? `Great work. Your activity has been logged successfully and ${submitSuccess.points} Green Points were added.`
                     : "Your activity is now in review. You can keep logging more actions while this one is pending."}
@@ -264,32 +264,32 @@ export const LogActivityDialog = ({
                 <p className="mt-1 text-xs opacity-80">{submitSuccess.note}</p>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center gap-3">
+              <div className="flex flex-col sm:flex-row items-center gap-2">
                 <button
                   type="button"
                   onClick={resetForAnotherLog}
-                  className="btn-primary w-full sm:flex-1 h-12 flex items-center justify-center"
+                  className="btn-primary w-full sm:flex-1 h-10 text-sm flex items-center justify-center"
                 >
                   Add Another Log
                 </button>
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="w-full sm:flex-1 h-12 flex items-center justify-center border-2 border-slate-100 rounded-xl font-bold hover:bg-slate-50 transition-colors"
+                  className="w-full sm:flex-1 h-10 text-sm flex items-center justify-center border-2 border-slate-100 rounded-xl font-bold hover:bg-slate-50 transition-colors"
                 >
                   Close
                 </button>
               </div>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                  <Target size={16} className="text-primary" />
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                  <Target size={14} className="text-primary" />
                   Choose a task (optional)
                 </label>
                 <select
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
+                  className="w-full p-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
                   value={selectedTaskId}
                   onChange={(e) => handleTaskSelect(e.target.value)}
                 >
@@ -300,72 +300,72 @@ export const LogActivityDialog = ({
                     </option>
                   ))}
                 </select>
-                <p className="text-xs text-slate-500">Selecting a task pre-fills category and description. You can edit them.</p>
+                <p className="text-[11px] text-slate-500">Selecting a task pre-fills category and description. You can edit them.</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-sm font-bold text-slate-700">Category</label>
-                  <select
-                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  >
-                    <option>Waste Management</option>
-                    <option>Energy Conservation</option>
-                    <option>Community Outreach</option>
-                    <option>Environmental Advocacy</option>
-                    <option>Biodiversity</option>
-                    <option>Sustainability task</option>
-                  </select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-sm font-bold text-slate-700">Hours Involved</label>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700">Category</label>
+                <select
+                  className="w-full p-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                >
+                  <option>Waste Management</option>
+                  <option>Energy Conservation</option>
+                  <option>Community Outreach</option>
+                  <option>Environmental Advocacy</option>
+                  <option>Biodiversity</option>
+                  <option>Sustainability task</option>
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700">Hours Involved</label>
                   <input
                     type="number"
                     min="0.5"
                     step="0.5"
-                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
+                    className="w-full p-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
                     value={formData.hours}
                     onChange={(e) => setFormData({ ...formData, hours: parseFloat(e.target.value) })}
                   />
                 </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700">Date of Activity</label>
+                  <input
+                    type="date"
+                    className="w-full p-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
+                    value={formData.date}
+                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                  />
+                </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-sm font-bold text-slate-700">Date of Activity</label>
-                <input
-                  type="date"
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
-                  value={formData.date}
-                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-sm font-bold text-slate-700">Description</label>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700">Description</label>
                 <textarea
-                  rows={4}
+                  rows={3}
                   placeholder="What did you do? What was the impact?"
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none resize-none"
+                  className="w-full p-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none resize-none"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 />
-                <p className={`text-xs ${hasEnoughDescription ? "text-emerald-600" : "text-slate-500"}`}>
+                <p className={`text-[11px] ${hasEnoughDescription ? "text-emerald-600" : "text-slate-500"}`}>
                   {formData.description.trim().length}/{minDescriptionLength} minimum characters
                 </p>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700">Evidence (Optional)</label>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700">Evidence (Optional)</label>
                 <input
                   type="url"
                   placeholder="Link to photos, reports, or social posts"
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
+                  className="w-full p-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none"
                   value={formData.evidenceUrl}
                   onChange={(e) => setFormData({ ...formData, evidenceUrl: e.target.value })}
                 />
-                <p className="text-xs text-slate-500">Or upload a photo by browsing. AI verification will run automatically after you submit.</p>
+                <p className="text-[11px] text-slate-500">Or upload a photo by browsing. AI verification will run automatically after you submit.</p>
 
                 <input
                   ref={fileInputRef}
@@ -381,14 +381,14 @@ export const LogActivityDialog = ({
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className={`w-full text-left p-3 rounded-xl border transition-all ${proofImage ? "bg-emerald-50 border-emerald-200 text-emerald-900" : "bg-white border-slate-200 hover:border-primary/30 hover:bg-primary-light/40"}`}
+                  className={`w-full text-left p-2.5 text-sm rounded-xl border transition-all ${proofImage ? "bg-emerald-50 border-emerald-200 text-emerald-900" : "bg-white border-slate-200 hover:border-primary/30 hover:bg-primary-light/40"}`}
                 >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <Upload size={16} />
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <Upload size={14} />
                       <div className="truncate">
-                        <p className="text-sm font-semibold truncate">{proofImage ? proofImage.name : "Choose evidence image"}</p>
-                        <p className="text-xs opacity-80">{proofImage ? `${(proofImage.size / 1024).toFixed(0)} KB selected` : "PNG, JPG or HEIC supported"}</p>
+                        <p className="text-xs font-semibold truncate">{proofImage ? proofImage.name : "Choose evidence image"}</p>
+                        <p className="text-[11px] opacity-80">{proofImage ? `${(proofImage.size / 1024).toFixed(0)} KB selected` : "PNG, JPG or HEIC supported"}</p>
                       </div>
                     </div>
                     {proofImage ? (
@@ -414,20 +414,20 @@ export const LogActivityDialog = ({
                 )}
               </div>
 
-              {submitError && <p className="text-sm text-red-600 font-semibold">{submitError}</p>}
+              {submitError && <p className="text-xs text-red-600 font-semibold">{submitError}</p>}
 
               {isSubmitting && (
-                <div className="flex items-center gap-2 text-sm text-slate-600">
+                <div className="flex items-center gap-2 text-xs text-slate-600">
                   <LoaderCircle size={16} className="animate-spin" />
                   {submitStage}
                 </div>
               )}
 
-              <div className="pt-0 flex flex-col sm:flex-row items-center gap-3">
+              <div className="pt-0 flex flex-col sm:flex-row items-center gap-2">
                 <button
                   type="submit"
                   disabled={!canSubmit}
-                  className={`${isDirty ? "sm:flex-[2]" : "sm:flex-1"} w-full sm:w-auto btn-primary h-12 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed`}
+                  className={`${isDirty ? "sm:flex-[2]" : "sm:flex-1"} w-full sm:w-auto btn-primary h-10 text-sm flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
                   {isSubmitting ? "Submitting..." : "Submit Activity"}
                 </button>
@@ -435,7 +435,7 @@ export const LogActivityDialog = ({
                   <button
                     type="button"
                     onClick={resetForAnotherLog}
-                    className="w-full sm:flex-1 h-12 flex items-center justify-center border-2 border-red-100 text-red-600 rounded-xl font-bold text-center hover:bg-red-50 hover:text-red-700 transition-colors"
+                    className="w-full sm:flex-1 h-10 text-sm flex items-center justify-center border-2 border-red-100 text-red-600 rounded-xl font-bold text-center hover:bg-red-50 hover:text-red-700 transition-colors"
                   >
                     Reset
                   </button>

@@ -207,13 +207,13 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
             }}
           >
             <div
-              className="bg-white rounded-2xl max-w-xl w-full p-6 space-y-5 shadow-xl"
+              className="bg-white rounded-2xl w-[560px] max-w-full p-5 space-y-4 shadow-xl"
               onMouseDown={(event) => event.stopPropagation()}
             >
-              <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h3 className="text-xl font-bold">Personalise your AI</h3>
-                  <p className="text-sm text-slate-500">
+                  <h3 className="text-lg font-bold">Personalise your AI</h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
                     Answer a few quick questions and we’ll fine-tune your recommendations.
                   </p>
                 </div>
@@ -227,18 +227,18 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
                 </button>
               </div>
 
-              <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
+              <div className="space-y-3 overflow-hidden">
                 {questions.map((q) => (
-                  <div key={q.key} className="space-y-2">
-                    <label className="text-sm text-slate-600 block">{q.label}</label>
-                    <div className="flex gap-2">
+                  <div key={q.key} className="space-y-1">
+                    <label className="text-xs text-slate-600 block">{q.label}</label>
+                    <div className="flex gap-1.5">
                       {[1, 2, 3, 4, 5].map((n) => (
                         <button
                           key={n}
                           type="button"
                           onClick={() => setAnswers({ ...answers, [q.key]: n })}
                           className={cn(
-                            "flex-1 min-w-0 py-2 rounded-xl text-sm font-bold transition-colors",
+                            "flex-1 min-w-0 py-1.5 rounded-lg text-sm font-bold transition-colors",
                             answers[q.key] === n
                               ? "bg-primary text-white shadow-sm"
                               : "bg-slate-100 text-slate-600 hover:bg-slate-200",
@@ -250,19 +250,19 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
                     </div>
                   </div>
                 ))}
-                <div className="space-y-2">
-                  <label className="text-sm text-slate-600">How do you feel? (optional)</label>
-                  <textarea
+                <div className="space-y-1">
+                  <label className="text-xs text-slate-600">How do you feel? (optional)</label>
+                  <input
+                    type="text"
                     value={feelingText}
                     onChange={(e) => setFeelingText(e.target.value)}
                     placeholder="e.g. I want to focus on waste this week..."
-                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 min-h-[72px]"
-                    rows={2}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2">
+              <div className="flex items-center justify-end gap-2 pt-1">
                 <button
                   type="button"
                   onClick={() => setRefineOpen(false)}
