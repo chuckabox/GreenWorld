@@ -360,14 +360,15 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
             <button
               type="button"
               onClick={() => setCreateChannelOpen(true)}
-              className="text-[10px] font-medium px-2 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50"
+              className="p-1 rounded-lg text-slate-400 hover:text-primary hover:bg-primary-light transition-colors"
+              title="Add community"
             >
-              + New
+              <Plus size={16} />
             </button>
           </div>
           <ul className="space-y-0.5">
             {channels.map((ch) => {
-              const Icon = ch.icon;
+              const Icon = ch.icon || Hash;
               return (
                 <li key={ch.id}>
                   <button
@@ -438,24 +439,7 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {viewMode === "channel" && (
-              <div className="hidden sm:flex items-center gap-2 text-slate-400">
-                <button
-                  type="button"
-                  className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-slate-50 text-xs font-medium"
-                >
-                  <Users size={14} />
-                  Members
-                </button>
-                <button
-                  type="button"
-                  className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-slate-50 text-xs font-medium"
-                >
-                  <Hash size={14} />
-                  Channel settings
-                </button>
-              </div>
-            )}
+
             <button
               type="button"
               className="inline-flex md:hidden items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50"
@@ -683,14 +667,15 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
                       setIsMobileSidebarOpen(false);
                       setCreateChannelOpen(true);
                     }}
-                    className="text-[10px] font-medium px-2 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50"
+                    className="p-1 rounded-lg text-slate-400 hover:text-primary hover:bg-primary-light transition-colors"
+                    title="Add community"
                   >
-                    + New
+                    <Plus size={16} />
                   </button>
                 </div>
                 <ul className="space-y-0.5 max-h-40 overflow-y-auto">
                   {channels.map((ch) => {
-                    const Icon = ch.icon;
+                    const Icon = ch.icon || Hash;
                     return (
                       <li key={ch.id}>
                         <button
@@ -816,7 +801,7 @@ export const DiscussionBoard = ({ user }: { user: UserData }) => {
                 />
               </label>
               <p className="text-xs text-slate-500">
-                This is a demo-only community – perfect for showing how students could create their own spaces.
+                Create a new space for your friends or local group to share ideas and coordinate events.
               </p>
             </div>
             <div className="p-4 border-t border-slate-100 flex justify-end gap-2">

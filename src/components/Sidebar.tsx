@@ -102,13 +102,17 @@ export const Sidebar = ({
                             : "text-slate-500 hover:bg-slate-50 hover:text-slate-900",
                         )}
                       >
-                        <Icon
-                          size={20}
-                          className={cn(
-                            isActive ? "text-primary" : "text-slate-400 group-hover:text-slate-600",
-                          )}
-                        />
-                        {item.name}
+                        <div className="flex items-center justify-between w-full">
+                          <div className="flex items-center gap-3">
+                            <Icon
+                              size={20}
+                              className={cn(
+                                isActive ? "text-primary" : "text-slate-400 group-hover:text-slate-600",
+                              )}
+                            />
+                            {item.name}
+                          </div>
+                        </div>
                       </Link>
                     );
                   })}
@@ -139,49 +143,55 @@ export const Sidebar = ({
           </div>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-between h-full py-3 bg-white">
-          <button
-            type="button"
-            onClick={onToggle}
-            className="p-2 rounded-xl hover:bg-slate-100 text-slate-500"
-            aria-label="Expand sidebar"
-          >
-            <Menu size={20} />
-          </button>
-          <nav className="flex-1 flex flex-col items-center gap-4 mt-4 text-slate-400">
-            {navGroups.flatMap((group) => group.items).map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.path;
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={cn(
-                    "p-2.5 rounded-xl transition-colors",
-                    isActive
-                      ? "bg-primary-light text-primary"
-                      : "hover:bg-slate-50 hover:text-slate-700",
-                  )}
-                  title={item.name}
-                >
-                  <Icon
-                    size={20}
-                    className={cn(isActive ? "text-primary" : "text-slate-400")}
-                  />
-                </Link>
-              );
-            })}
+        <div className="flex flex-col items-center justify-between h-full bg-white">
+          <div className="h-16 flex items-center justify-center w-full shrink-0">
+            <button
+              type="button"
+              onClick={onToggle}
+              className="p-2 rounded-xl hover:bg-slate-100 text-slate-500"
+              aria-label="Expand sidebar"
+            >
+              <Menu size={20} />
+            </button>
+          </div>
+          <nav className="flex-1 w-full px-2 py-4 overflow-y-auto flex flex-col items-center">
+            <div className="space-y-1 w-full flex flex-col items-center text-slate-400">
+              {navGroups.flatMap((group) => group.items).map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.path;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={cn(
+                      "p-3 rounded-xl transition-colors w-full flex justify-center relative",
+                      isActive
+                        ? "bg-primary-light text-primary"
+                        : "hover:bg-slate-50 hover:text-slate-700",
+                    )}
+                    title={item.name}
+                  >
+                    <Icon
+                      size={20}
+                      className={cn(isActive ? "text-primary" : "text-slate-400")}
+                    />
+                  </Link>
+                );
+              })}
+            </div>
           </nav>
-          <button
-            className="mb-2 p-2 rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
-            onClick={() => {
-              localStorage.removeItem("userEmail");
-              navigate("/");
-            }}
-            aria-label="Sign out"
-          >
-            <LogOut size={18} />
-          </button>
+          <div className="pb-3 w-full flex justify-center shrink-0">
+            <button
+              className="p-2 rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+              onClick={() => {
+                localStorage.removeItem("userEmail");
+                navigate("/");
+              }}
+              aria-label="Sign out"
+            >
+              <LogOut size={18} />
+            </button>
+          </div>
         </div>
       )}
     </div>

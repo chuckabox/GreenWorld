@@ -10,36 +10,36 @@ const learningThemes = [
       {
         title: "🌊 Ocean & Marine Life",
         slug: "ocean-marine",
-        duration: "70 mins",
-        modules: 4,
+        duration: "15 mins",
+        points: 8,
         accent: "bg-blue-50 text-blue-700",
       },
       {
         title: "🌳 Forests & Biodiversity",
         slug: "forests-biodiversity",
-        duration: "85 mins",
-        modules: 5,
+        duration: "12 mins",
+        points: 6,
         accent: "bg-emerald-50 text-emerald-700",
       },
       {
         title: "🐝 Wildlife & Ecosystems",
         slug: "wildlife-ecosystems",
-        duration: "60 mins",
-        modules: 4,
+        duration: "10 mins",
+        points: 5,
         accent: "bg-amber-50 text-amber-700",
       },
       {
         title: "🌱 Soil & Agriculture",
         slug: "soil-agriculture",
-        duration: "75 mins",
-        modules: 4,
+        duration: "8 mins",
+        points: 4,
         accent: "bg-lime-50 text-lime-700",
       },
       {
         title: "💧 Water Resources",
         slug: "water-resources",
-        duration: "65 mins",
-        modules: 3,
+        duration: "14 mins",
+        points: 7,
         accent: "bg-sky-50 text-sky-700",
       },
     ],
@@ -51,29 +51,29 @@ const learningThemes = [
       {
         title: "⚡ Energy & Climate",
         slug: "energy-climate",
-        duration: "80 mins",
-        modules: 5,
+        duration: "18 mins",
+        points: 9,
         accent: "bg-amber-50 text-amber-700",
       },
       {
         title: "♻️ Waste & Circular Economy",
         slug: "waste-circular",
-        duration: "70 mins",
-        modules: 4,
+        duration: "10 mins",
+        points: 5,
         accent: "bg-emerald-50 text-emerald-700",
       },
       {
         title: "🚲 Sustainable Cities & Transport",
         slug: "sustainable-cities",
-        duration: "90 mins",
-        modules: 5,
+        duration: "16 mins",
+        points: 8,
         accent: "bg-blue-50 text-blue-700",
       },
       {
         title: "🍎 Food & Sustainable Consumption",
         slug: "food-consumption",
-        duration: "60 mins",
-        modules: 3,
+        duration: "12 mins",
+        points: 6,
         accent: "bg-rose-50 text-rose-700",
       },
     ],
@@ -85,22 +85,22 @@ const learningThemes = [
       {
         title: "🧠 Green Innovation & Technology",
         slug: "green-innovation",
-        duration: "75 mins",
-        modules: 4,
+        duration: "14 mins",
+        points: 7,
         accent: "bg-violet-50 text-violet-700",
       },
       {
         title: "🌍 Climate Action & Policy",
         slug: "climate-policy",
-        duration: "85 mins",
-        modules: 5,
+        duration: "15 mins",
+        points: 8,
         accent: "bg-slate-50 text-slate-700",
       },
       {
         title: "🤝 Community Sustainability",
         slug: "community-sustainability",
-        duration: "65 mins",
-        modules: 3,
+        duration: "9 mins",
+        points: 4,
         accent: "bg-teal-50 text-teal-700",
       },
     ],
@@ -169,7 +169,9 @@ export const LearningHub = () => {
                       </div>
                       <div>
                         <h4 className="text-lg font-bold group-hover:text-primary transition-colors">{path.title}</h4>
-                        <p className="text-xs text-slate-500">{path.modules} modules • {path.duration}</p>
+                        <p className="text-xs text-slate-500 font-medium">
+                          {path.duration} • <span className="text-amber-600 font-bold">{path.points} pts</span>
+                        </p>
                       </div>
                     </div>
                     <ArrowUpRight size={20} className="text-slate-300 group-hover:text-primary transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

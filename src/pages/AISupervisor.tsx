@@ -157,39 +157,56 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
         </p>
       </div>
 
-      {isLoading ? (
-        <div className="card py-12 flex items-center justify-center gap-3 text-slate-500">
-          <Sparkles size={24} className="animate-pulse text-primary" />
-          <span>Finding recommendations...</span>
-        </div>
-      ) : (
-        <div className="card space-y-6">
-          <div className="flex items-center justify-between flex-wrap gap-3">
-            <h3 className="text-xl font-bold text-slate-900">Recommended for you</h3>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={refreshFromProfile}
-                disabled={isLoading}
-                className="p-2 text-slate-400 hover:text-primary hover:bg-slate-50 rounded-xl transition-all disabled:opacity-50"
-                title="Refresh recommendations"
-              >
-                <RotateCw size={18} className={cn(isLoading && "animate-spin")} />
-              </button>
-              <button
-                type="button"
-                onClick={() => setRefineOpen(true)}
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50"
-              >
-                <Sparkles size={16} className="text-primary" />
-                Take quiz
-              </button>
-            </div>
+      <div className="card space-y-6">
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <h3 className="text-xl font-bold text-slate-900">Recommended for you</h3>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={refreshFromProfile}
+              disabled={isLoading}
+              className="p-2 text-slate-400 hover:text-primary hover:bg-slate-50 rounded-xl transition-all disabled:opacity-50"
+              title="Refresh recommendations"
+            >
+              <RotateCw size={18} className={cn(isLoading && "animate-spin")} />
+            </button>
+            <button
+              type="button"
+              onClick={() => setRefineOpen(true)}
+              disabled={isLoading}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-50"
+            >
+              <Sparkles size={16} className="text-primary" />
+              Take quiz
+            </button>
           </div>
+        </div>
 
-          {error && <p className="text-sm text-red-600 font-medium">{error}</p>}
+        {error && <p className="text-sm text-red-600 font-medium">{error}</p>}
 
-          {recommendations !== null && recommendations.length === 0 ? (
+        <div className="transition-all duration-300">
+          {isLoading ? (
+            <ul className="space-y-4">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <li
+                  key={i}
+                  className="p-4 rounded-xl border border-slate-200 bg-slate-50/50"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 animate-pulse">
+                    <div className="flex-1 min-w-0">
+                      <div className="h-5 bg-slate-200 rounded w-1/3 mb-1"></div>
+                      <div className="h-4 bg-slate-200 rounded w-full mt-1 mb-1"></div>
+                      <div className="h-4 bg-slate-200 rounded w-2/3 mb-2"></div>
+                      <div className="h-6 bg-slate-200 rounded-full w-20 mt-2"></div>
+                    </div>
+                    <div className="shrink-0 mt-3 sm:mt-0">
+                      <div className="h-10 bg-slate-200 rounded-xl w-full sm:w-28"></div>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : recommendations !== null && recommendations.length === 0 ? (
             <p className="text-slate-500">No recommendations right now. Try refining with the quiz.</p>
           ) : recommendations !== null ? (
             <ul className="space-y-4">
@@ -228,9 +245,11 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
                 </li>
               ))}
             </ul>
-          ) : null}
+          ) : (
+            <div className="h-40" />
+          )}
         </div>
-      )}
+      </div>
 
       {/* Quiz dialog (full-page overlay via portal) */}
       {refineOpen &&
