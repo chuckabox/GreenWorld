@@ -8,6 +8,7 @@ import heroBg from "../assets/hero_background.png";
 import reforestationImg from "../assets/reforestation.png";
 import universityImg from "../assets/university_recognition.png";
 import analyticsImg from "../assets/impact_analytics.png";
+import councilImg from "../assets/council_support.png";
 
 export const LandingPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -36,7 +37,7 @@ export const LandingPage = () => {
           <div className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600">
             <a href="#levels" className="hover:text-primary transition-colors">Levels</a>
             <a href="#how-it-works" className="hover:text-primary transition-colors">How it Works</a>
-            <a href="#faq" className="hover:text-primary transition-colors">FAQ</a>
+            <a href="#council" className="hover:text-primary transition-colors">Council Support</a>
           </div>
           <Link to={authPath} className="btn-primary text-sm shadow-md">{authText}</Link>
         </div>
@@ -73,6 +74,37 @@ export const LandingPage = () => {
               </motion.a>
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Council Support Section */}
+      <section id="council" className="py-16 bg-white border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
+          <div className="flex-1 text-center md:text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-bold uppercase tracking-wider mb-6">
+              <Globe size={14} />
+              Official City Partner
+            </div>
+            <h2 className="text-3xl md:text-4xl font-display font-bold mb-6">Supported by Brisbane City Council</h2>
+            <p className="text-slate-600 text-lg leading-relaxed mb-8">
+              We are proud to be supported by the Brisbane City Council in our mission to build a more sustainable future. Through this partnership, we're empowering residents to take verifiable action for our local environment.
+            </p>
+            <div className="flex items-center justify-center md:justify-start gap-4">
+              <div className="h-px w-12 bg-slate-200"></div>
+              <span className="text-slate-400 font-medium text-sm">Working together for a cleaner Brisbane</span>
+              <div className="h-px w-12 bg-slate-200"></div>
+            </div>
+          </div>
+          <div className="w-full max-w-[320px] md:max-w-none md:flex-1 flex justify-center">
+            <div className="relative group">
+              <div className="absolute -inset-4 bg-gradient-to-tr from-primary/10 to-blue-500/10 rounded-[2.5rem] blur-2xl group-hover:blur-3xl transition-all opacity-70"></div>
+              <img 
+                src={councilImg} 
+                alt="Brisbane City Council Support" 
+                className="relative w-full max-w-[400px] h-auto object-contain drop-shadow-2xl grayscale hover:grayscale-0 transition-all duration-700"
+              />
+            </div>
+          </div>
         </div>
       </section>
 
