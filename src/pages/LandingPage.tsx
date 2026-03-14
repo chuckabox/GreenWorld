@@ -60,9 +60,6 @@ export const LandingPage = () => {
 
         <div className="relative z-20 max-w-4xl mx-auto px-6 text-center text-white flex flex-col items-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <span className="inline-block px-4 py-1.5 bg-primary/20 backdrop-blur-md border border-primary/30 text-primary-light rounded-full text-xs font-bold tracking-widest uppercase mb-8 shadow-sm">
-              AI-Powered Eco Verification
-            </span>
             <h1 className="text-5xl md:text-7xl font-display font-bold leading-tight mb-4 drop-shadow-lg">
               Make an impact.<br />
               <span className="text-primary drop-shadow-md">Earn the Badge.</span>
@@ -88,10 +85,6 @@ export const LandingPage = () => {
       <section id="council" className="py-16 bg-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
           <div className="flex-1 text-center md:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-bold uppercase tracking-wider mb-6">
-              <Globe size={14} />
-              Official City Partner
-            </div>
             <h2 className="text-3xl md:text-4xl font-display font-bold mb-6">Supported by Brisbane City Council</h2>
             <p className="text-slate-600 text-lg leading-relaxed mb-8">
               We are proud to be supported by the Brisbane City Council in our mission to build a more sustainable future. Through this partnership, we're empowering residents to take verifiable action for our local environment.
@@ -105,9 +98,9 @@ export const LandingPage = () => {
           <div className="w-full max-w-[320px] md:max-w-none md:flex-1 flex justify-center">
             <div className="relative group">
               <div className="absolute -inset-4 bg-gradient-to-tr from-primary/10 to-blue-500/10 rounded-[2.5rem] blur-2xl group-hover:blur-3xl transition-all opacity-70"></div>
-              <img 
-                src={councilImg} 
-                alt="Brisbane City Council Support" 
+              <img
+                src={councilImg}
+                alt="Brisbane City Council Support"
                 className="relative w-full max-w-[400px] h-auto object-contain drop-shadow-2xl grayscale hover:grayscale-0 transition-all duration-700"
               />
             </div>
