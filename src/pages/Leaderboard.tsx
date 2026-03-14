@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { cn } from "../lib/utils";
-import { Activity, StoredUser } from "../types";
+import { Activity, StoredUser, UserData } from "../types";
+import { toRoman } from "../lib/badges";
 
-export const Leaderboard = () => {
+export const Leaderboard = ({ user }: { user: UserData }) => {
   const [leaders, setLeaders] = useState<any[]>([]);
   const [communityStats, setCommunityStats] = useState({ co2Kg: 0, activitiesCount: 0, members: 0 });
   const [highlight, setHighlight] = useState({
@@ -11,6 +12,8 @@ export const Leaderboard = () => {
     recentAction: "No verified actions yet",
     topTeam: "No team data",
   });
+  const [userRank, setUserRank] = useState<number>(0);
+  const userLevel = Math.floor((user?.impact_points || 0) / 500) + 1;
 
   useEffect(() => {
     const users: StoredUser[] = JSON.parse(localStorage.getItem("users") || "[]");
@@ -54,6 +57,13 @@ export const Leaderboard = () => {
     const topTeamEntry = Object.entries(teamCount).sort((a, b) => b[1] - a[1])[0];
     const recentApproved = approvedActivities[approvedActivities.length - 1];
 
+    const allRanked = users
+      .filter((u) => u.role !== "admin")
+      .sort((a, b) => (b.impact_points || 0) - (a.impact_points || 0));
+    
+    const myRank = allRanked.findIndex(u => u.email.toLowerCase() === user.email.toLowerCase()) + 1;
+    setUserRank(myRank);
+
     setHighlight({
       topCategory: topCategoryEntry?.[0] ?? "No actions yet",
       topCategoryCount: topCategoryEntry?.[1] ?? 0,
@@ -62,7 +72,7 @@ export const Leaderboard = () => {
         : "No verified actions yet",
       topTeam: topTeamEntry?.[0] ?? "No team data",
     });
-  }, []);
+  }, [user.email]);
 
   return (
     <div className="p-6 space-y-6">
@@ -126,37 +136,21 @@ export const Leaderboard = () => {
             </div>
           </div>
 
-          <div className="card">
-            <h3 className="text-xl mb-4">Verified Impact</h3>
-            <div className="space-y-3 text-sm">
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                <p className="text-slate-500 text-xs font-semibold uppercase tracking-wide mb-1">
-                  Most common action type
-                </p>
-                <p className="font-bold text-slate-900">
-                  {highlight.topCategory} ({highlight.topCategoryCount} logs)
-                </p>
+          <div className="card text-center p-8 bg-slate-50 border-slate-200">
+            <div className="w-24 h-24 bg-white rounded-3xl mx-auto mb-4 shadow-sm border border-slate-100 overflow-hidden">
+               <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} alt="avatar" className="w-full h-full object-cover" />
+            </div>
+            <h3 className="text-2xl font-bold text-slate-900 mb-1">{user.name}</h3>
+            <p className="text-sm text-slate-500 font-medium mb-6">Badge {toRoman(userLevel)} Contributor</p>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 rounded-2xl bg-white border border-slate-100 shadow-sm">
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Your Rank</p>
+                <p className="text-2xl font-black text-primary">#{userRank || "-"}</p>
               </div>
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                <p className="text-slate-500 text-xs font-semibold uppercase tracking-wide mb-1">
-                  Latest verified action
-                </p>
-                <p className="font-bold text-slate-900">
-                  {highlight.recentAction}
-                </p>
-              </div>
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
-                <div>
-                  <p className="text-slate-500 text-xs font-semibold uppercase tracking-wide mb-1">
-                    Most active team
-                  </p>
-                  <p className="font-bold text-slate-900">
-                    {highlight.topTeam}
-                  </p>
-                </div>
-                <span className="px-2 py-1 rounded-full bg-primary-light text-primary text-[11px] font-semibold">
-                  Verified by AI
-                </span>
+              <div className="p-4 rounded-2xl bg-white border border-slate-100 shadow-sm">
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Total Pts</p>
+                <p className="text-2xl font-black text-primary">{user.impact_points}</p>
               </div>
             </div>
           </div>

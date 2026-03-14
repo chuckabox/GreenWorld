@@ -26,9 +26,9 @@ export const GreenPassInfoDialog = ({ onClose }: { onClose: () => void }) => {
       bg: "bg-purple-50"
     },
     {
-      icon: TrendingUp,
-      title: "Point Multipliers",
-      description: "Earn 1.5x points on every activity you log with a verified Pass.",
+      icon: ShieldCheck,
+      title: "Badge Certificate",
+      description: "Download a CV-ready certificate with your current sustainability badge.",
       color: "text-orange-600",
       bg: "bg-orange-50"
     }
@@ -42,48 +42,42 @@ export const GreenPassInfoDialog = ({ onClose }: { onClose: () => void }) => {
       }}
     >
       <div 
-        className="relative max-w-md w-full bg-white rounded-3xl p-6 shadow-2xl space-y-6"
+        className="relative max-w-2xl w-full bg-white rounded-3xl p-8 shadow-2xl space-y-8"
         onMouseDown={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary-light text-primary rounded-xl flex items-center justify-center">
-              <ShieldCheck size={24} />
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-primary-light text-primary rounded-2xl flex items-center justify-center">
+              <ShieldCheck size={28} />
             </div>
             <div>
-              <h2 className="text-xl font-bold">Green Pass Perks</h2>
-              <p className="text-xs text-slate-500 font-medium tracking-tight">Your verified status unlocks value.</p>
+              <h2 className="text-2xl font-bold">Green Pass Perks</h2>
+              <p className="text-sm text-slate-500 font-medium tracking-tight">Your verified status unlocks these benefits.</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 hover:bg-slate-100 rounded-full text-slate-400 transition-colors"
+            className="p-2 hover:bg-slate-100 rounded-full text-slate-400 transition-colors"
           >
-            <X size={20} />
+            <X size={24} />
           </button>
         </div>
 
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {perks.map((perk, i) => {
             const Icon = perk.icon;
             return (
-              <div key={i} className="flex gap-4 p-3 rounded-2xl hover:bg-slate-50 transition-colors group">
+              <div key={i} className="flex flex-col gap-3 p-5 rounded-2xl bg-slate-50 border border-slate-100 hover:border-primary/20 transition-all group">
                 <div className={cn("w-10 h-10 shrink-0 rounded-xl flex items-center justify-center", perk.bg, perk.color)}>
                   <Icon size={20} />
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm text-slate-900 mb-0.5">{perk.title}</h4>
+                  <h4 className="font-bold text-base text-slate-900 mb-1">{perk.title}</h4>
                   <p className="text-xs text-slate-500 leading-relaxed">{perk.description}</p>
                 </div>
               </div>
             );
           })}
-        </div>
-
-        <div className="bg-primary-light/30 p-4 rounded-2xl border border-primary/10">
-          <p className="text-xs text-slate-600 leading-relaxed text-center italic">
-            "Your actions don't just help the planet, they reward you too. Keep logging to earn more pts!"
-          </p>
         </div>
 
         <button

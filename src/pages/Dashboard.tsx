@@ -1,12 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { PlusCircle, Zap, Globe, Clock, AlertCircle, ChevronDown, ChevronLeft, ChevronRight, Target, Calendar, ShieldCheck, Info } from "lucide-react";
+import { PlusCircle, Zap, Globe, Clock, AlertCircle, ChevronDown, ChevronLeft, ChevronRight, Target, Calendar, ShieldCheck, Info, History, X as CloseIcon } from "lucide-react";
 import { cn } from "../lib/utils";
 import { UserData, Activity } from "../types";
 import { getLevelLabel, toRoman } from "../lib/badges";
 import tasksAndEventsData from "../data/tasksAndEvents.json";
 import { LogActivityDialog } from "../components/LogActivityDialog";
 import { GreenPassInfoDialog } from "../components/GreenPassInfoDialog";
+import { EventHistoryDialog } from "../components/EventHistoryDialog";
 
 type FilterDropdownOption = {
   value: string;
@@ -83,6 +84,7 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
   const [activityPage, setActivityPage] = useState(1);
   const [isLogDialogOpen, setIsLogDialogOpen] = useState(false);
   const [isInfoDialogOpen, setIsInfoDialogOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   
   const currentLevel = Math.floor(user.impact_points / 500) + 1;
   const nextLevelThreshold = currentLevel * 500;
@@ -165,10 +167,6 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-1.5">
                 <p className="text-sm text-slate-500 font-medium">Green Pass</p>
-                <div className="px-1.5 py-0.5 bg-primary/10 text-primary text-[10px] font-bold rounded flex items-center gap-1 border border-primary/20">
-                  <ShieldCheck size={10} />
-                  VERIFIED
-                </div>
               </div>
               <button 
                 onClick={() => setIsInfoDialogOpen(true)}
@@ -197,11 +195,20 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
           </div>
         </div>
         <div className="card flex items-center gap-4">
-          <div className="w-12 h-12 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center">
+          <div className="w-12 h-12 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center shrink-0">
             <Calendar size={24} />
           </div>
-          <div>
-            <p className="text-sm text-slate-500 font-medium">Events Completed</p>
+          <div className="flex-1">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-sm text-slate-500 font-medium">Events Completed</p>
+              <button 
+                onClick={() => setIsHistoryOpen(true)}
+                className="text-slate-300 hover:text-orange-600 transition-colors p-1"
+                aria-label="View History"
+              >
+                <History size={16} />
+              </button>
+            </div>
             <p className="text-2xl font-bold">{totalEventsCompleted}</p>
           </div>
         </div>
@@ -388,6 +395,12 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
       )}
       {isInfoDialogOpen && (
         <GreenPassInfoDialog onClose={() => setIsInfoDialogOpen(false)} />
+      )}
+      {isHistoryOpen && (
+        <EventHistoryDialog 
+          activities={safeActivities} 
+          onClose={() => setIsHistoryOpen(false)} 
+        />
       )}
     </div>
   );

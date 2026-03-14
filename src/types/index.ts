@@ -26,6 +26,7 @@ export interface Activity {
   status: 'pending' | 'approved' | 'rejected';
   taskId?: string;
   taskTitle?: string;
+  pointsEarned?: number;
 }
 
 export interface StoredUser extends UserData {

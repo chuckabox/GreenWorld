@@ -165,7 +165,7 @@ const AppContent = () => {
               <Route path="/learning" element={user ? <LearningHub /> : <Navigate to="/login" replace />} />
               <Route path="/green-hub/waste-circular" element={user ? <GreenHubCategory /> : <Navigate to="/login" replace />} />
               <Route path="/community" element={user ? <DiscussionBoard user={user} /> : <Navigate to="/login" replace />} />
-              <Route path="/leaderboard" element={user ? <Leaderboard /> : <Navigate to="/login" replace />} />
+              <Route path="/leaderboard" element={user ? <Leaderboard user={user} /> : <Navigate to="/login" replace />} />
               <Route path="/admin" element={user ? <AdminPortal /> : <Navigate to="/login" replace />} />
             </Routes>
           </motion.div>
