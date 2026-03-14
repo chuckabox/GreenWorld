@@ -17,6 +17,7 @@ import { Portfolio } from "./pages/Portfolio";
 import { AdminPortal } from "./pages/AdminPortal";
 import { AISupervisor } from "./pages/AISupervisor";
 import { LearningHub } from "./pages/LearningHub";
+import { GreenHubCategory } from "./pages/GreenHubCategory";
 import demoAccounts from "./data/demoAccounts.json";
 
 const AppContent = () => {
@@ -121,6 +122,7 @@ const AppContent = () => {
           location.pathname === "/log" ? "Log Activity" :
           location.pathname === "/ai-supervisor" ? "AI Advisor" :
           location.pathname === "/learning" ? "Green Hub" :
+          location.pathname === "/green-hub/waste-circular" ? "Waste & Circular Economy" :
           location.pathname === "/leaderboard" ? "Leaderboard" :
           location.pathname === "/portfolio" ? "Profile" :
           location.pathname === "/admin" ? "Admin Portal" : ""
@@ -164,6 +166,7 @@ const AppContent = () => {
               <Route path="/log" element={user ? <LogActivity userId={user.id} onActivityLogged={loadUserData} /> : <Navigate to="/login" replace />} />
               <Route path="/ai-supervisor" element={user ? <AISupervisor user={user} activities={activities} onPointsAdded={loadUserData} /> : <Navigate to="/login" replace />} />
               <Route path="/learning" element={user ? <LearningHub /> : <Navigate to="/login" replace />} />
+              <Route path="/green-hub/waste-circular" element={user ? <GreenHubCategory /> : <Navigate to="/login" replace />} />
               <Route path="/leaderboard" element={user ? <Leaderboard /> : <Navigate to="/login" replace />} />
               <Route path="/portfolio" element={user ? <Portfolio user={user} /> : <Navigate to="/login" replace />} />
               <Route path="/admin" element={user ? <AdminPortal /> : <Navigate to="/login" replace />} />
