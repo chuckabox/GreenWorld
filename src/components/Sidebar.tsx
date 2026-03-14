@@ -66,7 +66,9 @@ export const Sidebar = ({
               <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shrink-0">
                 <Leaf size={24} />
               </div>
-              <span className="font-display font-bold text-xl tracking-tight text-slate-900">GreenWorld</span>
+              <span className="font-display font-bold text-xl tracking-tight text-slate-900 text-ellipsis overflow-hidden">
+                GreenWorld
+              </span>
             </Link>
             <button
               onClick={onToggle}

@@ -49,7 +49,7 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) =
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
@@ -70,7 +70,7 @@ export const SignUpPage = ({ onSignUp }: { onSignUp?: (payload: SignUpPayload) =
 
           <div className="mb-8">
             <h1 className="text-3xl font-display font-bold mb-3 text-slate-900 tracking-tight">
-              Join the Movement
+              Join GreenWorld
             </h1>
             <p className="text-slate-500 leading-relaxed text-sm">
               Create your account to start your journey towards environmental excellence.
