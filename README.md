@@ -7,7 +7,7 @@ Our platform connects people, guides them toward meaningful environmental activi
 This project was built as a **frontend-first MVP for the Library Hackathon 2026**.
 
 🏆 **Achievements**
-- **Top 5 Finalist** at the Library Hackathon 2026
+- **Top 5 Team** at the Library Hackathon 2026
 - **Judges’ Choice Award**
 
 ## Problem
