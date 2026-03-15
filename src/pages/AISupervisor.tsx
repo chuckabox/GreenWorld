@@ -59,7 +59,6 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
   const [refineOpen, setRefineOpen] = useState(false);
   const [answers, setAnswers] = useState<QuestionnaireInput>(defaultAnswers);
   const [feelingText, setFeelingText] = useState("");
-  const [refineLoading, setRefineLoading] = useState(false);
   const [isLogDialogOpen, setIsLogDialogOpen] = useState(false);
   const [selectedTaskForLog, setSelectedTaskForLog] = useState<{ taskId: string; taskTitle: string } | null>(null);
   const refineScrollRef = useRef<HTMLDivElement | null>(null);
@@ -132,17 +131,17 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
   };
 
   const fetchFromQuiz = async () => {
-    setRefineLoading(true);
-    setError(null);
-    try {
-      const list = await getTaskRecommendations(tasks, answers, feelingText.trim() || undefined);
-      setRecommendations(list);
-      setRefineOpen(false);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Recommendations failed.");
-    } finally {
-      setRefineLoading(false);
-    }
+    setRefineOpen(false);
+    refreshWithAnimation(async () => {
+      setError(null);
+      try {
+        const list = await getTaskRecommendations(tasks, answers, feelingText.trim() || undefined);
+        setRecommendations(list);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Recommendations failed.");
+        setRecommendations([]);
+      }
+    });
   };
 
   return (
@@ -358,11 +357,10 @@ export const AISupervisor = ({ user, activities, onPointsAdded }: Props) => {
                     </button>
                     <button
                       onClick={fetchFromQuiz}
-                      disabled={refineLoading}
-                      className="btn-primary py-2.5 px-5 flex items-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="btn-primary py-2.5 px-5 flex items-center gap-2 text-sm"
                     >
                       <Sparkles size={16} />
-                      {refineLoading ? "Updating..." : "Get Recommendations"}
+                      Get Recommendations
                     </button>
                   </div>
                 </div>

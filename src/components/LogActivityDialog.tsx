@@ -296,17 +296,17 @@ export const LogActivityDialog = ({
           <div className="mx-auto mb-3 h-1 w-12 rounded-full bg-slate-200 sm:hidden" />
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 className="text-2xl font-bold">Log Your Impact</h2>
+              <h2 className="text-2xl font-bold">{submitSuccess ? "Completed" : "Log Your Impact"}</h2>
               <p className="text-sm text-slate-500 mt-1">Snap, verify, and submit your sustainability action for points.</p>
             </div>
           </div>
 
           {submitSuccess ? (
             <div className="space-y-4">
-              <div className={`rounded-xl p-3 border ${submitSuccess.status === "approved" ? "border-emerald-200 bg-emerald-50 text-emerald-900" : "border-amber-200 bg-amber-50 text-amber-900"}`}>
+              <div className={`rounded-xl p-3 ${submitSuccess.status === "approved" ? "bg-emerald-50 text-emerald-900" : "bg-amber-50 text-amber-900"}`}>
                 <div className="flex items-center gap-2 font-bold text-base">
                   <CheckCircle2 size={18} />
-                  {submitSuccess.status === "approved" ? "Activity approved" : "Activity submitted for review"}
+                  {submitSuccess.status === "approved" ? "Activity Approved" : "Activity Submitted"}
                 </div>
                 <p className="mt-1.5 text-xs">
                   {submitSuccess.status === "approved"
@@ -316,20 +316,20 @@ export const LogActivityDialog = ({
                 <p className="mt-1 text-xs opacity-80">{submitSuccess.note}</p>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center gap-2">
-                <button
-                  type="button"
-                  onClick={resetForAnotherLog}
-                  className="btn-primary w-full sm:flex-1 h-10 text-sm flex items-center justify-center"
-                >
-                  Add Another Log
-                </button>
+              <div className="flex flex-col sm:flex-row items-center gap-3">
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="w-full sm:flex-1 h-10 text-sm flex items-center justify-center border-2 border-slate-100 rounded-xl font-bold hover:bg-slate-50 transition-colors"
+                  className="w-full sm:flex-1 h-12 text-base flex items-center justify-center border border-slate-200 rounded-xl font-medium text-slate-700 hover:bg-slate-50 transition-colors"
                 >
                   Close
+                </button>
+                <button
+                  type="button"
+                  onClick={resetForAnotherLog}
+                  className="btn-primary w-full sm:flex-1 h-12 text-base flex items-center justify-center"
+                >
+                  Add Another Log
                 </button>
               </div>
             </div>

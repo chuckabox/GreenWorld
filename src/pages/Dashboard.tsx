@@ -213,7 +213,7 @@ export const Dashboard = ({ user, activities, onActivityLogged }: { user: UserDa
           className="btn-primary flex items-center gap-2"
         >
           <PlusCircle size={20} />
-          Complete Task
+          Log Activity
         </button>
       </div>
 

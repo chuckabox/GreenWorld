@@ -58,6 +58,21 @@ export interface UserActivityProfile {
   taskIdsDone: string[];
 }
 
+const RANDOM_REASONS = [
+  "Perfectly aligned with your recent eco-actions.",
+  "A highly impactful step for your community.",
+  "Matches your interest in sustainable living.",
+  "Great way to build a consistent green habit.",
+  "A simple but effective contribution today.",
+  "Recommended based on your lifestyle profile.",
+  "Helps you reach your next badge milestone faster.",
+  "A popular choice among eco-conscious users.",
+  "Tailored to your current sustainability level.",
+  "A rewarding task with a high impact score.",
+  "Directly supports local green initiatives.",
+  "Fits easily into your daily routine.",
+];
+
 const cleanJsonText = (text: string) =>
   text
     .replace(/^```json\s*/i, "")
@@ -245,12 +260,7 @@ const getDemoTaskRecommendations = (
     const rank = (5 - i) / 5;
     const fit: "high" | "medium" | "low" =
       avg >= 4 && rank > 0.5 ? "high" : avg >= 3 || rank > 0.3 ? "medium" : "low";
-    const reason =
-      fit === "high"
-        ? "Your habits and goals align well with this task."
-        : fit === "medium"
-          ? "A good next step given your current level."
-          : "Worth trying once you build a bit more routine.";
+    const reason = RANDOM_REASONS[(i + t.title.length) % RANDOM_REASONS.length];
     return { taskId: t.id, taskTitle: t.title, fit, reason, mode: "demo" as const };
   });
 };
@@ -318,7 +328,7 @@ const getDemoStarterRecommendations = (tasks: TaskForFit[]): TaskRecommendation[
     taskId: t.id,
     taskTitle: t.title,
     fit: (i < 2 ? "high" : i < 4 ? "medium" : "low") as "high" | "medium" | "low",
-    reason: "Great for getting started.",
+    reason: RANDOM_REASONS[i % RANDOM_REASONS.length],
     mode: "demo" as const,
   }));
 
@@ -333,9 +343,7 @@ const getDemoRecommendationsFromProfile = (
     const done = profile.taskIdsDone.includes(t.id);
     const reason = done
       ? "Worth repeating to build habit."
-      : profile.totalCount > 0
-        ? "Builds on your impact so far."
-        : "Great for getting started.";
+      : RANDOM_REASONS[(i + profile.totalCount) % RANDOM_REASONS.length];
     return {
       taskId: t.id,
       taskTitle: t.title,
