@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Leaf, Mail, Lock, Eye, EyeOff, LogIn, Globe } from 'lucide-react';
+import { Leaf, Mail, Lock, Eye, EyeOff, LogIn, Globe, Sparkles } from 'lucide-react';
 import { StoredUser } from '../types';
 import demoAccounts from '../data/demoAccounts.json';
 
@@ -50,6 +50,13 @@ export const LoginPage = ({ onLogin }: { onLogin?: (email: string) => void }) =>
     navigate('/dashboard');
   };
 
+  const handleDemoLogin = () => {
+    const demoUser = demoAccounts[0];
+    localStorage.setItem('userEmail', demoUser.email);
+    if (onLogin) onLogin(demoUser.email);
+    navigate('/dashboard');
+  };
+
   return (
     <div className="min-h-screen bg-[#f8faf9] font-sans flex flex-col relative overflow-hidden">
       {/* Background Graphic */}
@@ -77,7 +84,19 @@ export const LoginPage = ({ onLogin }: { onLogin?: (email: string) => void }) =>
         <div className="w-full max-w-[460px] bg-white rounded-2xl shadow-sm border border-slate-100 p-8 sm:p-10">
           <div className="mb-8">
             <h1 className="text-3xl font-display font-bold mb-2 text-slate-900">Welcome Back</h1>
-            <p className="text-primary font-semibold">Log in to your impact dashboard</p>
+            <p className="text-primary font-semibold mb-6">Log in to your impact dashboard</p>
+            
+            <button
+              type="button"
+              onClick={handleDemoLogin}
+              className="w-full bg-slate-50 hover:bg-slate-100 text-slate-600 py-3.5 rounded-xl font-bold flex flex-col items-center justify-center gap-1 transition-all group"
+            >
+              <div className="flex items-center gap-2 text-sm">
+                <Sparkles size={16} className="text-primary group-hover:scale-110 transition-transform" />
+                <span>Too lazy? Use our demo account</span>
+              </div>
+              <span className="text-[10px] opacity-70 font-medium italic">See the rest of the site instantly</span>
+            </button>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
