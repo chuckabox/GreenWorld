@@ -4,7 +4,7 @@ GreenWorld is a community hub designed to help people turn sustainability intent
 
 Our platform connects people, guides them toward meaningful environmental activities, and rewards their impact through a sustainability points system called **GreenPass**.
 
-This project was built as a **frontend-first MVP for the Library Hackathon 2026**.
+Built as a **frontend-first MVP in 48 hours for the Library Hackathon 2026**. Learn more about the event [here](https://web.library.uq.edu.au/stories/team-hackaithon-13-15-march-2026).
 
 🏆 **Achievements**
 - **Top 5 Team** at the Library Hackathon 2026
