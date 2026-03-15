@@ -116,7 +116,7 @@ export const verifyEcoImageWithGemini = async (
   activityCategory: string,
   activityDescription: string,
 ): Promise<EcoVerificationResult> => {
-  const aiDemoMode = parseBoolean(import.meta.env.VITE_AI_DEMO_MODE, false);
+  const aiDemoMode = import.meta.env.VITE_AI_DEMO_MODE === "true";
   if (aiDemoMode) {
     return getDemoVerification(activityCategory, activityDescription);
   }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Leaf, Users, Award, CheckCircle2, Trophy, Globe, ChevronDown, Target, Calendar, Instagram, ExternalLink, FileDown } from "lucide-react";
+import { Leaf, Users, Award, CheckCircle2, Trophy, Globe, ChevronDown, Target, Calendar, Instagram, Github, ExternalLink, FileDown } from "lucide-react";
 import { motion } from "motion/react";
 import { cn } from "../lib/utils";
 
@@ -89,7 +89,8 @@ export const LandingPage = () => {
       <section id="council" className="py-16 bg-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
           <div className="flex-1 text-center md:text-left">
-            <h2 className="text-3xl md:text-4xl font-display font-bold mb-6">Supported by Brisbane City Council</h2>
+            <h2 className="text-3xl md:text-4xl font-display font-bold mb-2">Supported by Brisbane City Council</h2>
+            <p className="text-slate-400 text-sm mb-6">(we're not actually but for the sake of the demo!)</p>
             <p className="text-slate-600 text-lg leading-relaxed mb-8">
               We're working with Brisbane City Council to help residents take real action for a greener local environment ahead of the 2032 Olympics. This local pilot will guide improvements before expanding the platform to communities worldwide.
             </p>
@@ -346,6 +347,12 @@ export const LandingPage = () => {
                   <a href="https://uqu.com.au/clubs-and-societies/uq-sustainable-innovators-club-uqsic/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors flex items-center gap-2">
                     <ExternalLink size={16} />
                     <span>UQSIC Club Page</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="https://github.com/chuckabox/GreenWorld" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors flex items-center gap-2">
+                    <Github size={16} />
+                    <span>GitHub</span>
                   </a>
                 </li>
               </ul>
