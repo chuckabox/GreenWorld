@@ -5,13 +5,13 @@ import { motion } from "motion/react";
 import { cn } from "../lib/utils";
 
 import councilImg from "../assets/council_support.png";
-import heroBg from "../assets/hero_background.jpeg";
+import heroBg from "../assets/hero_background.jpg";
 import brisbane1 from "../assets/brisbane_1.png";
 import brisbane2 from "../assets/brisbane_2.png";
 import brisbane3 from "../assets/brisbane_3.png";
-import eventBeach from "../assets/event_beach.png";
-import eventTrees from "../assets/event_trees.png";
-import eventWorkshop from "../assets/event_workshop.png";
+import eventBeach from "../assets/event_beach.jpg";
+import eventTrees from "../assets/event_trees.jpg";
+import eventWorkshop from "../assets/event_workshop.jpg";
 import { ImageCarousel } from "../components/ImageCarousel";
 import tasksAndEventsData from "../data/tasksAndEvents.json";
 
@@ -76,7 +76,7 @@ export const LandingPage = () => {
                 href="#levels"
                 animate={{ y: [0, 10, 0] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="text-primary hover:text-primary-dark transition-colors"
+                className="text-white hover:text-slate-200 transition-colors"
               >
                 <ChevronDown size={48} strokeWidth={3} />
               </motion.a>
@@ -207,7 +207,7 @@ export const LandingPage = () => {
           <div>
             <h2 className="text-4xl font-display font-bold mb-6">How It Works</h2>
             <p className="text-slate-500 text-lg mb-8 max-w-md leading-relaxed">
-              Make a difference step by step. Use our framework to build green habits and grow your impact.
+              Make a difference step by step. Use our framework to make a sustainable impact.
             </p>
           </div>
 
