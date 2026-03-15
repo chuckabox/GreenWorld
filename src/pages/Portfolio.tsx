@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Lock, Sparkles } from "lucide-react";
+import { Lock, Sparkles, FileDown, Award } from "lucide-react";
 import { cn } from "../lib/utils";
 import { UserData } from "../types";
 import { getLevelLabel, toRoman } from "../lib/badges";
@@ -55,11 +55,19 @@ export const Portfolio = ({ user }: { user: UserData }) => {
             </span>
           </div>
         </div>
-        <div className="w-full md:w-auto">
-          <div className="bg-slate-50 p-6 rounded-2xl text-center min-w-[160px]">
+        <div className="w-full md:w-auto flex flex-col items-center gap-3">
+          <div className="bg-slate-50 p-6 rounded-2xl text-center min-w-[160px] w-full">
             <p className="text-3xl font-bold text-primary">{user.impact_points}</p>
             <p className="text-xs text-slate-500 uppercase tracking-wider font-bold mt-1">Green Points</p>
           </div>
+          <a
+            href="/certificate.pdf"
+            download="GreenWorld_Certificate.pdf"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-primary/20 text-primary rounded-2xl font-bold hover:bg-primary hover:text-white transition-all shadow-sm group"
+          >
+            <FileDown size={18} className="group-hover:scale-110 transition-transform" />
+            <span>Download CV</span>
+          </a>
         </div>
       </div>
 

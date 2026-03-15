@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Leaf, Users, Award, CheckCircle2, Trophy, Globe, ChevronDown, Target, Calendar, Instagram, ExternalLink } from "lucide-react";
+import { Leaf, Users, Award, CheckCircle2, Trophy, Globe, ChevronDown, Target, Calendar, Instagram, ExternalLink, FileDown } from "lucide-react";
 import { motion } from "motion/react";
 import { cn } from "../lib/utils";
 
@@ -184,14 +184,26 @@ export const LandingPage = () => {
 
                 <div className="space-y-4">
                   {[
-                    "Discounts at partnered businesses",
-                    "Exclusive free products and merchandise",
-                    "Early access to community workshops",
-                    "Get a CV-ready certificate with your badge"
+                    { text: "Discounts at partnered businesses" },
+                    { text: "Exclusive free products and merchandise" },
+                    { text: "Early access to community workshops" },
+                    { text: "Get a CV-ready certificate with your badge", link: true }
                   ].map((benefit, i) => (
                     <div key={i} className="flex items-center gap-4 bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10 group-hover:bg-white/15 transition-all">
                       <CheckCircle2 size={20} className="shrink-0" />
-                      <span className="font-medium text-sm md:text-base">{benefit}</span>
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                        <span className="font-medium text-sm md:text-base">{benefit.text}</span>
+                        {benefit.link && (
+                          <a
+                            href="/certificate.pdf"
+                            download="Sample_Certificate.pdf"
+                            className="inline-flex items-center gap-1 text-xs font-bold text-white/70 hover:text-white transition-colors bg-white/10 px-2 py-0.5 rounded-full"
+                          >
+                            <FileDown size={12} />
+                            Sample
+                          </a>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
