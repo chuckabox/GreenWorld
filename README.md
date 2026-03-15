@@ -121,7 +121,7 @@ GreenWorld creates value at multiple levels.
 
 ## Hackathon MVP Scope
 
-This repository focuses on the **GreenPass citizen app demo**.
+This repository focuses on the **a live demo**.
 
 To keep the build fast and reliable for the hackathon:
 
