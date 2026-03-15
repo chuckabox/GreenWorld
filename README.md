@@ -1,4 +1,4 @@
-# GreenWorld (Library Hackathon 2026)
+# GreenWorld
 
 GreenWorld is a community hub designed to help people turn sustainability intentions into real action.
 
