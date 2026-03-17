@@ -9,7 +9,6 @@ Built as a **frontend-first MVP in 48 hours for the Library Hackathon 2026**. Le
 (Any commits after [this](https://github.com/chuckabox/GreenWorld/commit/9531962ed339a220ed3f0e1865b3cce6872daeae) are post-hackathon)
 
 🏆 **Achievements**
-- **Top 5 Team** at the Library Hackathon 2026
 - **Judges’ Choice Award**
 
 ## Problem
