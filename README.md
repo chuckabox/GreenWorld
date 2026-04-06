@@ -187,10 +187,6 @@ VITE_AI_DEMO_MODE=false
 VITE_GEMINI_API_KEY=your_key_here
 ```
 
-## Project Goal
-
-GreenWorld creates a loop that turns learning into action:
-
 ```
 Learn → Act → Verify → Earn → Redeem → Repeat
 ```
