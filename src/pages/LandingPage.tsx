@@ -375,6 +375,42 @@ export const LandingPage = () => {
                 </li>
               </ul>
             </div>
+
+            <div>
+              <h4 className="font-bold mb-6">Our Team</h4>
+              <ul className="space-y-3 text-sm text-slate-500">
+                <li>
+                  <a href="https://www.linkedin.com/in/anshkataria7/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors flex items-center gap-2">
+                    <Users size={16} />
+                    <span>Ansh Kataria</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.linkedin.com/in/oliver-rusterholz-8a4b953b2/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors flex items-center gap-2">
+                    <Users size={16} />
+                    <span>Oliver Rusterholz</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.linkedin.com/in/peterzma/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors flex items-center gap-2">
+                    <Users size={16} />
+                    <span>Peter Ma</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.linkedin.com/in/vietductran/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors flex items-center gap-2">
+                    <Users size={16} />
+                    <span>Viet Duc Tran</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.linkedin.com/in/vincent-nguyen-98667137b/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors flex items-center gap-2">
+                    <Users size={16} />
+                    <span>Vincent Nguyen</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
 
           <div className="pt-8 border-t border-slate-100 text-center text-sm text-slate-400">
